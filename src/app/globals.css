@@ -1,0 +1,268 @@
+@import "tailwindcss";
+
+@theme {
+  /* Enhanced Primary Colors - Professional Emerald */
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+  
+  /* Sophisticated Secondary Colors - Deep Blue */
+  --color-secondary-50: #eff6ff;
+  --color-secondary-100: #dbeafe;
+  --color-secondary-200: #bfdbfe;
+  --color-secondary-300: #93c5fd;
+  --color-secondary-400: #60a5fa;
+  --color-secondary-500: #3b82f6;
+  --color-secondary-600: #2563eb;
+  --color-secondary-700: #1d4ed8;
+  --color-secondary-800: #1e40af;
+  --color-secondary-900: #1e3a8a;
+  
+  /* Trust-building Accent Colors */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
+  
+  /* Professional Neutral Colors */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+  
+  /* Success Colors for Financial Trust */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  
+  /* Warning Colors */
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  
+  /* Error Colors */
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+}
+
+@layer base {
+  * {
+    border-color: rgb(229 231 235);
+  }
+  
+  body {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    color: rgb(15 23 42);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Enhanced typography for financial trust */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    color: rgb(15 23 42);
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgb(30 41 59);
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgb(51 65 85);
+  }
+  
+  /* Enhanced button and interactive elements */
+  button, a, [role="button"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+  }
+  
+  /* Professional card styling */
+  .card-enhanced {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Gradient backgrounds for sections */
+  .gradient-primary {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  }
+  
+  .gradient-secondary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  }
+  
+  .gradient-accent {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+  
+  .gradient-neutral {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+  
+  /* Enhanced custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 0.5rem;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+  }
+}
+
+@layer components {
+  /* Enhanced Primary Button Styling */
+  .bg-primary-500 {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    box-shadow: 
+      0 4px 14px 0 rgba(34, 197, 94, 0.25),
+      0 2px 4px 0 rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .hover\:bg-primary-600:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+    box-shadow: 
+      0 6px 20px 0 rgba(34, 197, 94, 0.35),
+      0 4px 6px 0 rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .text-primary-600 {
+    color: #16a34a !important;
+  }
+  
+  .hover\:text-primary-500:hover {
+    color: #22c55e !important;
+  }
+  
+  .focus\:ring-primary-500:focus {
+    --tw-ring-color: rgba(34, 197, 94, 0.5) !important;
+    box-shadow: 
+      0 0 0 3px rgba(34, 197, 94, 0.1),
+      0 4px 14px 0 rgba(34, 197, 94, 0.25) !important;
+  }
+  
+  .focus\:border-primary-500:focus {
+    border-color: #22c55e !important;
+  }
+  
+  /* Enhanced Card Styling */
+  .card-professional {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+  }
+  
+  .card-professional:hover {
+    box-shadow: 
+      0 20px 40px -10px rgba(0, 0, 0, 0.15),
+      0 8px 12px -4px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Enhanced Secondary Button */
+  .bg-secondary-500 {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    box-shadow: 
+      0 4px 14px 0 rgba(59, 130, 246, 0.25),
+      0 2px 4px 0 rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .hover\:bg-secondary-600:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    box-shadow: 
+      0 6px 20px 0 rgba(59, 130, 246, 0.35),
+      0 4px 6px 0 rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /* Enhanced Accent Button */
+  .bg-accent-500 {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    box-shadow: 
+      0 4px 14px 0 rgba(245, 158, 11, 0.25),
+      0 2px 4px 0 rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .hover\:bg-accent-600:hover {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+    box-shadow: 
+      0 6px 20px 0 rgba(245, 158, 11, 0.35),
+      0 4px 6px 0 rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /* Professional Input Styling */
+  .input-professional {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(229, 231, 235, 0.5);
+    border-radius: 0.75rem;
+    box-shadow: 
+      0 2px 4px 0 rgba(0, 0, 0, 0.05),
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .input-professional:focus {
+    border-color: #22c55e;
+    box-shadow: 
+      0 0 0 3px rgba(34, 197, 94, 0.1),
+      0 4px 6px 0 rgba(0, 0, 0, 0.1),
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+  }
+}
