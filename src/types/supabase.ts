@@ -156,6 +156,7 @@ export interface Database {
           completed: boolean
           due_date: string | null
           completed_at: string | null
+          notes: string | null
         }
         Insert: {
           id?: string
@@ -166,6 +167,7 @@ export interface Database {
           completed?: boolean
           due_date?: string | null
           completed_at?: string | null
+          notes?: string | null
         }
         Update: {
           id?: string
@@ -176,6 +178,7 @@ export interface Database {
           completed?: boolean
           due_date?: string | null
           completed_at?: string | null
+          notes?: string | null
         }
         Relationships: [
           {

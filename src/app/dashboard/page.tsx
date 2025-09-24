@@ -1,19 +1,62 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { DollarSign, ArrowRightLeft, Star, BarChart3, Target, User } from 'lucide-react'
+import { User, Loader2 } from 'lucide-react'
+import { getActiveSwitchesCount, getUserEarnings } from '../../lib/supabase/analytics'
+
+// Import dashboard components
+import EarningsCard from '../../components/features/dashboard/EarningsCard'
+import ActiveSwitchesCard from '../../components/features/dashboard/ActiveSwitchesCard'
+import AvailableDealsCard from '../../components/features/dashboard/AvailableDealsCard'
+import RecentActivityCard from '../../components/features/dashboard/RecentActivityCard'
+import QuickActions from '../../components/features/dashboard/QuickActions'
+import StatsOverview from '../../components/features/dashboard/StatsOverview'
 
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth()
+  const [activeSwitchesCount, setActiveSwitchesCount] = useState(0)
+  const [loadingActiveCount, setLoadingActiveCount] = useState(true)
+  const [totalEarnings, setTotalEarnings] = useState(0)
+  const [loadingEarnings, setLoadingEarnings] = useState(true)
+
+  // Fetch active switches count and total earnings for welcome cards
+  useEffect(() => {
+    if (!user?.id) return
+
+    const fetchWelcomeData = async () => {
+      try {
+        setLoadingActiveCount(true)
+        setLoadingEarnings(true)
+        
+        const [count, earnings] = await Promise.all([
+          getActiveSwitchesCount(user.id),
+          getUserEarnings(user.id)
+        ])
+        
+        setActiveSwitchesCount(count)
+        setTotalEarnings(earnings.totalLifetime)
+      } catch (error) {
+        console.error('Error fetching welcome data:', error)
+        setActiveSwitchesCount(0)
+        setTotalEarnings(0)
+      } finally {
+        setLoadingActiveCount(false)
+        setLoadingEarnings(false)
+      }
+    }
+
+    fetchWelcomeData()
+  }, [user?.id])
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+          <p className="mt-2 text-muted-foreground">Loading dashboard...</p>
         </div>
       </div>
     )
@@ -21,96 +64,84 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-        {/* Welcome Card */}
-        <Card className="card-professional border-0">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
-              Welcome back, {profile?.full_name || 'User'}!
-            </CardTitle>
-            <CardDescription className="text-lg text-neutral-600">
-              Here&apos;s an overview of your bank switching activity and earnings.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-4">
-                  <DollarSign className="w-6 h-6 text-white" />
-                </div>
-                <p className="text-3xl font-bold text-primary-600 mb-2">£{profile?.total_earnings || 0}</p>
-                <p className="text-sm font-medium text-neutral-600">Total Earnings</p>
+      {/* Welcome Card */}
+      <Card className="card-professional border-0">
+        <CardHeader className="pb-6">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+            Welcome back, {profile?.full_name || 'User'}!
+          </CardTitle>
+          <CardDescription className="text-lg text-neutral-600">
+            Here&apos;s an overview of your bank switching activity and earnings.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-4">
+                <User className="w-6 h-6 text-white" />
               </div>
-              <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-full mb-4">
-                  <ArrowRightLeft className="w-6 h-6 text-white" />
-                </div>
-                <p className="text-3xl font-bold text-secondary-600 mb-2">0</p>
-                <p className="text-sm font-medium text-neutral-600">Active Switches</p>
-              </div>
-              <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full mb-4">
-                  <Star className="w-6 h-6 text-white" />
-                </div>
-                <Badge className="bg-gradient-to-r from-accent-500 to-accent-600 text-white border-0 px-4 py-2 text-sm font-medium">
-                  {profile?.subscription_tier || 'free'}
-                </Badge>
-                <p className="text-sm font-medium text-neutral-600 mt-2">Subscription</p>
-              </div>
+              <Badge className="bg-gradient-to-r from-primary-500 to-primary-600 text-white border-0 px-4 py-2 text-sm font-medium mb-2">
+                {profile?.subscription_tier || 'free'}
+              </Badge>
+              <p className="text-sm font-medium text-neutral-600">Subscription</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Coming Soon Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="card-professional border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="w-4 h-4 text-white" />
-                </div>
-                Recent Activity
-              </CardTitle>
-              <CardDescription>Your latest bank switching activities</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-neutral-100 to-neutral-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="w-8 h-8 text-neutral-500" />
-                </div>
-                <p className="text-neutral-600 font-medium">Coming soon - Activity feed will appear here</p>
+            <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-success-500 to-success-600 rounded-full mb-4">
+                <User className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="card-professional border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-lg flex items-center justify-center">
-                  <Target className="w-4 h-4 text-white" />
-                </div>
-                Available Deals
-              </CardTitle>
-              <CardDescription>New bank switching offers</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-secondary-100 to-secondary-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Target className="w-8 h-8 text-secondary-500" />
-                </div>
-                <p className="text-neutral-600 font-medium">Coming soon - Available deals will appear here</p>
+              <p className="text-3xl font-bold text-success-600 mb-2">
+                {loadingEarnings ? (
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+                ) : (
+                  `£${totalEarnings}`
+                )}
+              </p>
+              <p className="text-sm font-medium text-neutral-600">Total Earnings</p>
+            </div>
+            <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full mb-4">
+                <User className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <p className="text-3xl font-bold text-accent-600 mb-2">
+                {loadingActiveCount ? (
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+                ) : (
+                  activeSwitchesCount
+                )}
+              </p>
+              <p className="text-sm font-medium text-neutral-600">Active Switches</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* User Info Debug Card */}
+      {/* Row 1: Earnings and Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <EarningsCard />
+        <StatsOverview />
+      </div>
+
+      {/* Row 2: Active Switches and Available Deals */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ActiveSwitchesCard />
+        <AvailableDealsCard />
+      </div>
+
+      {/* Row 3: Recent Activity and Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentActivityCard />
+        <QuickActions />
+      </div>
+
+      {/* Debug Card - Only show in development */}
+      {process.env.NODE_ENV === 'development' && (
         <Card className="card-professional border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-accent-600 rounded-lg flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
-              Account Information
+              Account Information (Debug)
             </CardTitle>
             <CardDescription>Your account details</CardDescription>
           </CardHeader>
@@ -145,7 +176,8 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      )}
+    </div>
   )
 }
 
