@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Textarea } from '@/components/ui/textarea'
 import { Database } from '../../../types/supabase'
 import { updateSwitchStep, calculateSwitchProgress, calculateEstimatedCompletion } from '../../../lib/supabase/switches'
-import { format } from 'date-fns'
+import { formatDistanceToNow, format } from 'date-fns'
 import { 
   CheckCircle, 
   Circle, 
@@ -76,7 +76,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
     try {
       await updateSwitchStep(stepId, { notes: value })
       // Optional: Show a subtle indicator that notes were saved
-    } catch {
+    } catch (error) {
       // Silent fail for auto-save - user can manually save if needed
     } finally {
       setAutoSaving(prev => {
@@ -98,7 +98,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
 
   // Save pending changes before page unload
   useEffect(() => {
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       // Check if there are any pending auto-saves
       const hasPendingSaves = Object.keys(autoSaveTimeouts).length > 0
       
@@ -132,7 +132,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
     try {
       await updateSwitchStep(stepId, { completed })
       onStepUpdate?.()
-    } catch {
+    } catch (error) {
       // Silent fail for auto-save - user can manually retry if needed
     } finally {
       setUpdatingSteps(prev => {
@@ -150,8 +150,8 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
       const notesValue = stepNotes[stepId] || ''
       await updateSwitchStep(stepId, { notes: notesValue })
       onStepUpdate?.()
-    } catch (err) {
-      console.error('Error saving notes:', err)
+    } catch (error) {
+      console.error('Error saving notes:', error)
     } finally {
       setSavingNotes(prev => {
         const newSet = new Set(prev)
@@ -170,7 +170,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const getStepStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'secondary'
+        return 'success'
       case 'overdue':
         return 'destructive'
       default:

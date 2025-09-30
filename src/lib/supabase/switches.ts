@@ -57,7 +57,7 @@ export const getUserSwitches = async (userId: string): Promise<UserSwitch[]> => 
 }
 
 // Simple version for testing - without joins
-export const getUserSwitchesSimple = async (userId: string): Promise<Database['public']['Tables']['user_switches']['Row'][]> => {
+export const getUserSwitchesSimple = async (userId: string): Promise<any[]> => {
   // Create completely fresh client for each request to avoid connection issues
   const supabase = createFreshClient()
   
@@ -73,7 +73,7 @@ export const getUserSwitchesSimple = async (userId: string): Promise<Database['p
       setTimeout(() => reject(new Error('Query timeout after 8 seconds')), 8000)
     })
 
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: Database['public']['Tables']['user_switches']['Row'][] | null, error: { message: string } | null }
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
 
     if (error) {
       throw new Error(`Failed to fetch switches: ${error.message}`)
@@ -100,10 +100,10 @@ export const testSupabaseConnection = async (): Promise<boolean> => {
       setTimeout(() => reject(new Error('Connection test timeout')), 5000)
     })
     
-    const { error } = await Promise.race([queryPromise, timeoutPromise]) as { data: unknown, error: { message: string } | null }
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
     
     return !error
-  } catch {
+  } catch (err) {
     return false
   }
 }
@@ -223,9 +223,9 @@ export const updateSwitchStep = async (
 
 // Update switch status
 export const updateSwitchStatus = async (
-  switchId: string,
+  switchId: string, 
   status: 'started' | 'in_progress' | 'waiting' | 'completed' | 'failed'
-): Promise<Database['public']['Tables']['user_switches']['Row']> => {
+): Promise<UserSwitch> => {
   const supabase = createClient()
   
   const updateData: UserSwitchUpdate = {
@@ -250,9 +250,9 @@ export const updateSwitchStatus = async (
 
 // Update switch notes
 export const updateSwitchNotes = async (
-  switchId: string,
+  switchId: string, 
   notes: string
-): Promise<Database['public']['Tables']['user_switches']['Row']> => {
+): Promise<UserSwitch> => {
   const supabase = createClient()
   
   const { data, error } = await supabase
@@ -306,12 +306,12 @@ export const calculateEstimatedCompletion = (
   // Add days for completed steps
   let totalDays = 0
   completedSteps.forEach(step => {
-    totalDays += step.step_number <= 3 ? 1 : 1 // Use 1 day for all steps for now
+    totalDays += step.stepNumber <= 3 ? step.estimatedDays || 1 : 1 // Use actual days for first 3 steps
   })
-
+  
   // Add estimated days for remaining steps
-  remainingSteps.forEach(() => {
-    totalDays += 1 // Use 1 day for all remaining steps
+  remainingSteps.forEach(step => {
+    totalDays += step.estimatedDays || 1
   })
   
   const completionDate = new Date(start)

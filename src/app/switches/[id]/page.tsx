@@ -100,7 +100,7 @@ export default function SwitchDetailPage() {
       
       if (switchData) setUserSwitch(switchData)
       setSteps(stepsData)
-    } catch {
+    } catch (err) {
       // Error refreshing data - could show a toast notification here
     }
   }

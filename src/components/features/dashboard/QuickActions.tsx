@@ -11,15 +11,18 @@ import {
   ArrowRightLeft,
   Target,
   CheckCircle,
+  Settings
 } from 'lucide-react'
 import Link from 'next/link'
 import { getAllActiveDeals } from '../../../lib/supabase/deals'
+import { useAuth } from '../../../context/AuthContext'
 
 interface QuickActionsProps {
   className?: string
 }
 
 export default function QuickActions({ className }: QuickActionsProps) {
+  const { user } = useAuth()
   const [maxReward, setMaxReward] = useState(0)
   const [loading, setLoading] = useState(true)
 

@@ -5,9 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Database } from '../../../types/supabase'
-import { format } from 'date-fns'
+import { formatDistanceToNow, format } from 'date-fns'
 import { 
   Banknote, 
+  Calendar, 
+  CreditCard, 
   Clock, 
   TrendingUp,
   CheckCircle,
@@ -43,14 +45,14 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
     } else if (daysUntilExpiry <= 7) {
       return { text: `${daysUntilExpiry} days left`, color: 'destructive' as const }
     } else if (daysUntilExpiry <= 30) {
-      return { text: `${daysUntilExpiry} days left`, color: 'secondary' as const }
+      return { text: `${daysUntilExpiry} days left`, color: 'warning' as const }
     } else {
       return { text: `Expires ${format(date, 'MMM dd, yyyy')}`, color: 'default' as const }
     }
   }
 
   const expiryInfo = formatExpiryDate(deal.expiry_date || '')
-  const requirements = deal.requirements as Record<string, unknown>
+  const requirements = deal.requirements as any
 
   return (
     <Card className="card-professional border-0 h-full flex flex-col">
@@ -74,6 +76,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col">
+        {/* Reward Amount - Prominently displayed */}
         <div className="text-center mb-6 p-4 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl border border-primary-200">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Banknote className="w-6 h-6 text-primary-600" />
@@ -84,6 +87,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
           </div>
         </div>
 
+        {/* Requirements Breakdown */}
         <div className="space-y-4 mb-6">
           <div className="space-y-3">
             <h4 className="font-semibold text-neutral-800 flex items-center gap-2">
@@ -92,10 +96,13 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
             </h4>
             
             <div className="grid grid-cols-1 gap-3">
+              {/* Minimum Pay-in */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
                 <span className="text-sm font-medium text-neutral-700">Minimum Pay-in</span>
                 <span className="text-sm font-bold text-neutral-800">£{deal.min_pay_in}</span>
               </div>
+
+              {/* Direct Debits */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
                 <span className="text-sm font-medium text-neutral-700">Direct Debits</span>
                 <Badge variant="secondary" className="bg-secondary-100 text-secondary-700">
@@ -103,7 +110,17 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
                 </Badge>
               </div>
 
+              {/* Card Transactions */}
+              {deal.debit_card_transactions > 0 && (
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
+                  <span className="text-sm font-medium text-neutral-700">Card Transactions</span>
+                  <Badge variant="secondary" className="bg-accent-100 text-accent-700">
+                    {deal.debit_card_transactions} required
+                  </Badge>
+                </div>
+              )}
 
+              {/* Account Switch */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
                 <span className="text-sm font-medium text-success-700">Account Switch</span>
                 <div className="flex items-center gap-1">
@@ -112,7 +129,8 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
                 </div>
               </div>
 
-              {Boolean((requirements as Record<string, unknown>)?.maintain_balance) && (
+              {/* Balance Maintenance */}
+              {requirements?.maintain_balance && (
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-warning-50 to-warning-100 rounded-lg">
                   <span className="text-sm font-medium text-warning-700">Maintain Balance</span>
                   <div className="flex items-center gap-1">
@@ -124,6 +142,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
             </div>
           </div>
 
+          {/* Time to Payout */}
           <div className="flex items-center justify-between p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-accent-600" />
@@ -133,6 +152,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
           </div>
         </div>
 
+        {/* Start Switch Button */}
         <div className="mt-auto">
           <Button 
             onClick={handleStartSwitch}

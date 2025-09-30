@@ -47,6 +47,14 @@ export default function EarningsCard({ className }: EarningsCardProps) {
     }).format(amount)
   }
 
+  const formatCurrencyDetailed = (amount: number): string => {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount)
+  }
 
   if (loading) {
     return (
@@ -121,6 +129,7 @@ export default function EarningsCard({ className }: EarningsCardProps) {
   }
 
   const isGrowthPositive = earnings.monthlyGrowth >= 0
+  const growthIcon = isGrowthPositive ? TrendingUp : TrendingDown
   const growthColor = isGrowthPositive ? 'text-success-600' : 'text-red-600'
   const growthBgColor = isGrowthPositive ? 'bg-success-50' : 'bg-red-50'
 

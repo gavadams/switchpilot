@@ -56,6 +56,12 @@ export default function ActiveSwitchesCard({ className }: ActiveSwitchesCardProp
     }).format(amount)
   }
 
+  const getProgressColor = (progress: number): string => {
+    if (progress >= 75) return 'bg-success-500'
+    if (progress >= 50) return 'bg-primary-500'
+    if (progress >= 25) return 'bg-accent-500'
+    return 'bg-neutral-400'
+  }
 
   const getDaysRemainingColor = (days: number): string => {
     if (days <= 7) return 'text-red-600'

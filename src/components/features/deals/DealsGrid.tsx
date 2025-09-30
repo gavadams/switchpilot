@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -51,7 +52,7 @@ export default function DealsGrid({ deals, onStartSwitch, loading = false }: Dea
 
   // Filter and sort deals
   const filteredAndSortedDeals = useMemo(() => {
-    const filtered = deals.filter(deal => {
+    let filtered = deals.filter(deal => {
       // Search filter
       if (searchTerm && !deal.bank_name.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false

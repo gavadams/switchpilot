@@ -71,7 +71,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
 
   if (!deal) return null
 
-  const requirements = deal.requirements as Record<string, unknown>
+  const requirements = deal.requirements as any
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -133,7 +133,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
                 </div>
               )}
               
-              {Boolean(requirements?.maintain_balance) && (
+              {requirements?.maintain_balance && (
                 <div className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
                   <span className="text-sm text-neutral-700">Maintain minimum balance</span>
                   <CheckCircle className="w-4 h-4 text-success-600" />

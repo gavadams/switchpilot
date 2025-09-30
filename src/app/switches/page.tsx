@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Database } from '../../types/supabase'
@@ -11,7 +12,14 @@ import SwitchCard from '../../components/features/switches/SwitchCard'
 import { AlertCircle, Loader2, Plus, ArrowRightLeft } from 'lucide-react'
 import Link from 'next/link'
 
-type UserSwitch = Database['public']['Tables']['user_switches']['Row']
+type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
+  bank_deals: {
+    bank_name: string
+    reward_amount: number
+    expiry_date: string | null
+    time_to_payout: string | null
+  } | null
+}
 
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 
@@ -87,7 +95,7 @@ export default function SwitchesPage() {
     }
 
     fetchSwitches()
-  }, [user?.id, authLoading, retryCount, user])
+  }, [user?.id, authLoading, retryCount])
 
   const handleRefresh = () => {
     setRetryCount(prev => prev + 1)
@@ -138,7 +146,7 @@ export default function SwitchesPage() {
           const bProgress = bSteps.filter(step => step.completed).length / Math.max(bSteps.length, 1)
           return bProgress - aProgress
         case 'reward_amount':
-          return (b.earnings_received || 0) - (a.earnings_received || 0)
+          return (b.bank_deals?.reward_amount || 0) - (a.bank_deals?.reward_amount || 0)
         default:
           return 0
       }

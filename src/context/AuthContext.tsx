@@ -20,16 +20,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-
-  // Only create Supabase client if we're in a browser environment
-  const supabase = typeof window !== 'undefined' ? createClient() : null
+  const supabase = createClient()
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false)
-      return
-    }
-
     const fetchProfile = async (userId: string) => {
       try {
         const { data, error } = await supabase
@@ -54,11 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession()
       setSession(session)
       setUser(session?.user ?? null)
-
+      
       if (session?.user) {
         await fetchProfile(session.user.id)
       }
-
+      
       setLoading(false)
     }
 
@@ -69,13 +62,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
-
+        
         if (session?.user) {
           await fetchProfile(session.user.id)
         } else {
           setProfile(null)
         }
-
+        
         setLoading(false)
       }
     )
@@ -84,11 +77,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase])
 
   const signOut = async () => {
-    if (!supabase) {
-      setLoading(false)
-      return
-    }
-
     setLoading(true)
     await supabase.auth.signOut()
     setUser(null)

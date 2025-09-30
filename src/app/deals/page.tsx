@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Database } from '../../types/supabase'
 import { getAllActiveDeals } from '../../lib/supabase/deals'
 import DealsGrid from '../../components/features/deals/DealsGrid'
@@ -12,7 +13,7 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 
 export default function DealsPage() {
-  const { loading: authLoading } = useAuth()
+  const { user, profile, loading: authLoading } = useAuth()
   const [deals, setDeals] = useState<BankDeal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

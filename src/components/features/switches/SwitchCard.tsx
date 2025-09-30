@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Database } from '../../../types/supabase'
 import { calculateSwitchProgress, calculateEstimatedCompletion } from '../../../lib/supabase/switches'
-import { format } from 'date-fns'
+import { formatDistanceToNow, format } from 'date-fns'
 import { 
   ArrowRightLeft, 
   Calendar, 
@@ -18,7 +18,14 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-type UserSwitch = Database['public']['Tables']['user_switches']['Row']
+type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
+  bank_deals: {
+    bank_name: string
+    reward_amount: number
+    expiry_date: string | null
+    time_to_payout: string | null
+  } | null
+}
 
 interface SwitchCardProps {
   userSwitch: UserSwitch
@@ -36,9 +43,9 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
       case 'in_progress':
         return 'secondary'
       case 'waiting':
-        return 'secondary'
+        return 'warning'
       case 'completed':
-        return 'secondary'
+        return 'success'
       case 'failed':
         return 'destructive'
       default:
@@ -86,7 +93,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-xl font-bold text-neutral-800 mb-2">
-              {'Bank Switch'}
+              {userSwitch.bank_deals?.bank_name || 'Unknown Bank'}
             </CardTitle>
             <CardDescription className="text-neutral-600">
               Bank switching in progress
@@ -110,7 +117,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
             <span className="text-sm font-medium text-primary-700">Reward Amount</span>
           </div>
           <div className="text-3xl font-black text-primary-600">
-            £0
+            £{userSwitch.bank_deals?.reward_amount || 0}
           </div>
         </div>
 
