@@ -5,11 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Database } from '../../../types/supabase'
-import { formatDistanceToNow, format } from 'date-fns'
+import { format } from 'date-fns'
 import { 
   Banknote, 
-  Calendar, 
-  CreditCard, 
   Clock, 
   TrendingUp,
   CheckCircle,
@@ -52,7 +50,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
   }
 
   const expiryInfo = formatExpiryDate(deal.expiry_date || '')
-  const requirements = deal.requirements as any
+  const requirements = deal.requirements as Record<string, unknown>
 
   return (
     <Card className="card-professional border-0 h-full flex flex-col">

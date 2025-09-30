@@ -57,7 +57,7 @@ export const getUserSwitches = async (userId: string): Promise<UserSwitch[]> => 
 }
 
 // Simple version for testing - without joins
-export const getUserSwitchesSimple = async (userId: string): Promise<any[]> => {
+export const getUserSwitchesSimple = async (userId: string): Promise<Database['public']['Tables']['user_switches']['Row'][]> => {
   // Create completely fresh client for each request to avoid connection issues
   const supabase = createFreshClient()
   
@@ -73,7 +73,7 @@ export const getUserSwitchesSimple = async (userId: string): Promise<any[]> => {
       setTimeout(() => reject(new Error('Query timeout after 8 seconds')), 8000)
     })
 
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: Database['public']['Tables']['user_switches']['Row'][] | null, error: any }
 
     if (error) {
       throw new Error(`Failed to fetch switches: ${error.message}`)
@@ -100,10 +100,10 @@ export const testSupabaseConnection = async (): Promise<boolean> => {
       setTimeout(() => reject(new Error('Connection test timeout')), 5000)
     })
     
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
+    const { error } = await Promise.race([queryPromise, timeoutPromise]) as { data: any, error: any }
     
     return !error
-  } catch (err) {
+  } catch {
     return false
   }
 }

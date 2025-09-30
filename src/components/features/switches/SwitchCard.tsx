@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Database } from '../../../types/supabase'
 import { calculateSwitchProgress, calculateEstimatedCompletion } from '../../../lib/supabase/switches'
-import { formatDistanceToNow, format } from 'date-fns'
+import { format } from 'date-fns'
 import { 
   ArrowRightLeft, 
   Calendar, 

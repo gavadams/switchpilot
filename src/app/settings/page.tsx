@@ -6,8 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { User, Shield, Bell, Info, Lock, Key } from 'lucide-react'
+import { User, Shield, Bell, Info } from 'lucide-react'
 
 export default function SettingsPage() {
   const { user, profile, loading } = useAuth()

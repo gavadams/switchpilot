@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Database } from '../../types/supabase'
@@ -95,7 +94,7 @@ export default function SwitchesPage() {
     }
 
     fetchSwitches()
-  }, [user?.id, authLoading, retryCount])
+  }, [user?.id, authLoading, retryCount, user])
 
   const handleRefresh = () => {
     setRetryCount(prev => prev + 1)

@@ -2,17 +2,6 @@ import { createClient } from './client'
 import { Database } from '../../types/supabase'
 import { STANDARD_SWITCH_STEPS } from '../data/switch-steps'
 
-type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
-  bank_deals: {
-    bank_name: string
-    reward_amount: number
-    expiry_date: string | null
-    time_to_payout: string | null
-  } | null
-}
-
-type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
-
 // Analytics interfaces
 export interface UserEarnings {
   totalLifetime: number

@@ -71,7 +71,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
 
   if (!deal) return null
 
-  const requirements = deal.requirements as any
+  const requirements = deal.requirements as Record<string, unknown>
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
