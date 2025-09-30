@@ -223,9 +223,9 @@ export const updateSwitchStep = async (
 
 // Update switch status
 export const updateSwitchStatus = async (
-  switchId: string, 
+  switchId: string,
   status: 'started' | 'in_progress' | 'waiting' | 'completed' | 'failed'
-): Promise<UserSwitch> => {
+): Promise<Database['public']['Tables']['user_switches']['Row']> => {
   const supabase = createClient()
   
   const updateData: UserSwitchUpdate = {
@@ -250,9 +250,9 @@ export const updateSwitchStatus = async (
 
 // Update switch notes
 export const updateSwitchNotes = async (
-  switchId: string, 
+  switchId: string,
   notes: string
-): Promise<UserSwitch> => {
+): Promise<Database['public']['Tables']['user_switches']['Row']> => {
   const supabase = createClient()
   
   const { data, error } = await supabase
@@ -306,12 +306,12 @@ export const calculateEstimatedCompletion = (
   // Add days for completed steps
   let totalDays = 0
   completedSteps.forEach(step => {
-    totalDays += step.stepNumber <= 3 ? step.estimatedDays || 1 : 1 // Use actual days for first 3 steps
+    totalDays += step.step_number <= 3 ? 1 : 1 // Use 1 day for all steps for now
   })
-  
+
   // Add estimated days for remaining steps
-  remainingSteps.forEach(step => {
-    totalDays += step.estimatedDays || 1
+  remainingSteps.forEach(() => {
+    totalDays += 1 // Use 1 day for all remaining steps
   })
   
   const completionDate = new Date(start)

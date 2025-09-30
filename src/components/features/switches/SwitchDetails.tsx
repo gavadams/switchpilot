@@ -59,9 +59,9 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
       case 'in_progress':
         return 'secondary'
       case 'waiting':
-        return 'warning'
+        return 'secondary'
       case 'completed':
-        return 'success'
+        return 'secondary'
       case 'failed':
         return 'destructive'
       default:

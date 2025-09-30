@@ -170,7 +170,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const getStepStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'success'
+        return 'secondary'
       case 'overdue':
         return 'destructive'
       default:

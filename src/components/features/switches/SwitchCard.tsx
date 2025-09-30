@@ -36,9 +36,9 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
       case 'in_progress':
         return 'secondary'
       case 'waiting':
-        return 'warning'
+        return 'secondary'
       case 'completed':
-        return 'success'
+        return 'secondary'
       case 'failed':
         return 'destructive'
       default:
