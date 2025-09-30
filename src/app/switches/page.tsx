@@ -11,14 +11,7 @@ import SwitchCard from '../../components/features/switches/SwitchCard'
 import { AlertCircle, Loader2, Plus, ArrowRightLeft } from 'lucide-react'
 import Link from 'next/link'
 
-type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
-  bank_deals: {
-    bank_name: string
-    reward_amount: number
-    expiry_date: string | null
-    time_to_payout: string | null
-  } | null
-}
+type UserSwitch = Database['public']['Tables']['user_switches']['Row']
 
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 

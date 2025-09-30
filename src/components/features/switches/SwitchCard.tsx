@@ -18,14 +18,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
-  bank_deals: {
-    bank_name: string
-    reward_amount: number
-    expiry_date: string | null
-    time_to_payout: string | null
-  } | null
-}
+type UserSwitch = Database['public']['Tables']['user_switches']['Row']
 
 interface SwitchCardProps {
   userSwitch: UserSwitch
@@ -93,7 +86,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-xl font-bold text-neutral-800 mb-2">
-              {userSwitch.bank_deals?.bank_name || 'Unknown Bank'}
+              {'Bank Switch'}
             </CardTitle>
             <CardDescription className="text-neutral-600">
               Bank switching in progress
@@ -117,7 +110,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
             <span className="text-sm font-medium text-primary-700">Reward Amount</span>
           </div>
           <div className="text-3xl font-black text-primary-600">
-            £{userSwitch.bank_deals?.reward_amount || 0}
+            £0
           </div>
         </div>
 
