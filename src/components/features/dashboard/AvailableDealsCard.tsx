@@ -178,7 +178,7 @@ export default function AvailableDealsCard({ className }: AvailableDealsCardProp
                         )}
                       </div>
                       <p className="text-sm text-neutral-600">
-                        {deal.description || 'Bank switching offer'}
+                        Bank switching offer
                       </p>
                     </div>
                     <Badge className={`${getRewardBadgeColor(deal.reward_amount)} text-white border-0`}>
