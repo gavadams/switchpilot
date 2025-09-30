@@ -42,15 +42,18 @@ interface SwitchDetailsProps {
 }
 
 export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: SwitchDetailsProps) {
+  // Ensure userSwitch is properly typed and extract values
+  const typedUserSwitch = userSwitch as UserSwitch
+  const rewardAmount = (typedUserSwitch.bank_deals?.reward_amount as number) || 0
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [showCompleteDialog, setShowCompleteDialog] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
-  const [switchNotes, setSwitchNotes] = useState(userSwitch.notes || '')
+  const [switchNotes, setSwitchNotes] = useState(typedUserSwitch.notes || '')
   const [savingNotes, setSavingNotes] = useState(false)
   const router = useRouter()
 
   const progress = calculateSwitchProgress(steps)
-  const estimatedCompletion = calculateEstimatedCompletion(userSwitch.started_at, steps)
+  const estimatedCompletion = calculateEstimatedCompletion(typedUserSwitch.started_at, steps)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -89,7 +92,7 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
   const handleStatusUpdate = async (status: 'completed' | 'failed') => {
     setIsUpdating(true)
     try {
-      await updateSwitchStatus(userSwitch.id, status)
+      await updateSwitchStatus(typedUserSwitch.id, status)
       onSwitchUpdate?.()
       setShowCompleteDialog(false)
       setShowCancelDialog(false)
@@ -103,7 +106,7 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
   const handleSaveNotes = async () => {
     setSavingNotes(true)
     try {
-      await updateSwitchNotes(userSwitch.id, switchNotes)
+      await updateSwitchNotes(typedUserSwitch.id, switchNotes)
       onSwitchUpdate?.()
     } catch (error) {
       console.error('Error saving notes:', error)
@@ -127,7 +130,7 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-neutral-800">
-            {userSwitch.bank_deals?.bank_name || 'Unknown Bank'} Switch
+            {typedUserSwitch.bank_deals?.bank_name || 'Unknown Bank'} Switch
           </h1>
           <p className="text-neutral-600">
             Track your bank switching progress and requirements
@@ -148,8 +151,8 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
                 Key details and progress for this bank switch
               </CardDescription>
             </div>
-            <Badge variant={getStatusColor(userSwitch.status)} className="text-sm">
-              {formatStatus(userSwitch.status)}
+            <Badge variant={getStatusColor(typedUserSwitch.status)} className="text-sm">
+              {formatStatus(typedUserSwitch.status)}
             </Badge>
           </div>
         </CardHeader>
@@ -162,7 +165,7 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
                 <span className="text-sm font-medium text-primary-700">Reward Amount</span>
               </div>
               <div className="text-3xl font-black text-primary-600">
-                £{userSwitch.bank_deals?.reward_amount || 0}
+                £{rewardAmount}
               </div>
             </div>
 
@@ -203,18 +206,18 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
                 <span className="text-sm font-medium text-neutral-700">Started</span>
               </div>
               <span className="text-sm font-bold text-neutral-800">
-                {format(new Date(userSwitch.started_at), 'MMM dd, yyyy')}
+                {format(new Date(typedUserSwitch.started_at), 'MMM dd, yyyy')}
               </span>
             </div>
             
-            {userSwitch.completed_at && (
+            {typedUserSwitch.completed_at && (
               <div className="flex items-center justify-between p-3 bg-success-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success-600" />
                   <span className="text-sm font-medium text-success-700">Completed</span>
                 </div>
                 <span className="text-sm font-bold text-success-800">
-                  {format(new Date(userSwitch.completed_at), 'MMM dd, yyyy')}
+                  {format(new Date(typedUserSwitch.completed_at), 'MMM dd, yyyy')}
                 </span>
               </div>
             )}
@@ -265,7 +268,7 @@ export default function SwitchDetails({ userSwitch, steps, onSwitchUpdate }: Swi
       </Card>
 
       {/* Action Buttons */}
-      {userSwitch.status !== 'completed' && userSwitch.status !== 'failed' && (
+      {typedUserSwitch.status !== 'completed' && typedUserSwitch.status !== 'failed' && (
         <Card className="card-professional border-0">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-end">

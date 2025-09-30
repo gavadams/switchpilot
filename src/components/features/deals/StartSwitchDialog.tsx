@@ -25,6 +25,9 @@ interface StartSwitchDialogProps {
 }
 
 export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwitchDialogProps) {
+  // Helper functions to safely extract and type values
+  const getNumber = (value: unknown): number => Number(value) || 0
+  const getString = (value: unknown): string => String(value) || ''
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { user } = useAuth()
@@ -40,21 +43,21 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
     setError(null)
 
     try {
-      console.log('Creating user switch for user:', user.id, 'deal:', deal.id)
+      console.log('Creating user switch for user:', user.id, 'deal:', (deal as BankDeal).id)
       
       // Check if user already has a switch for this deal
       console.log('Checking for existing switch...')
-      const existingSwitch = await checkExistingSwitch(user.id, deal.id)
+      const existingSwitch = await checkExistingSwitch(user.id, (deal as BankDeal).id)
       console.log('Existing switch check result:', existingSwitch)
       
       if (existingSwitch) {
         console.log('Found existing switch, showing error')
-        setError(`You already have an active switch for ${deal.bank_name}. Please check your switches page.`)
+        setError(`You already have an active switch for ${(deal as BankDeal).bank_name}. Please check your switches page.`)
         return
       }
       
       console.log('No existing switch found, creating new switch...')
-      const result = await createUserSwitch(user.id, deal.id)
+      const result = await createUserSwitch(user.id, (deal as BankDeal).id)
       console.log('User switch created successfully:', result)
       
       // Close dialog and redirect to switches page
@@ -71,7 +74,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
 
   if (!deal) return null
 
-  const requirements = deal.requirements as any
+  const requirements = (deal as BankDeal).requirements as Record<string, unknown>
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -82,7 +85,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
             Start Bank Switch
           </DialogTitle>
           <DialogDescription>
-            Confirm you want to start switching to {deal.bank_name} to claim your reward.
+            Confirm you want to start switching to {(deal as BankDeal).bank_name} to claim your reward.
           </DialogDescription>
         </DialogHeader>
 
@@ -91,12 +94,12 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
           <div className="p-3 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl border border-primary-200">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary-600 mb-1">
-                {deal.bank_name}
+                {(deal as BankDeal).bank_name}
               </div>
               <div className="flex items-center justify-center gap-2">
                 <Banknote className="w-5 h-5 text-primary-600" />
                 <span className="text-3xl font-black text-primary-600">
-                  £{deal.reward_amount}
+                  £{(deal.reward_amount as number)}
                 </span>
               </div>
               <p className="text-sm text-primary-700 mt-2">Reward Amount</p>
@@ -117,21 +120,14 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
               </div>
               
               <div className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
-                <span className="text-sm text-neutral-700">Pay in £{deal.min_pay_in}</span>
+                <span className="text-sm text-neutral-700">Pay in £{(deal.min_pay_in as number)}</span>
                 <CheckCircle className="w-4 h-4 text-success-600" />
               </div>
               
               <div className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
-                <span className="text-sm text-neutral-700">Set up {deal.required_direct_debits} direct debits</span>
+                <span className="text-sm text-neutral-700">Set up {(deal.required_direct_debits as number)} direct debits</span>
                 <CheckCircle className="w-4 h-4 text-success-600" />
               </div>
-              
-              {deal.debit_card_transactions > 0 && (
-                <div className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
-                  <span className="text-sm text-neutral-700">Make {deal.debit_card_transactions} card transactions</span>
-                  <CheckCircle className="w-4 h-4 text-success-600" />
-                </div>
-              )}
               
               {requirements?.maintain_balance && (
                 <div className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
@@ -147,7 +143,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-accent-700">Time to payout:</span>
               <Badge className="bg-accent-500 text-white">
-                {deal.time_to_payout}
+                {(deal as BankDeal).time_to_payout}
               </Badge>
             </div>
           </div>
@@ -204,3 +200,4 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
     </Dialog>
   )
 }
+

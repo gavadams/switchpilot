@@ -14,7 +14,7 @@ type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 
 export default function DealsPage() {
   const { user, profile, loading: authLoading } = useAuth()
-  const [deals, setDeals] = useState<BankDeal[]>([])
+  const [deals, setDeals] = useState<BankDeal[]>([] as BankDeal[])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedDeal, setSelectedDeal] = useState<BankDeal | null>(null)
@@ -26,7 +26,7 @@ export default function DealsPage() {
         setLoading(true)
         setError(null)
         const dealsData = await getAllActiveDeals()
-        setDeals(dealsData)
+        setDeals(dealsData as BankDeal[])
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load deals')
       } finally {
@@ -108,7 +108,7 @@ export default function DealsPage() {
         <Card className="card-professional border-0">
           <CardContent className="text-center p-6">
             <div className="text-3xl font-bold text-secondary-600 mb-2">
-              £{Math.max(...deals.map(d => d.reward_amount), 0)}
+              £{Math.max(...deals.map(d => (d.reward_amount as number) || 0), 0)}
             </div>
             <p className="text-sm font-medium text-neutral-600">Highest Reward</p>
           </CardContent>
@@ -117,7 +117,7 @@ export default function DealsPage() {
         <Card className="card-professional border-0">
           <CardContent className="text-center p-6">
             <div className="text-3xl font-bold text-accent-600 mb-2">
-              £{Math.round(deals.reduce((sum, d) => sum + d.reward_amount, 0) / deals.length) || 0}
+              £{Math.round(deals.reduce((sum, d) => sum + ((d.reward_amount as number) || 0), 0) / deals.length) || 0}
             </div>
             <p className="text-sm font-medium text-neutral-600">Average Reward</p>
           </CardContent>

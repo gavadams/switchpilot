@@ -25,13 +25,13 @@ export const getAllActiveDealsServer = async (): Promise<BankDeal[]> => {
   const activeDeals = (data || []).filter(deal => {
     // If no expiry date, deal is still active
     if (!deal.expiry_date) return true
-    
+
     // Check if expiry date is in the future
     const expiryDate = new Date(deal.expiry_date)
     return expiryDate > now
   })
 
-  return activeDeals
+  return activeDeals as BankDeal[]
 }
 
 export const getDealByIdServer = async (id: string): Promise<BankDeal | null> => {
@@ -58,7 +58,7 @@ export const getDealByIdServer = async (id: string): Promise<BankDeal | null> =>
     }
   }
 
-  return data
+  return data as BankDeal | null
 }
 
 export const createUserSwitchServer = async (

@@ -57,7 +57,7 @@ export const getUserSwitches = async (userId: string): Promise<UserSwitch[]> => 
 }
 
 // Simple version for testing - without joins
-export const getUserSwitchesSimple = async (userId: string): Promise<any[]> => {
+export const getUserSwitchesSimple = async (userId: string): Promise<UserSwitch[]> => {
   // Create completely fresh client for each request to avoid connection issues
   const supabase = createFreshClient()
   
@@ -73,7 +73,9 @@ export const getUserSwitchesSimple = async (userId: string): Promise<any[]> => {
       setTimeout(() => reject(new Error('Query timeout after 8 seconds')), 8000)
     })
 
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
+    const result = await Promise.race([queryPromise, timeoutPromise])
+    const queryResult = result as { data: UserSwitch[] | null; error: { message: string } | null } | Error
+    const { data, error } = queryResult as { data: UserSwitch[] | null; error: { message: string } | null }
 
     if (error) {
       throw new Error(`Failed to fetch switches: ${error.message}`)
@@ -95,12 +97,14 @@ export const testSupabaseConnection = async (): Promise<boolean> => {
       .from('user_switches')
       .select('count')
       .limit(1)
-    
+
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('Connection test timeout')), 5000)
     })
-    
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
+
+    const result = await Promise.race([queryPromise, timeoutPromise])
+    const queryResult = result as { data: { count: number }[] | null; error: { message: string } | null } | Error
+    const { data, error } = queryResult as { data: { count: number }[] | null; error: { message: string } | null }
     
     return !error
   } catch (err) {
@@ -158,8 +162,8 @@ export const createSwitchSteps = async (switchId: string): Promise<SwitchStep[]>
   
   const stepsToInsert: SwitchStepInsert[] = STANDARD_SWITCH_STEPS.map(step => ({
     switch_id: switchId,
-    step_number: step.stepNumber,
-    step_name: step.stepName,
+    step_number: step.step_number,
+    step_name: step.step_name,
     description: step.description,
     completed: false,
     due_date: null, // Will be calculated based on start date
@@ -237,7 +241,15 @@ export const updateSwitchStatus = async (
     .from('user_switches')
     .update(updateData)
     .eq('id', switchId)
-    .select()
+    .select(`
+      *,
+      bank_deals (
+        bank_name,
+        reward_amount,
+        expiry_date,
+        time_to_payout
+      )
+    `)
     .single()
 
   if (error) {
@@ -259,7 +271,15 @@ export const updateSwitchNotes = async (
     .from('user_switches')
     .update({ notes })
     .eq('id', switchId)
-    .select()
+    .select(`
+      *,
+      bank_deals (
+        bank_name,
+        reward_amount,
+        expiry_date,
+        time_to_payout
+      )
+    `)
     .single()
 
   if (error) {
@@ -306,12 +326,12 @@ export const calculateEstimatedCompletion = (
   // Add days for completed steps
   let totalDays = 0
   completedSteps.forEach(step => {
-    totalDays += step.stepNumber <= 3 ? step.estimatedDays || 1 : 1 // Use actual days for first 3 steps
+    totalDays += step.step_number <= 3 ? step.estimated_days || 1 : 1 // Use actual days for first 3 steps
   })
   
   // Add estimated days for remaining steps
   remainingSteps.forEach(step => {
-    totalDays += step.estimatedDays || 1
+    totalDays += step.estimated_days || 1
   })
   
   const completionDate = new Date(start)

@@ -33,8 +33,11 @@ interface SwitchCardProps {
 }
 
 export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
+  // Ensure userSwitch is properly typed and extract values
+  const typedUserSwitch = userSwitch as UserSwitch
+  const rewardAmount = (typedUserSwitch.bank_deals?.reward_amount as number) || 0
   const progress = calculateSwitchProgress(steps)
-  const estimatedCompletion = calculateEstimatedCompletion(userSwitch.started_at, steps)
+  const estimatedCompletion = calculateEstimatedCompletion(typedUserSwitch.started_at, steps)
   
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -93,18 +96,18 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-xl font-bold text-neutral-800 mb-2">
-              {userSwitch.bank_deals?.bank_name || 'Unknown Bank'}
+              {typedUserSwitch.bank_deals?.bank_name || 'Unknown Bank'}
             </CardTitle>
             <CardDescription className="text-neutral-600">
               Bank switching in progress
             </CardDescription>
           </div>
           <Badge 
-            variant={getStatusColor(userSwitch.status)}
+            variant={getStatusColor(typedUserSwitch.status)}
             className="ml-2 shrink-0 flex items-center gap-1"
           >
-            {getStatusIcon(userSwitch.status)}
-            {formatStatus(userSwitch.status)}
+            {getStatusIcon(typedUserSwitch.status)}
+            {formatStatus(typedUserSwitch.status)}
           </Badge>
         </div>
       </CardHeader>
@@ -117,7 +120,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
             <span className="text-sm font-medium text-primary-700">Reward Amount</span>
           </div>
           <div className="text-3xl font-black text-primary-600">
-            £{userSwitch.bank_deals?.reward_amount || 0}
+            £{rewardAmount}
           </div>
         </div>
 
@@ -159,7 +162,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
                 <span className="text-xs text-neutral-600">Started</span>
               </div>
               <span className="text-xs font-medium text-neutral-800">
-                {format(new Date(userSwitch.started_at), 'MMM dd')}
+                {format(new Date(typedUserSwitch.started_at), 'MMM dd')}
               </span>
             </div>
             
@@ -177,7 +180,7 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
 
         {/* Action Button */}
         <div className="mt-auto">
-          <Link href={`/switches/${userSwitch.id}`}>
+          <Link href={`/switches/${typedUserSwitch.id}`}>
             <Button className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3">
               <ArrowRightLeft className="w-4 h-4 mr-2" />
               View Details

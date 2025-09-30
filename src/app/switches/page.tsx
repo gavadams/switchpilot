@@ -146,7 +146,7 @@ export default function SwitchesPage() {
           const bProgress = bSteps.filter(step => step.completed).length / Math.max(bSteps.length, 1)
           return bProgress - aProgress
         case 'reward_amount':
-          return (b.bank_deals?.reward_amount || 0) - (a.bank_deals?.reward_amount || 0)
+          return ((b.bank_deals?.reward_amount as number) || 0) - ((a.bank_deals?.reward_amount as number) || 0)
         default:
           return 0
       }

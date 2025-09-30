@@ -52,7 +52,7 @@ export default function DealsGrid({ deals, onStartSwitch, loading = false }: Dea
 
   // Filter and sort deals
   const filteredAndSortedDeals = useMemo(() => {
-    let filtered = deals.filter(deal => {
+    const filtered = deals.filter(deal => {
       // Search filter
       if (searchTerm && !deal.bank_name.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false

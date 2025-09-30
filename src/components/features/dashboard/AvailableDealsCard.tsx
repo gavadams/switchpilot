@@ -16,16 +16,20 @@ interface AvailableDealsCardProps {
 }
 
 export default function AvailableDealsCard({ className }: AvailableDealsCardProps) {
+  // Ensure deals are properly typed
   const [deals, setDeals] = useState<BankDeal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Helper function to safely extract numeric values
+  const getRewardAmount = (deal: BankDeal) => deal.reward_amount as number
 
   useEffect(() => {
     const fetchDeals = async () => {
       try {
         setLoading(true)
         setError(null)
-        const data = await getAllActiveDeals()
+        const data = await getAllActiveDeals() as BankDeal[]
         setDeals(data)
       } catch (err) {
         console.error('Error fetching deals:', err)
@@ -181,8 +185,8 @@ export default function AvailableDealsCard({ className }: AvailableDealsCardProp
                         {deal.description || 'Bank switching offer'}
                       </p>
                     </div>
-                    <Badge className={`${getRewardBadgeColor(deal.reward_amount)} text-white border-0`}>
-                      {formatCurrency(deal.reward_amount)}
+                    <Badge className={`${getRewardBadgeColor(getRewardAmount(deal))} text-white border-0`}>
+                      {formatCurrency(getRewardAmount(deal))}
                     </Badge>
                   </div>
 

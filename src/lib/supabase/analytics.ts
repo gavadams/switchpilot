@@ -326,7 +326,7 @@ export const getProjectedEarnings = async (userId: string): Promise<number> => {
     }
 
     const projectedEarnings = data?.reduce((sum, switch_) => 
-      sum + (switch_.bank_deals?.reward_amount || 0), 0) || 0
+      sum + ((switch_.bank_deals?.reward_amount as number) || 0), 0) || 0
 
     return projectedEarnings
   } catch (error) {
@@ -485,7 +485,7 @@ export const getActiveSwitches = async (userId: string, limit: number = 3): Prom
       activeSwitches.push({
         id: switch_.id,
         bankName: switch_.bank_deals?.bank_name || 'Unknown Bank',
-        rewardAmount: switch_.bank_deals?.reward_amount || 0,
+        rewardAmount: (switch_.bank_deals?.reward_amount as number) || 0,
         progress,
         daysRemaining,
         nextAction,

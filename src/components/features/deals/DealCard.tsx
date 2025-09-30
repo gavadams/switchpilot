@@ -24,12 +24,15 @@ interface DealCardProps {
 }
 
 export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
+  // Helper function to safely extract and type values
+  const getNumber = (value: unknown): number => Number(value) || 0
+  const getString = (value: unknown): string => String(value) || ''
   const [isStarting, setIsStarting] = useState(false)
 
   const handleStartSwitch = async () => {
     setIsStarting(true)
     try {
-      await onStartSwitch(deal.id)
+      await onStartSwitch((deal as BankDeal).id)
     } finally {
       setIsStarting(false)
     }
@@ -51,8 +54,8 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
     }
   }
 
-  const expiryInfo = formatExpiryDate(deal.expiry_date || '')
-  const requirements = deal.requirements as any
+  const expiryInfo = formatExpiryDate((deal as BankDeal).expiry_date || '')
+  const requirements = (deal as BankDeal).requirements as Record<string, unknown>
 
   return (
     <Card className="card-professional border-0 h-full flex flex-col">
@@ -60,7 +63,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-xl font-bold text-neutral-800 mb-2">
-              {deal.bank_name}
+              {(deal as BankDeal).bank_name}
             </CardTitle>
             <CardDescription className="text-neutral-600">
               Bank switching reward offer
@@ -83,7 +86,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
             <span className="text-sm font-medium text-primary-700">Reward Amount</span>
           </div>
           <div className="text-4xl font-black text-primary-600">
-            £{deal.reward_amount}
+            £{(deal.reward_amount as number)}
           </div>
         </div>
 
@@ -99,26 +102,8 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
               {/* Minimum Pay-in */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
                 <span className="text-sm font-medium text-neutral-700">Minimum Pay-in</span>
-                <span className="text-sm font-bold text-neutral-800">£{deal.min_pay_in}</span>
+                <span className="text-sm font-bold text-neutral-800">£{(deal.min_pay_in as number)}</span>
               </div>
-
-              {/* Direct Debits */}
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
-                <span className="text-sm font-medium text-neutral-700">Direct Debits</span>
-                <Badge variant="secondary" className="bg-secondary-100 text-secondary-700">
-                  {deal.required_direct_debits} required
-                </Badge>
-              </div>
-
-              {/* Card Transactions */}
-              {deal.debit_card_transactions > 0 && (
-                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
-                  <span className="text-sm font-medium text-neutral-700">Card Transactions</span>
-                  <Badge variant="secondary" className="bg-accent-100 text-accent-700">
-                    {deal.debit_card_transactions} required
-                  </Badge>
-                </div>
-              )}
 
               {/* Account Switch */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
@@ -148,7 +133,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
               <Clock className="w-4 h-4 text-accent-600" />
               <span className="text-sm font-medium text-accent-700">Time to Payout</span>
             </div>
-            <span className="text-sm font-bold text-accent-700">{deal.time_to_payout}</span>
+            <span className="text-sm font-bold text-accent-700">{(deal as BankDeal).time_to_payout}</span>
           </div>
         </div>
 

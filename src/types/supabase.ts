@@ -62,6 +62,7 @@ export interface Database {
           required_direct_debits: number
           debit_card_transactions: number
           time_to_payout: string
+          description: string | null
           created_at: string
           updated_at: string
         }
@@ -76,6 +77,7 @@ export interface Database {
           required_direct_debits?: number
           debit_card_transactions?: number
           time_to_payout?: string
+          description?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -90,6 +92,7 @@ export interface Database {
           required_direct_debits?: number
           debit_card_transactions?: number
           time_to_payout?: string
+          description?: string | null
           created_at?: string
           updated_at?: string
         }

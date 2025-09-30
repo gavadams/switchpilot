@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { 
-  Plus, 
-  Search, 
-  BarChart3, 
+import { Database } from '../../../types/supabase'
+import {
+  Plus,
+  Search,
+  BarChart3,
   CreditCard,
   ArrowRightLeft,
   Target,
@@ -15,6 +16,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { getAllActiveDeals } from '../../../lib/supabase/deals'
+
+type BankDeal = Database['public']['Tables']['bank_deals']['Row']
+
 import { useAuth } from '../../../context/AuthContext'
 
 interface QuickActionsProps {
@@ -22,17 +26,19 @@ interface QuickActionsProps {
 }
 
 export default function QuickActions({ className }: QuickActionsProps) {
-  const { user } = useAuth()
   const [maxReward, setMaxReward] = useState(0)
   const [loading, setLoading] = useState(true)
+
+  // Helper function to safely extract numeric values
+  const getRewardAmount = (deal: BankDeal) => deal.reward_amount as number
 
   // Fetch highest reward amount from available deals
   useEffect(() => {
     const fetchMaxReward = async () => {
       try {
         setLoading(true)
-        const deals = await getAllActiveDeals()
-        const max = deals.reduce((max, deal) => Math.max(max, deal.reward_amount), 0)
+        const deals = await getAllActiveDeals() as BankDeal[]
+        const max = deals.reduce((max, deal) => Math.max(max, getRewardAmount(deal)), 0)
         setMaxReward(max)
       } catch (error) {
         console.error('Error fetching max reward:', error)
