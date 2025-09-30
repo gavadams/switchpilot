@@ -73,7 +73,7 @@ export const getUserSwitchesSimple = async (userId: string): Promise<Database['p
       setTimeout(() => reject(new Error('Query timeout after 8 seconds')), 8000)
     })
 
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: Database['public']['Tables']['user_switches']['Row'][] | null, error: any }
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: Database['public']['Tables']['user_switches']['Row'][] | null, error: { message: string } | null }
 
     if (error) {
       throw new Error(`Failed to fetch switches: ${error.message}`)
@@ -100,7 +100,7 @@ export const testSupabaseConnection = async (): Promise<boolean> => {
       setTimeout(() => reject(new Error('Connection test timeout')), 5000)
     })
     
-    const { error } = await Promise.race([queryPromise, timeoutPromise]) as { data: any, error: any }
+    const { error } = await Promise.race([queryPromise, timeoutPromise]) as { data: unknown, error: { message: string } | null }
     
     return !error
   } catch {

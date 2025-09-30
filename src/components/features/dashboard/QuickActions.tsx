@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { getAllActiveDeals } from '../../../lib/supabase/deals'
-import { useAuth } from '../../../context/AuthContext'
 
 interface QuickActionsProps {
   className?: string

@@ -1,5 +1,4 @@
 import { createClient } from './client'
-import { Database } from '../../types/supabase'
 import { STANDARD_SWITCH_STEPS } from '../data/switch-steps'
 
 // Analytics interfaces
