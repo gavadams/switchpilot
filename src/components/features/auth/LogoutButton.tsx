@@ -21,7 +21,8 @@ export default function LogoutButton({ className, children, variant = 'default',
     setIsLoading(true)
     try {
       await signOut()
-      router.push('/login')
+      // Use replace to avoid back button issues
+      router.replace('/login')
     } catch (error) {
       console.error('Error signing out:', error)
     } finally {
