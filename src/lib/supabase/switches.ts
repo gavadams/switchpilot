@@ -65,7 +65,15 @@ export const getUserSwitchesSimple = async (userId: string): Promise<UserSwitch[
     // Add a timeout to the query
     const queryPromise = supabase
       .from('user_switches')
-      .select('*')
+      .select(`
+        *,
+        bank_deals (
+          bank_name,
+          reward_amount,
+          expiry_date,
+          time_to_payout
+        )
+      `)
       .eq('user_id', userId)
       .order('started_at', { ascending: false })
 
