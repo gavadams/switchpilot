@@ -183,7 +183,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border shadow-lg backdrop-blur-none" style={{ backgroundColor: 'white', opacity: 1 }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <CreditCard className="w-6 h-6 text-primary-600" />
