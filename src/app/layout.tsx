@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import ConditionalLayout from "../components/layout/ConditionalLayout";
 
-const inter = Inter({
-  subsets: ["latin"],
+// Use system fonts as fallback to avoid Google Fonts build issues
+const interFont = {
+  className: "",
   variable: "--font-sans",
-});
+  style: {
+    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+};
 
 export const metadata: Metadata = {
   title: "SwitchPilot - Bank Switching Automation",
@@ -27,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-background font-sans antialiased">
+    <html lang="en" className={interFont.variable}>
+      <body className={`min-h-screen bg-background font-sans antialiased ${interFont.className}`} style={interFont.style}>
         <AuthProvider>
           <ConditionalLayout>
             {children}

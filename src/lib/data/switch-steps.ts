@@ -37,10 +37,10 @@ export const STANDARD_SWITCH_STEPS: SwitchStep[] = [
     estimated_days: 2
   },
   {
-    stepNumber: 6,
-    stepName: "Fulfill Pay-in Requirements",
+    step_number: 6,
+    step_name: "Fulfill Pay-in Requirements",
     description: "Transfer required amount into new account (can cycle smaller amounts)",
-    estimatedDays: 1
+    estimated_days: 1
   },
   {
     step_number: 7,

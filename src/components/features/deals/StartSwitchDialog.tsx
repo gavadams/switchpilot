@@ -129,7 +129,7 @@ export default function StartSwitchDialog({ deal, open, onOpenChange }: StartSwi
                 <CheckCircle className="w-4 h-4 text-success-600" />
               </div>
               
-              {requirements?.maintain_balance && (
+              {requirements && typeof requirements === 'object' && 'maintain_balance' in requirements && Boolean(requirements.maintain_balance) && (
                 <div className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
                   <span className="text-sm text-neutral-700">Maintain minimum balance</span>
                   <CheckCircle className="w-4 h-4 text-success-600" />

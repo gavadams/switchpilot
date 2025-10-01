@@ -467,7 +467,7 @@ export const getActiveSwitches = async (userId: string, limit: number = 3): Prom
       const daysElapsed = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
       
       // Calculate total estimated days for all steps dynamically
-      const totalEstimatedDays = STANDARD_SWITCH_STEPS.reduce((total, step) => total + step.estimatedDays, 0)
+      const totalEstimatedDays = STANDARD_SWITCH_STEPS.reduce((total, step) => total + step.estimated_days, 0)
       const daysRemaining = Math.max(0, totalEstimatedDays - daysElapsed)
 
       // Determine next action based on progress

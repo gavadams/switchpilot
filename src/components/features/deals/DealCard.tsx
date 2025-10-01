@@ -105,7 +105,6 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
                 <span className="text-sm font-bold text-neutral-800">£{(deal.min_pay_in as number)}</span>
               </div>
 
-              {/* Account Switch */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
                 <span className="text-sm font-medium text-success-700">Account Switch</span>
                 <div className="flex items-center gap-1">
@@ -114,8 +113,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
                 </div>
               </div>
 
-              {/* Balance Maintenance */}
-              {requirements?.maintain_balance && (
+              {requirements && typeof requirements === 'object' && 'maintain_balance' in requirements && Boolean(requirements.maintain_balance) && (
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-warning-50 to-warning-100 rounded-lg">
                   <span className="text-sm font-medium text-warning-700">Maintain Balance</span>
                   <div className="flex items-center gap-1">

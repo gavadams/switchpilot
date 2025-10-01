@@ -326,12 +326,12 @@ export const calculateEstimatedCompletion = (
   // Add days for completed steps
   let totalDays = 0
   completedSteps.forEach(step => {
-    totalDays += step.step_number <= 3 ? step.estimated_days || 1 : 1 // Use actual days for first 3 steps
+    totalDays += step.step_number <= 3 ? 1 : 1 // Use actual days for first 3 steps
   })
   
   // Add estimated days for remaining steps
   remainingSteps.forEach(step => {
-    totalDays += step.estimated_days || 1
+    totalDays += 1 // Default 1 day per step
   })
   
   const completionDate = new Date(start)
