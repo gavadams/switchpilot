@@ -53,12 +53,17 @@ export default function DirectDebitCard({ directDebit, onUpdate }: DirectDebitCa
         return 'bg-accent-100 text-accent-700 border-accent-200'
       case 'cancelled':
         return 'bg-neutral-100 text-neutral-600 border-neutral-200'
+      case 'completed':
+        return 'bg-primary-100 text-primary-700 border-primary-200'
       case 'failed':
         return 'bg-error-100 text-error-700 border-error-200'
       default:
         return 'bg-neutral-100 text-neutral-600 border-neutral-200'
     }
   }
+
+  const isSwitchPilotDD = directDebit.provider === 'switchpilot'
+  const isExternalDD = provider?.isExternal === true
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-GB', {
@@ -105,9 +110,21 @@ export default function DirectDebitCard({ directDebit, onUpdate }: DirectDebitCa
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg font-bold text-neutral-800 mb-2 break-words">
-              {provider?.name || directDebit.provider}
-            </CardTitle>
+            <div className="flex items-center gap-2 mb-2">
+              <CardTitle className="text-lg font-bold text-neutral-800 break-words">
+                {provider?.name || directDebit.provider}
+              </CardTitle>
+              {isSwitchPilotDD && (
+                <Badge variant="outline" className="bg-primary-100 text-primary-700 border-primary-200 text-xs">
+                  SwitchPilot
+                </Badge>
+              )}
+              {isExternalDD && (
+                <Badge variant="outline" className="bg-neutral-100 text-neutral-600 border-neutral-200 text-xs">
+                  External
+                </Badge>
+              )}
+            </div>
             <CardDescription className="text-neutral-600 break-words">
               {provider?.description || 'Direct debit provider'}
             </CardDescription>

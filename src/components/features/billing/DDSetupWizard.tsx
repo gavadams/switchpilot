@@ -35,11 +35,13 @@ interface SelectedProvider {
   id: string
   name: string
   description: string
-  website: string
+  website?: string
   setupTime: string
-  minAmount: number
-  recommendedAmount: number
-  category: 'service' | 'charity'
+  minAmount?: number
+  recommendedAmount?: number
+  amount?: number
+  category: 'switchpilot' | 'charity' | 'external_service'
+  isExternal?: boolean
 }
 
 export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetupWizardProps) {
@@ -52,8 +54,9 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const serviceProviders = getProvidersByCategory('service')
+  const switchPilotProviders = getProvidersByCategory('switchpilot')
   const charityProviders = getProvidersByCategory('charity')
+  const externalProviders = getProvidersByCategory('external_service')
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-GB', {
@@ -69,13 +72,13 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
 
   const handleProviderSelect = (provider: DDProvider) => {
     setSelectedProvider(provider)
-    setAmount(provider.recommendedAmount)
+    setAmount(provider.amount || provider.recommendedAmount || 1)
     setCurrentStep('amount')
   }
 
   const handleAmountChange = (value: string) => {
     const numValue = parseFloat(value)
-    if (!isNaN(numValue) && selectedProvider && numValue >= selectedProvider.minAmount) {
+    if (!isNaN(numValue) && selectedProvider && (!selectedProvider.minAmount || numValue >= selectedProvider.minAmount)) {
       setAmount(numValue)
     }
   }
@@ -136,7 +139,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
       case 'provider':
         return selectedProvider !== null
       case 'amount':
-        return selectedProvider && amount >= selectedProvider.minAmount
+        return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
       case 'confirmation':
         return termsAccepted
       default:
@@ -201,14 +204,14 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
               <p className="text-neutral-600">Select a direct debit provider to get started</p>
             </div>
 
-            {/* Service Providers */}
+            {/* SwitchPilot Providers - PRIMARY OPTION */}
             <div>
-              <h4 className="text-md font-semibold text-neutral-700 mb-4 flex items-center gap-2">
+              <h4 className="text-md font-semibold text-primary-700 mb-4 flex items-center gap-2">
                 <Building className="w-4 h-4" />
-                Service Providers
+                SwitchPilot Direct Debits (Recommended)
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {serviceProviders.map((provider) => (
+                {switchPilotProviders.map((provider) => (
                   <Card 
                     key={provider.id}
                     className={`cursor-pointer transition-all hover:shadow-md ${
@@ -231,14 +234,24 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
                     </CardHeader>
                     <CardContent className="pt-0">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-neutral-600">Min Amount:</span>
-                          <span className="font-medium">{formatCurrency(provider.minAmount)}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-neutral-600">Recommended:</span>
-                          <span className="font-medium text-primary-600">{formatCurrency(provider.recommendedAmount)}</span>
-                        </div>
+                        {provider.minAmount && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-neutral-600">Min Amount:</span>
+                            <span className="font-medium">{formatCurrency(provider.minAmount)}</span>
+                          </div>
+                        )}
+                        {provider.recommendedAmount && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-neutral-600">Recommended:</span>
+                            <span className="font-medium text-primary-600">{formatCurrency(provider.recommendedAmount)}</span>
+                          </div>
+                        )}
+                        {provider.amount && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-neutral-600">Fixed Amount:</span>
+                            <span className="font-medium text-primary-600">{formatCurrency(provider.amount)}</span>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -246,14 +259,14 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
               </div>
             </div>
 
-            {/* Charity Providers */}
+            {/* External Providers - SECONDARY OPTIONS */}
             <div>
               <h4 className="text-md font-semibold text-neutral-700 mb-4 flex items-center gap-2">
                 <Heart className="w-4 h-4" />
-                Charity Providers
+                External Options (Free but slower)
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {charityProviders.map((provider) => (
+                {[...charityProviders, ...externalProviders].map((provider) => (
                   <Card 
                     key={provider.id}
                     className={`cursor-pointer transition-all hover:shadow-md ${
@@ -276,14 +289,24 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
                     </CardHeader>
                     <CardContent className="pt-0">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-neutral-600">Min Amount:</span>
-                          <span className="font-medium">{formatCurrency(provider.minAmount)}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-neutral-600">Recommended:</span>
-                          <span className="font-medium text-primary-600">{formatCurrency(provider.recommendedAmount)}</span>
-                        </div>
+                        {provider.minAmount && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-neutral-600">Min Amount:</span>
+                            <span className="font-medium">{formatCurrency(provider.minAmount)}</span>
+                          </div>
+                        )}
+                        {provider.recommendedAmount && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-neutral-600">Recommended:</span>
+                            <span className="font-medium text-primary-600">{formatCurrency(provider.recommendedAmount)}</span>
+                          </div>
+                        )}
+                        {provider.amount && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-neutral-600">Fixed Amount:</span>
+                            <span className="font-medium text-primary-600">{formatCurrency(provider.amount)}</span>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -328,9 +351,11 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
                     onChange={(e) => handleAmountChange(e.target.value)}
                     className="mt-1"
                   />
-                  <p className="text-xs text-neutral-500 mt-1">
-                    Minimum: {formatCurrency(selectedProvider.minAmount)}
-                  </p>
+                  {selectedProvider.minAmount && (
+                    <p className="text-xs text-neutral-500 mt-1">
+                      Minimum: {formatCurrency(selectedProvider.minAmount)}
+                    </p>
+                  )}
                 </div>
 
                 <div>

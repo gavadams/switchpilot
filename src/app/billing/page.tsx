@@ -31,15 +31,15 @@ export default function BillingPage() {
         </p>
       </div>
 
-      {/* Information Card */}
+      {/* Revenue Model Information */}
       <Card className="card-professional border-0">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <Info className="w-6 h-6 text-primary-600" />
-            Why Direct Debits Matter
+            SwitchPilot Direct Debit Service
           </CardTitle>
           <CardDescription>
-            Understanding the importance of direct debits for bank switching
+            Our direct debit service - instant activation for bank switching requirements
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -48,18 +48,18 @@ export default function BillingPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-success-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-neutral-800">Bank Switching Requirements</h4>
+                  <h4 className="font-semibold text-neutral-800">Instant Activation</h4>
                   <p className="text-sm text-neutral-600">
-                    Most banks require active direct debits to qualify for switching bonuses
+                    SwitchPilot DDs activate immediately - no 3-5 day wait like external options
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-success-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-neutral-800">Easy Setup</h4>
+                  <h4 className="font-semibold text-neutral-800">Auto-Cancel After Switch</h4>
                   <p className="text-sm text-neutral-600">
-                    Set up direct debits in minutes with our guided process
+                    DDs automatically cancel when your switch completes and reward is received
                   </p>
                 </div>
               </div>
@@ -68,18 +68,18 @@ export default function BillingPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-success-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-neutral-800">Flexible Management</h4>
+                  <h4 className="font-semibold text-neutral-800">Managed Within Platform</h4>
                   <p className="text-sm text-neutral-600">
-                    Pause, modify, or cancel direct debits anytime from your dashboard
+                    All SwitchPilot DDs managed in one place - no external accounts needed
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-success-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-neutral-800">Charity Options</h4>
+                  <h4 className="font-semibold text-neutral-800">External Options Available</h4>
                   <p className="text-sm text-neutral-600">
-                    Support worthy causes while meeting switching requirements
+                    Free external charity DDs available but require 3-5 day setup time
                   </p>
                 </div>
               </div>
@@ -90,20 +90,23 @@ export default function BillingPage() {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-primary-600 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-primary-800 mb-2">Quick Start Guide</h4>
+                <h4 className="font-semibold text-primary-800 mb-2">Pricing & Revenue Model</h4>
                 <p className="text-sm text-primary-700 mb-3">
-                  New to direct debits? Start with our recommended providers for the easiest setup.
+                  SwitchPilot DDs are charged separately from your subscription: £1/month per DD until your switch completes.
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className="text-xs">
-                    One Pound DD - £1/month
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    PayPal - £2/month
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    UNICEF - £10/month
-                  </Badge>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Subscription (platform access):</span>
+                    <span className="font-medium">£4.99/month</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>SwitchPilot DDs (per DD needed):</span>
+                    <span className="font-medium">£1/month each</span>
+                  </div>
+                  <div className="flex justify-between font-semibold text-primary-800">
+                    <span>Example: 3 DDs needed = £7.99/month total</span>
+                    <span>£4.99 + £3.00</span>
+                  </div>
                 </div>
               </div>
             </div>

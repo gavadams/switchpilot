@@ -27,7 +27,7 @@ interface DirectDebitsListProps {
 }
 
 type StatusFilter = 'all' | 'active' | 'pending' | 'cancelled' | 'failed'
-type CategoryFilter = 'all' | 'service' | 'charity'
+type CategoryFilter = 'all' | 'switchpilot' | 'charity' | 'external_service'
 type SortBy = 'amount' | 'setup_date' | 'next_collection' | 'provider'
 
 export default function DirectDebitsList({ onSetupNew, className }: DirectDebitsListProps) {
@@ -41,7 +41,9 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
   const [stats, setStats] = useState({
     activeCount: 0,
     monthlyTotal: 0,
-    totalCollected: 0
+    totalCollected: 0,
+    switchPilotRevenue: 0,
+    switchPilotCount: 0
   })
 
   const fetchDirectDebits = useCallback(async () => {
@@ -78,8 +80,10 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
     }).format(amount)
   }
 
-  const getCategoryFromProvider = (provider: string): 'service' | 'charity' => {
-    return provider.startsWith('charity_') ? 'charity' : 'service'
+  const getCategoryFromProvider = (provider: string): 'switchpilot' | 'charity' | 'external_service' => {
+    if (provider === 'switchpilot') return 'switchpilot'
+    if (provider.startsWith('charity_')) return 'charity'
+    return 'external_service'
   }
 
   const filteredAndSortedDebits = directDebits
@@ -144,7 +148,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="card-professional border-0">
           <CardContent className="text-center p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -169,9 +173,20 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
           <CardContent className="text-center p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-success-600" />
-              <span className="text-sm font-medium text-success-700">Total Collected</span>
+              <span className="text-sm font-medium text-success-700">SwitchPilot Revenue</span>
             </div>
-            <div className="text-2xl font-bold text-success-600">{formatCurrency(stats.totalCollected)}</div>
+            <div className="text-2xl font-bold text-success-600">{formatCurrency(stats.switchPilotRevenue)}</div>
+            <div className="text-xs text-success-600">{stats.switchPilotCount} active</div>
+          </CardContent>
+        </Card>
+        
+        <Card className="card-professional border-0">
+          <CardContent className="text-center p-4">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <DollarSign className="w-5 h-5 text-neutral-600" />
+              <span className="text-sm font-medium text-neutral-700">Total Collected</span>
+            </div>
+            <div className="text-2xl font-bold text-neutral-600">{formatCurrency(stats.totalCollected)}</div>
           </CardContent>
         </Card>
       </div>
@@ -206,8 +221,9 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="service">Services</SelectItem>
+                    <SelectItem value="switchpilot">SwitchPilot</SelectItem>
                     <SelectItem value="charity">Charities</SelectItem>
+                    <SelectItem value="external_service">External Services</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

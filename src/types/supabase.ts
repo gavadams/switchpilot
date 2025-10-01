@@ -197,14 +197,16 @@ export interface Database {
         Row: {
           id: string
           user_id: string
+          switch_id: string | null
           provider: string
           charity_name: string | null
           amount: number
           frequency: 'monthly' | 'one-time'
-          status: 'pending' | 'active' | 'cancelled' | 'failed'
+          status: 'pending' | 'active' | 'cancelled' | 'completed' | 'failed'
           setup_date: string
           next_collection_date: string | null
           last_collection_date: string | null
+          auto_cancel_after_switch: boolean
           total_collected: number
           stripe_payment_method_id: string | null
           created_at: string
@@ -213,14 +215,16 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
+          switch_id?: string | null
           provider: string
           charity_name?: string | null
           amount: number
           frequency?: 'monthly' | 'one-time'
-          status?: 'pending' | 'active' | 'cancelled' | 'failed'
+          status?: 'pending' | 'active' | 'cancelled' | 'completed' | 'failed'
           setup_date?: string
           next_collection_date?: string | null
           last_collection_date?: string | null
+          auto_cancel_after_switch?: boolean
           total_collected?: number
           stripe_payment_method_id?: string | null
           created_at?: string
@@ -229,14 +233,16 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
+          switch_id?: string | null
           provider?: string
           charity_name?: string | null
           amount?: number
           frequency?: 'monthly' | 'one-time'
-          status?: 'pending' | 'active' | 'cancelled' | 'failed'
+          status?: 'pending' | 'active' | 'cancelled' | 'completed' | 'failed'
           setup_date?: string
           next_collection_date?: string | null
           last_collection_date?: string | null
+          auto_cancel_after_switch?: boolean
           total_collected?: number
           stripe_payment_method_id?: string | null
           created_at?: string
@@ -248,6 +254,13 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "direct_debits_switch_id_fkey"
+            columns: ["switch_id"]
+            isOneToOne: false
+            referencedRelation: "user_switches"
             referencedColumns: ["id"]
           }
         ]

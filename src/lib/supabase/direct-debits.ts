@@ -6,10 +6,12 @@ type DirectDebitInsert = Database['public']['Tables']['direct_debits']['Insert']
 type DirectDebitUpdate = Database['public']['Tables']['direct_debits']['Update']
 
 export interface CreateDDInput {
+  switch_id?: string
   provider: string
   charity_name?: string
   amount: number
   frequency: 'monthly' | 'one-time'
+  auto_cancel_after_switch?: boolean
   stripe_payment_method_id?: string
 }
 
@@ -52,6 +54,7 @@ export const createDirectDebit = async (data: CreateDDInput & { user_id: string 
   try {
     const insertData: DirectDebitInsert = {
       user_id: data.user_id,
+      switch_id: data.switch_id,
       provider: data.provider,
       charity_name: data.charity_name,
       amount: data.amount,
@@ -61,6 +64,7 @@ export const createDirectDebit = async (data: CreateDDInput & { user_id: string 
       next_collection_date: data.frequency === 'monthly' 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
         : null,
+      auto_cancel_after_switch: data.auto_cancel_after_switch ?? true,
       stripe_payment_method_id: data.stripe_payment_method_id
     }
 
@@ -193,7 +197,7 @@ export const getDirectDebitStats = async (userId: string) => {
   try {
     const { data, error } = await supabase
       .from('direct_debits')
-      .select('amount, frequency, status, total_collected')
+      .select('amount, frequency, status, total_collected, provider')
       .eq('user_id', userId)
 
     if (error) {
@@ -206,13 +210,74 @@ export const getDirectDebitStats = async (userId: string) => {
       .reduce((sum, dd) => sum + (dd.amount || 0), 0) || 0
     const totalCollected = data?.reduce((sum, dd) => sum + (dd.total_collected || 0), 0) || 0
 
+    // Revenue tracking for SwitchPilot DDs
+    const switchPilotDDs = data?.filter(dd => dd.provider === 'switchpilot' && dd.status === 'active') || []
+    const switchPilotRevenue = switchPilotDDs.reduce((sum, dd) => sum + (dd.amount || 0), 0)
+    const switchPilotCount = switchPilotDDs.length
+
     return {
       activeCount,
       monthlyTotal,
-      totalCollected
+      totalCollected,
+      switchPilotRevenue,
+      switchPilotCount
     }
   } catch (error) {
     console.error('Error in getDirectDebitStats:', error)
+    throw error
+  }
+}
+
+// Get DDs for a specific switch
+export const getDirectDebitsForSwitch = async (switchId: string): Promise<DirectDebit[]> => {
+  const supabase = createClient()
+  
+  try {
+    const { data, error } = await supabase
+      .from('direct_debits')
+      .select('*')
+      .eq('switch_id', switchId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching DDs for switch:', error)
+      throw new Error(`Failed to fetch DDs for switch: ${error.message}`)
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Error in getDirectDebitsForSwitch:', error)
+    throw error
+  }
+}
+
+// Get revenue from SwitchPilot DDs
+export const getSwitchPilotRevenue = async (userId: string) => {
+  const supabase = createClient()
+  
+  try {
+    const { data, error } = await supabase
+      .from('direct_debits')
+      .select('amount, status, total_collected')
+      .eq('user_id', userId)
+      .eq('provider', 'switchpilot')
+
+    if (error) {
+      console.error('Error fetching SwitchPilot revenue:', error)
+      throw new Error(`Failed to fetch SwitchPilot revenue: ${error.message}`)
+    }
+
+    const activeRevenue = data?.filter(dd => dd.status === 'active')
+      .reduce((sum, dd) => sum + (dd.amount || 0), 0) || 0
+    const totalCollected = data?.reduce((sum, dd) => sum + (dd.total_collected || 0), 0) || 0
+
+    return {
+      activeRevenue,
+      totalCollected,
+      activeCount: data?.filter(dd => dd.status === 'active').length || 0
+    }
+  } catch (error) {
+    console.error('Error in getSwitchPilotRevenue:', error)
     throw error
   }
 }
