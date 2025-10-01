@@ -290,6 +290,36 @@ export const updateSwitchNotes = async (
   return data
 }
 
+// Update earnings received when bank pays out
+export const updateEarningsReceived = async (
+  switchId: string, 
+  earningsReceived: number
+): Promise<UserSwitch> => {
+  const supabase = createClient()
+  
+  const { data, error } = await supabase
+    .from('user_switches')
+    .update({ earnings_received: earningsReceived })
+    .eq('id', switchId)
+    .select(`
+      *,
+      bank_deals (
+        bank_name,
+        reward_amount,
+        expiry_date,
+        time_to_payout
+      )
+    `)
+    .single()
+
+  if (error) {
+    console.error('Error updating earnings received:', error)
+    throw new Error(`Failed to update earnings received: ${error.message}`)
+  }
+
+  return data
+}
+
 // Calculate switch progress
 export const calculateSwitchProgress = (steps: SwitchStep[]): {
   completedSteps: number
