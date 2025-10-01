@@ -137,18 +137,18 @@ export default function EarningsCard({ className }: EarningsCardProps) {
     <Card className={`card-professional border-0 ${className}`}>
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-success-500 to-success-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-success-500 to-success-600 rounded-lg flex items-center justify-center shrink-0">
             <DollarSign className="w-4 h-4 text-white" />
           </div>
-          Earnings Overview
+          <span className="break-words">Earnings Overview</span>
         </CardTitle>
         <CardDescription>Your bank switching rewards and projections</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Total Lifetime Earnings - Large Display */}
         <div className="text-center p-6 bg-gradient-to-r from-success-50 to-success-100 rounded-xl border border-success-200">
-          <p className="text-sm font-medium text-success-700 mb-2">Total Lifetime Earnings</p>
-          <p className="text-4xl font-bold text-success-600 mb-2">
+          <p className="text-sm font-medium text-success-700 mb-2 break-words">Total Lifetime Earnings</p>
+          <p className="text-4xl font-bold text-success-600 mb-2 break-words">
             {formatCurrency(earnings.totalLifetime)}
           </p>
           <Badge className="bg-success-500 text-white border-0">
@@ -159,14 +159,14 @@ export default function EarningsCard({ className }: EarningsCardProps) {
         {/* This Month vs Last Month */}
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-4 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg border border-primary-200">
-            <p className="text-sm font-medium text-primary-700 mb-1">This Month</p>
-            <p className="text-2xl font-bold text-primary-600">
+            <p className="text-sm font-medium text-primary-700 mb-1 break-words">This Month</p>
+            <p className="text-2xl font-bold text-primary-600 break-words">
               {formatCurrency(earnings.thisMonth)}
             </p>
           </div>
           <div className="text-center p-4 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg border border-neutral-200">
-            <p className="text-sm font-medium text-neutral-700 mb-1">Last Month</p>
-            <p className="text-2xl font-bold text-neutral-600">
+            <p className="text-sm font-medium text-neutral-700 mb-1 break-words">Last Month</p>
+            <p className="text-2xl font-bold text-neutral-600 break-words">
               {formatCurrency(earnings.lastMonth)}
             </p>
           </div>

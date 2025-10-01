@@ -93,18 +93,18 @@ export default function SwitchCard({ userSwitch, steps }: SwitchCardProps) {
   return (
     <Card className="card-professional border-0 h-full flex flex-col">
       <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-xl font-bold text-neutral-800 mb-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-xl font-bold text-neutral-800 mb-2 break-words">
               {typedUserSwitch.bank_deals?.bank_name || 'Unknown Bank'}
             </CardTitle>
-            <CardDescription className="text-neutral-600">
+            <CardDescription className="text-neutral-600 break-words">
               Bank switching in progress
             </CardDescription>
           </div>
           <Badge 
             variant={getStatusColor(typedUserSwitch.status)}
-            className="ml-2 shrink-0 flex items-center gap-1"
+            className="ml-2 shrink-0 flex items-center gap-1 whitespace-nowrap"
           >
             {getStatusIcon(typedUserSwitch.status)}
             {formatStatus(typedUserSwitch.status)}

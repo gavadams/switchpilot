@@ -60,18 +60,18 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
   return (
     <Card className="card-professional border-0 h-full flex flex-col">
       <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-xl font-bold text-neutral-800 mb-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-xl font-bold text-neutral-800 mb-2 break-words">
               {(deal as BankDeal).bank_name}
             </CardTitle>
-            <CardDescription className="text-neutral-600">
+            <CardDescription className="text-neutral-600 break-words">
               Bank switching reward offer
             </CardDescription>
           </div>
           <Badge 
             variant={expiryInfo.color}
-            className="ml-2 shrink-0"
+            className="ml-2 shrink-0 whitespace-nowrap"
           >
             {expiryInfo.text}
           </Badge>
@@ -101,24 +101,24 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
             <div className="grid grid-cols-1 gap-3">
               {/* Minimum Pay-in */}
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
-                <span className="text-sm font-medium text-neutral-700">Minimum Pay-in</span>
-                <span className="text-sm font-bold text-neutral-800">£{(deal.min_pay_in as number)}</span>
+                <span className="text-sm font-medium text-neutral-700 break-words">Minimum Pay-in</span>
+                <span className="text-sm font-bold text-neutral-800 whitespace-nowrap ml-2">£{(deal.min_pay_in as number)}</span>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
-                <span className="text-sm font-medium text-success-700">Account Switch</span>
-                <div className="flex items-center gap-1">
+                <span className="text-sm font-medium text-success-700 break-words">Account Switch</span>
+                <div className="flex items-center gap-1 shrink-0">
                   <CheckCircle className="w-4 h-4 text-success-600" />
-                  <span className="text-sm font-bold text-success-700">Required</span>
+                  <span className="text-sm font-bold text-success-700 whitespace-nowrap">Required</span>
                 </div>
               </div>
 
               {requirements && typeof requirements === 'object' && 'maintain_balance' in requirements && Boolean(requirements.maintain_balance) && (
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-warning-50 to-warning-100 rounded-lg">
-                  <span className="text-sm font-medium text-warning-700">Maintain Balance</span>
-                  <div className="flex items-center gap-1">
+                  <span className="text-sm font-medium text-warning-700 break-words">Maintain Balance</span>
+                  <div className="flex items-center gap-1 shrink-0">
                     <XCircle className="w-4 h-4 text-warning-600" />
-                    <span className="text-sm font-bold text-warning-700">Required</span>
+                    <span className="text-sm font-bold text-warning-700 whitespace-nowrap">Required</span>
                   </div>
                 </div>
               )}
@@ -127,11 +127,11 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
 
           {/* Time to Payout */}
           <div className="flex items-center justify-between p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-accent-600" />
-              <span className="text-sm font-medium text-accent-700">Time to Payout</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <Clock className="w-4 h-4 text-accent-600 shrink-0" />
+              <span className="text-sm font-medium text-accent-700 break-words">Time to Payout</span>
             </div>
-            <span className="text-sm font-bold text-accent-700">{(deal as BankDeal).time_to_payout}</span>
+            <span className="text-sm font-bold text-accent-700 whitespace-nowrap ml-2">{(deal as BankDeal).time_to_payout}</span>
           </div>
         </div>
 

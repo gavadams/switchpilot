@@ -82,6 +82,26 @@
     letter-spacing: -0.025em;
     line-height: 1.2;
     color: rgb(15 23 42);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Prevent text overflow in all cards and containers */
+  .card-professional,
+  .card-enhanced,
+  [class*="card-"],
+  .bg-gradient-to-r,
+  .flex,
+  .grid {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Ensure text doesn't break out of containers */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   h1 {
