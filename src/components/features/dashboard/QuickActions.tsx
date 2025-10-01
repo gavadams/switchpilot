@@ -94,12 +94,12 @@ export default function QuickActions({ className }: QuickActionsProps) {
     <Card className={`card-professional border-0 ${className}`}>
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center shrink-0">
             <ArrowRightLeft className="w-4 h-4 text-white" />
           </div>
-          Quick Actions
+          <span className="break-words">Quick Actions</span>
         </CardTitle>
-        <CardDescription>Common tasks and navigation shortcuts</CardDescription>
+        <CardDescription className="break-words">Common tasks and navigation shortcuts</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -109,15 +109,15 @@ export default function QuickActions({ className }: QuickActionsProps) {
                 variant={action.variant}
                 className={`w-full h-auto p-4 flex flex-col items-start gap-3 ${action.className}`}
               >
-                <div className="flex items-center gap-3 w-full">
+                <div className="flex items-center gap-3 w-full min-w-0">
                   <div className="flex-shrink-0">
                     {action.icon}
                   </div>
-                  <div className="flex-1 text-left">
-                    <h4 className="font-semibold text-sm mb-1">
+                  <div className="flex-1 text-left min-w-0">
+                    <h4 className="font-semibold text-sm mb-1 break-words">
                       {action.title}
                     </h4>
-                    <p className="text-xs opacity-80">
+                    <p className="text-xs opacity-80 break-words">
                       {action.description}
                     </p>
                   </div>
@@ -132,15 +132,15 @@ export default function QuickActions({ className }: QuickActionsProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-3 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg border border-primary-200">
               <Target className="w-5 h-5 text-primary-600 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-primary-700">Best Deals</p>
-              <p className="text-xs text-primary-600">
+              <p className="text-sm font-semibold text-primary-700 break-words">Best Deals</p>
+              <p className="text-xs text-primary-600 break-words">
                 {loading ? 'Loading...' : `Up to £${maxReward}`}
               </p>
             </div>
             <div className="text-center p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg border border-success-200">
               <CheckCircle className="w-5 h-5 text-success-600 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-success-700">Easy Process</p>
-              <p className="text-xs text-success-600">Guided workflow</p>
+              <p className="text-sm font-semibold text-success-700 break-words">Easy Process</p>
+              <p className="text-xs text-success-600 break-words">Guided workflow</p>
             </div>
           </div>
         </div>
