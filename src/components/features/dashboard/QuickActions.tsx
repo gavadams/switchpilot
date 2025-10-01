@@ -11,15 +11,12 @@ import {
   CreditCard,
   ArrowRightLeft,
   Target,
-  CheckCircle,
-  Settings
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
 import { getAllActiveDeals } from '../../../lib/supabase/deals'
 
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
-
-import { useAuth } from '../../../context/AuthContext'
 
 interface QuickActionsProps {
   className?: string

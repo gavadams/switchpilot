@@ -88,7 +88,7 @@ export const updateDirectDebitStatus = async (ddId: string, status: string): Pro
   
   try {
     const updateData: DirectDebitUpdate = {
-      status: status as any,
+      status: status as 'pending' | 'active' | 'cancelled' | 'failed',
       updated_at: new Date().toISOString()
     }
 
@@ -104,7 +104,7 @@ export const updateDirectDebitStatus = async (ddId: string, status: string): Pro
       throw new Error(`Failed to update direct debit status: ${error.message}`)
     }
 
-    return result
+    return data
   } catch (error) {
     console.error('Error in updateDirectDebitStatus:', error)
     throw error

@@ -13,7 +13,9 @@ import {
   Clock,
   XCircle
 } from 'lucide-react'
-import { DirectDebit } from '../../../types/supabase'
+import { Database } from '../../../types/supabase'
+
+type DirectDebit = Database['public']['Tables']['direct_debits']['Row']
 import { getProviderById } from '../../../lib/data/dd-providers'
 import { cancelDirectDebit } from '../../../lib/supabase/direct-debits'
 import { useAuth } from '../../../context/AuthContext'

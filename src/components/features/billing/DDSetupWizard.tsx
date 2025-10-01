@@ -13,7 +13,6 @@ import {
   ArrowLeft, 
   ArrowRight, 
   Check, 
-  ExternalLink, 
   AlertCircle,
   Info,
   CreditCard,
@@ -22,7 +21,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { createDirectDebit } from '../../../lib/supabase/direct-debits'
-import { DD_PROVIDERS, getProvidersByCategory } from '../../../lib/data/dd-providers'
+import { DD_PROVIDERS, getProvidersByCategory, DDProvider } from '../../../lib/data/dd-providers'
 
 interface DDSetupWizardProps {
   open: boolean
@@ -68,7 +67,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
     return frequency === 'monthly' ? amount * 12 : amount
   }
 
-  const handleProviderSelect = (provider: DD_PROVIDERS[0]) => {
+  const handleProviderSelect = (provider: DDProvider) => {
     setSelectedProvider(provider)
     setAmount(provider.recommendedAmount)
     setCurrentStep('amount')
@@ -76,7 +75,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
 
   const handleAmountChange = (value: string) => {
     const numValue = parseFloat(value)
-    if (!isNaN(numValue) && numValue >= selectedProvider?.minAmount) {
+    if (!isNaN(numValue) && selectedProvider && numValue >= selectedProvider.minAmount) {
       setAmount(numValue)
     }
   }
@@ -137,7 +136,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
       case 'provider':
         return selectedProvider !== null
       case 'amount':
-        return amount >= (selectedProvider?.minAmount || 0)
+        return selectedProvider && amount >= selectedProvider.minAmount
       case 'confirmation':
         return termsAccepted
       default:
@@ -372,7 +371,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
                       <div>
                         <p className="text-sm font-medium text-success-800">Charity Donation</p>
                         <p className="text-xs text-success-600">
-                          Your donation supports {selectedProvider.name}'s important work.
+                          Your donation supports {selectedProvider.name}&apos;s important work.
                         </p>
                       </div>
                     </div>

@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { useState, useEffect, useCallback } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
@@ -13,12 +12,13 @@ import {
   Loader2,
   AlertCircle,
   TrendingUp,
-  Calendar,
   DollarSign
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { getUserDirectDebits, getDirectDebitStats } from '../../../lib/supabase/direct-debits'
-import { DirectDebit } from '../../../types/supabase'
+import { Database } from '../../../types/supabase'
+
+type DirectDebit = Database['public']['Tables']['direct_debits']['Row']
 import DirectDebitCard from './DirectDebitCard'
 
 interface DirectDebitsListProps {
@@ -44,7 +44,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
     totalCollected: 0
   })
 
-  const fetchDirectDebits = async () => {
+  const fetchDirectDebits = useCallback(async () => {
     if (!user?.id) return
 
     try {
@@ -64,11 +64,11 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id])
 
   useEffect(() => {
     fetchDirectDebits()
-  }, [user?.id])
+  }, [user?.id, fetchDirectDebits])
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-GB', {
