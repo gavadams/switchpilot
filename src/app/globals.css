@@ -104,6 +104,19 @@
     box-sizing: border-box;
   }
   
+  /* Specific fixes for button text overflow */
+  button, [role="button"] {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+  }
+  
+  /* Ensure buttons can expand vertically for long text */
+  .h-auto {
+    min-height: auto;
+  }
+  
   h1 {
     font-size: 2.5rem;
     font-weight: 800;

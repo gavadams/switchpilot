@@ -107,17 +107,17 @@ export default function QuickActions({ className }: QuickActionsProps) {
             <Link key={action.id} href={action.href} className="block">
               <Button
                 variant={action.variant}
-                className={`w-full h-auto p-4 flex flex-col items-start gap-3 ${action.className}`}
+                className={`w-full h-auto p-4 flex flex-col items-start gap-3 whitespace-normal ${action.className}`}
               >
-                <div className="flex items-center gap-3 w-full min-w-0">
-                  <div className="flex-shrink-0">
+                <div className="flex items-start gap-3 w-full min-w-0">
+                  <div className="flex-shrink-0 mt-0.5">
                     {action.icon}
                   </div>
                   <div className="flex-1 text-left min-w-0">
-                    <h4 className="font-semibold text-sm mb-1 break-words">
+                    <h4 className="font-semibold text-sm mb-1 break-words leading-tight">
                       {action.title}
                     </h4>
-                    <p className="text-xs opacity-80 break-words">
+                    <p className="text-xs opacity-80 break-words leading-relaxed">
                       {action.description}
                     </p>
                   </div>
