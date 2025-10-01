@@ -11,7 +11,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard')
+      // Use replace to avoid back button issues
+      router.replace('/dashboard')
     }
   }, [user, loading, router])
 
@@ -41,7 +42,7 @@ export default function LoginPage() {
             Access your bank switching dashboard
           </p>
         </div>
-        <LoginForm onSuccess={() => router.push('/dashboard')} />
+        <LoginForm onSuccess={() => router.replace('/dashboard')} />
       </div>
     </div>
   )

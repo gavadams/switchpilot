@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/client'
+import { useAuth } from '../../../context/AuthContext'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -22,6 +23,14 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
+  const { user } = useAuth()
+
+  // Auto-redirect when user becomes available
+  useEffect(() => {
+    if (user && onSuccess) {
+      onSuccess()
+    }
+  }, [user, onSuccess])
 
   const {
     register,
@@ -46,7 +55,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         return
       }
 
-      onSuccess?.()
+      // The redirect will be handled by the useEffect when user state updates
     } catch {
       setError('An unexpected error occurred. Please try again.')
     } finally {
