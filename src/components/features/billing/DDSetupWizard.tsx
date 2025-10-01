@@ -454,7 +454,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId 
                       <div>
                         <h4 className="font-semibold text-warning-800 mb-1">Payment Method Required</h4>
                         <p className="text-sm text-warning-700">
-                          You'll need to add a payment method to complete this SwitchPilot direct debit setup.
+                          You&apos;ll need to add a payment method to complete this SwitchPilot direct debit setup.
                         </p>
                       </div>
                     </div>
