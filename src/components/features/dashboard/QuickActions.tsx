@@ -84,7 +84,7 @@ export default function QuickActions({ className }: QuickActionsProps) {
       title: 'Setup Direct Debit',
       description: 'Configure automatic payments',
       icon: <CreditCard className="w-5 h-5" />,
-      href: '/settings',
+      href: '/billing',
       variant: 'outline' as const,
       className: 'hover:bg-success-50 hover:border-success-200'
     }

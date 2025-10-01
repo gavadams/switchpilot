@@ -208,7 +208,7 @@ export default function EarningsCard({ className }: EarningsCardProps) {
               console.log('Navigate to analytics page')
             }}
           >
-            <span>View Detailed Analytics</span>
+            <span>Analytics page coming soon</span>
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>

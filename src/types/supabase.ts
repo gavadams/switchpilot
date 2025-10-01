@@ -193,6 +193,65 @@ export interface Database {
           }
         ]
       }
+      direct_debits: {
+        Row: {
+          id: string
+          user_id: string
+          provider: string
+          charity_name: string | null
+          amount: number
+          frequency: 'monthly' | 'one-time'
+          status: 'pending' | 'active' | 'cancelled' | 'failed'
+          setup_date: string
+          next_collection_date: string | null
+          last_collection_date: string | null
+          total_collected: number
+          stripe_payment_method_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          provider: string
+          charity_name?: string | null
+          amount: number
+          frequency?: 'monthly' | 'one-time'
+          status?: 'pending' | 'active' | 'cancelled' | 'failed'
+          setup_date?: string
+          next_collection_date?: string | null
+          last_collection_date?: string | null
+          total_collected?: number
+          stripe_payment_method_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          provider?: string
+          charity_name?: string | null
+          amount?: number
+          frequency?: 'monthly' | 'one-time'
+          status?: 'pending' | 'active' | 'cancelled' | 'failed'
+          setup_date?: string
+          next_collection_date?: string | null
+          last_collection_date?: string | null
+          total_collected?: number
+          stripe_payment_method_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "direct_debits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -203,6 +262,8 @@ export interface Database {
     Enums: {
       subscription_tier: 'free' | 'standard' | 'premium'
       switch_status: 'started' | 'in_progress' | 'waiting' | 'completed' | 'failed'
+      dd_frequency: 'monthly' | 'one-time'
+      dd_status: 'pending' | 'active' | 'cancelled' | 'failed'
     }
     CompositeTypes: {
       [_ in never]: never
