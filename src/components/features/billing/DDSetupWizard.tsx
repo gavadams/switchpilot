@@ -27,6 +27,7 @@ interface DDSetupWizardProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
+  switchId?: string // Optional switch ID for linking DDs to specific switches
 }
 
 type WizardStep = 'provider' | 'amount' | 'confirmation'
@@ -44,7 +45,7 @@ interface SelectedProvider {
   isExternal?: boolean
 }
 
-export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetupWizardProps) {
+export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId }: DDSetupWizardProps) {
   const { user } = useAuth()
   const [currentStep, setCurrentStep] = useState<WizardStep>('provider')
   const [selectedProvider, setSelectedProvider] = useState<SelectedProvider | null>(null)
@@ -106,14 +107,21 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
       setIsSubmitting(true)
       setError(null)
 
-      await createDirectDebit({
+      // Map provider ID to actual provider name for database
+      const providerName = selectedProvider.id === 'switchpilot_dd' ? 'switchpilot' : selectedProvider.id
+      
+      const newDD = await createDirectDebit({
         user_id: user.id,
-        provider: selectedProvider.id,
+        switch_id: switchId,
+        provider: providerName,
         charity_name: selectedProvider.category === 'charity' ? selectedProvider.name : undefined,
         amount: amount,
-        frequency: frequency
+        frequency: frequency,
+        auto_cancel_after_switch: selectedProvider.category === 'switchpilot' ? true : false,
+        stripe_payment_method_id: selectedProvider.category === 'switchpilot' ? 'pending_setup' : undefined
       })
 
+      console.log('Direct debit created successfully:', newDD)
       onSuccess()
       onOpenChange(false)
       resetWizard()
@@ -438,6 +446,20 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess }: DDSetup
                     </div>
                   )}
                 </div>
+                
+                {selectedProvider.category === 'switchpilot' && (
+                  <div className="mt-4 p-4 bg-warning-50 rounded-lg border border-warning-200">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-warning-600 mt-0.5" />
+                      <div>
+                        <h4 className="font-semibold text-warning-800 mb-1">Payment Method Required</h4>
+                        <p className="text-sm text-warning-700">
+                          You'll need to add a payment method to complete this SwitchPilot direct debit setup.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

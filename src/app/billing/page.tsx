@@ -122,6 +122,7 @@ export default function BillingPage() {
         open={setupWizardOpen}
         onOpenChange={setSetupWizardOpen}
         onSuccess={handleSetupSuccess}
+        switchId={undefined} // No specific switch context for general DD setup
       />
     </div>
   )
