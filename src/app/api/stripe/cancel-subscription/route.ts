@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     try {
       subscription = await stripe.subscriptions.cancel(subscription_id)
     } catch (stripeError: unknown) {
-      if ((stripeError as any).code === 'resource_missing') {
+      if ((stripeError as { code?: string }).code === 'resource_missing') {
         // Subscription already cancelled or doesn't exist
         console.log('Subscription already cancelled or not found')
       } else {
