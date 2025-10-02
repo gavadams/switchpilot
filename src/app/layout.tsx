@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import ConditionalLayout from "../components/layout/ConditionalLayout";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 // Use system fonts as fallback to avoid Google Fonts build issues
 const interFont = {
@@ -32,11 +33,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={interFont.variable}>
       <body className={`min-h-screen bg-background font-sans antialiased ${interFont.className}`} style={interFont.style}>
-        <AuthProvider>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
-        </AuthProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

@@ -10,29 +10,42 @@ type UserSwitchInsert = Database['public']['Tables']['user_switches']['Insert']
 export const getAllActiveDeals = async (): Promise<BankDeal[]> => {
   const supabase = createClient()
   
-  const { data, error } = await supabase
-    .from('bank_deals')
-    .select('*')
-    .eq('is_active', true)
-    .order('reward_amount', { ascending: false })
+  try {
+    // Add timeout to prevent hanging
+    const queryPromise = supabase
+      .from('bank_deals')
+      .select('*')
+      .eq('is_active', true)
+      .order('reward_amount', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching deals:', error)
-    throw new Error(`Failed to fetch deals: ${error.message}`)
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Query timeout after 8 seconds')), 8000)
+    })
+
+    const result = await Promise.race([queryPromise, timeoutPromise])
+    const { data, error } = result as { data: BankDeal[] | null; error: { message: string } | null }
+
+    if (error) {
+      console.error('Error fetching deals:', error)
+      throw new Error(`Failed to fetch deals: ${error.message}`)
+    }
+
+    // Filter out expired deals
+    const now = new Date()
+    const activeDeals = (data || []).filter(deal => {
+      // If no expiry date, deal is still active
+      if (!deal.expiry_date) return true
+
+      // Check if expiry date is in the future
+      const expiryDate = new Date(deal.expiry_date)
+      return expiryDate > now
+    })
+
+    return activeDeals as BankDeal[]
+  } catch (err) {
+    console.error('Error in getAllActiveDeals:', err)
+    throw err
   }
-
-  // Filter out expired deals
-  const now = new Date()
-  const activeDeals = (data || []).filter(deal => {
-    // If no expiry date, deal is still active
-    if (!deal.expiry_date) return true
-
-    // Check if expiry date is in the future
-    const expiryDate = new Date(deal.expiry_date)
-    return expiryDate > now
-  })
-
-  return activeDeals as BankDeal[]
 }
 
 export const getDealById = async (id: string): Promise<BankDeal | null> => {

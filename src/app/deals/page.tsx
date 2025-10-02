@@ -22,6 +22,11 @@ export default function DealsPage() {
 
   useEffect(() => {
     const fetchDeals = async () => {
+      // Don't fetch if still loading auth
+      if (authLoading) {
+        return
+      }
+
       try {
         setLoading(true)
         setError(null)
@@ -34,9 +39,7 @@ export default function DealsPage() {
       }
     }
 
-    if (!authLoading) {
-      fetchDeals()
-    }
+    fetchDeals()
   }, [authLoading])
 
   const handleStartSwitch = async (dealId: string) => {
