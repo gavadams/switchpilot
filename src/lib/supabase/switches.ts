@@ -28,9 +28,7 @@ export const getUserSwitches = async (userId: string): Promise<UserSwitch[]> => 
   
   try {
     console.log('getUserSwitches: Creating query...')
-    
-    // Add timeout to prevent hanging
-    const queryPromise = supabase
+    const { data, error } = await supabase
       .from('user_switches')
       .select(`
         *,
@@ -44,13 +42,6 @@ export const getUserSwitches = async (userId: string): Promise<UserSwitch[]> => 
       `)
       .eq('user_id', userId)
       .order('started_at', { ascending: false })
-
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout after 10 seconds')), 10000)
-    })
-
-    const result = await Promise.race([queryPromise, timeoutPromise])
-    const { data, error } = result as { data: UserSwitch[] | null; error: { message: string } | null }
 
     console.log('getUserSwitches: Query completed - data:', data?.length, 'error:', error)
 

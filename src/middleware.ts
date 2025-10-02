@@ -3,13 +3,6 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
-  // Skip middleware for static files and API routes
-  if (req.nextUrl.pathname.startsWith('/_next') || 
-      req.nextUrl.pathname.startsWith('/api') ||
-      req.nextUrl.pathname === '/favicon.ico') {
-    return NextResponse.next()
-  }
-
   let res = NextResponse.next({
     request: {
       headers: req.headers,
@@ -39,49 +32,35 @@ export async function middleware(req: NextRequest) {
     }
   )
 
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-    // Protected routes
-    const protectedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
-    const isProtectedRoute = protectedRoutes.some(route => 
-      req.nextUrl.pathname.startsWith(route)
-    )
+  // Protected routes
+  const protectedRoutes = ['/dashboard', '/deals', '/switches', '/billing']
+  const isProtectedRoute = protectedRoutes.some(route => 
+    req.nextUrl.pathname.startsWith(route)
+  )
 
-    // Auth routes
-    const authRoutes = ['/login', '/register']
-    const isAuthRoute = authRoutes.some(route => 
-      req.nextUrl.pathname.startsWith(route)
-    )
+  // Auth routes
+  const authRoutes = ['/login', '/register']
+  const isAuthRoute = authRoutes.some(route => 
+    req.nextUrl.pathname.startsWith(route)
+  )
 
-    // Redirect unauthenticated users from protected routes to login
-    if (isProtectedRoute && !session) {
-      const redirectUrl = new URL('/login', req.url)
-      redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
-    }
-
-    // Redirect authenticated users from auth routes to dashboard
-    if (isAuthRoute && session) {
-      // Don't redirect if we're already on the dashboard or if there's a redirectedFrom param
-      // This prevents redirect loops
-      const redirectedFrom = req.nextUrl.searchParams.get('redirectedFrom')
-      
-      if (!redirectedFrom) {
-        // Only redirect to dashboard if there's no redirect parameter
-        return NextResponse.redirect(new URL('/dashboard', req.url))
-      }
-      // If there's a redirectedFrom parameter, let the client-side handle the redirect
-    }
-
-    return res
-  } catch (error) {
-    console.error('Middleware error:', error)
-    // If there's an error, just continue without redirects
-    return res
+  // Redirect unauthenticated users from protected routes to login
+  if (isProtectedRoute && !session) {
+    const redirectUrl = new URL('/login', req.url)
+    redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
+    return NextResponse.redirect(redirectUrl)
   }
+
+  // Redirect authenticated users from auth routes to dashboard
+  if (isAuthRoute && session) {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
+  }
+
+  return res
 }
 
 export const config = {

@@ -40,18 +40,19 @@ export default function SwitchesPage() {
 
   useEffect(() => {
     const fetchSwitches = async () => {
-      // Don't fetch if still loading auth
+      
+      if (!user) {
+        if (!authLoading) {
+          setLoading(false)
+        }
+        return
+      }
+
       if (authLoading) {
         return
       }
 
-      // If no user and auth is done loading, set loading to false
-      if (!user) {
-        setLoading(false)
-        setError(null)
-        return
-      }
-
+      
       try {
         setLoading(true)
         setError(null)
@@ -75,22 +76,22 @@ export default function SwitchesPage() {
         } else {
           setSwitchSteps({})
         }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load switches'
-        setError(errorMessage)
-        
-        // Auto-retry for timeout errors
-        if (errorMessage.includes('timeout') && retryCount < 3) {
-          setIsRetrying(true)
-          setTimeout(() => {
-            setRetryCount(prev => prev + 1)
-            setIsRetrying(false)
-          }, 1000) // Wait 1 second before retry
-        }
-      } finally {
-        setLoading(false)
-        setHasInitiallyLoaded(true)
-      }
+          } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to load switches'
+            setError(errorMessage)
+            
+            // Auto-retry for timeout errors
+            if (errorMessage.includes('timeout') && retryCount < 3) {
+              setIsRetrying(true)
+              setTimeout(() => {
+                setRetryCount(prev => prev + 1)
+                setIsRetrying(false)
+              }, 1000) // Wait 1 second before retry
+            }
+          } finally {
+            setLoading(false)
+            setHasInitiallyLoaded(true)
+          }
     }
 
     fetchSwitches()

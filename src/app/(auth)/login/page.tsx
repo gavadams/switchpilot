@@ -1,42 +1,20 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import LoginForm from '../../../components/features/auth/LoginForm'
 
 export default function LoginPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (!loading && user) {
-      // Check if there's a redirect URL from middleware
-      const redirectedFrom = searchParams.get('redirectedFrom')
-      
-      // Validate redirect URL to prevent malicious redirects
-      let redirectUrl = '/dashboard'
-      if (redirectedFrom) {
-        // Only allow internal redirects (starting with /)
-        if (redirectedFrom.startsWith('/') && !redirectedFrom.startsWith('//')) {
-          // Allow only specific protected routes
-          const allowedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
-          if (allowedRoutes.some(route => redirectedFrom.startsWith(route))) {
-            redirectUrl = redirectedFrom
-          }
-        }
-      }
-      
-      console.log('Login redirect:', { redirectedFrom, redirectUrl, user: user.id })
-      
-      // Use replace to avoid back button issues and clean up URL
-      // Add a small delay to ensure the auth state is fully settled
-      setTimeout(() => {
-        router.replace(redirectUrl)
-      }, 100)
+      // Use replace to avoid back button issues
+      router.replace('/dashboard')
     }
-  }, [user, loading, router, searchParams])
+  }, [user, loading, router])
 
   if (loading) {
     return (
@@ -50,15 +28,7 @@ export default function LoginPage() {
   }
 
   if (user) {
-    // Show a brief loading state while redirecting
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Redirecting...</p>
-        </div>
-      </div>
-    )
+    return null // Will redirect
   }
 
   return (
@@ -72,29 +42,7 @@ export default function LoginPage() {
             Access your bank switching dashboard
           </p>
         </div>
-        <LoginForm onSuccess={() => {
-          const redirectedFrom = searchParams.get('redirectedFrom')
-          
-          // Validate redirect URL to prevent malicious redirects
-          let redirectUrl = '/dashboard'
-          if (redirectedFrom) {
-            // Only allow internal redirects (starting with /)
-            if (redirectedFrom.startsWith('/') && !redirectedFrom.startsWith('//')) {
-              // Allow only specific protected routes
-              const allowedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
-              if (allowedRoutes.some(route => redirectedFrom.startsWith(route))) {
-                redirectUrl = redirectedFrom
-              }
-            }
-          }
-          
-          console.log('LoginForm onSuccess redirect:', { redirectedFrom, redirectUrl })
-          
-          // Add a small delay to ensure the auth state is fully settled
-          setTimeout(() => {
-            router.replace(redirectUrl)
-          }, 100)
-        }} />
+        <LoginForm onSuccess={() => router.replace('/dashboard')} />
       </div>
     </div>
   )

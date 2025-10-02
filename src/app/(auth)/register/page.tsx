@@ -1,41 +1,19 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import RegisterForm from '../../../components/features/auth/RegisterForm'
 
 export default function RegisterPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (!loading && user) {
-      // Check if there's a redirect URL from middleware
-      const redirectedFrom = searchParams.get('redirectedFrom')
-      
-      // Validate redirect URL to prevent malicious redirects
-      let redirectUrl = '/dashboard'
-      if (redirectedFrom) {
-        // Only allow internal redirects (starting with /)
-        if (redirectedFrom.startsWith('/') && !redirectedFrom.startsWith('//')) {
-          // Allow only specific protected routes
-          const allowedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
-          if (allowedRoutes.some(route => redirectedFrom.startsWith(route))) {
-            redirectUrl = redirectedFrom
-          }
-        }
-      }
-      
-      console.log('Register redirect:', { redirectedFrom, redirectUrl, user: user.id })
-      
-      // Add a small delay to ensure the auth state is fully settled
-      setTimeout(() => {
-        router.replace(redirectUrl)
-      }, 100)
+      router.push('/dashboard')
     }
-  }, [user, loading, router, searchParams])
+  }, [user, loading, router])
 
   if (loading) {
     return (

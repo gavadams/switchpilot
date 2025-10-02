@@ -22,18 +22,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  // Add timeout to prevent infinite loading
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Auth loading timeout - setting loading to false')
-        setLoading(false)
-      }
-    }, 10000) // 10 second timeout
-
-    return () => clearTimeout(timeout)
-  }, [loading])
-
   useEffect(() => {
     const fetchProfile = async (userId: string) => {
       try {
@@ -56,19 +44,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Get initial session
     const getInitialSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        setSession(session)
-        setUser(session?.user ?? null)
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id)
-        }
-      } catch (error) {
-        console.error('Error getting initial session:', error)
-      } finally {
-        setLoading(false)
+      const { data: { session } } = await supabase.auth.getSession()
+      setSession(session)
+      setUser(session?.user ?? null)
+      
+      if (session?.user) {
+        await fetchProfile(session.user.id)
       }
+      
+      setLoading(false)
     }
 
     getInitialSession()
@@ -76,21 +60,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.id)
-        try {
-          setSession(session)
-          setUser(session?.user ?? null)
-          
-          if (session?.user) {
-            await fetchProfile(session.user.id)
-          } else {
-            setProfile(null)
-          }
-        } catch (error) {
-          console.error('Error in auth state change:', error)
-        } finally {
-          setLoading(false)
+        setSession(session)
+        setUser(session?.user ?? null)
+        
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        } else {
+          setProfile(null)
         }
+        
+        setLoading(false)
       }
     )
 
