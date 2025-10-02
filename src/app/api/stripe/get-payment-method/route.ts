@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '../../../../lib/stripe/config'
 import { createClient } from '../../../../lib/supabase/server'
+import type Stripe from 'stripe'
 
 export async function GET() {
   try {
