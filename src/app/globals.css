@@ -254,6 +254,12 @@
     opacity: 1 !important;
   }
   
+  /* Select dropdown content should be fully opaque */
+  [data-radix-select-content] {
+    background-color: white !important;
+    opacity: 1 !important;
+  }
+  
   /* Enhanced Secondary Button */
   .bg-secondary-500 {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;

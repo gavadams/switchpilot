@@ -153,7 +153,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
           <CardContent className="text-center p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <CreditCard className="w-5 h-5 text-primary-600" />
-              <span className="text-sm font-medium text-primary-700">Active DDs</span>
+              <span className="text-sm font-medium text-primary-700">Your Active DDs</span>
             </div>
             <div className="text-2xl font-bold text-primary-600">{stats.activeCount}</div>
           </CardContent>
@@ -163,7 +163,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
           <CardContent className="text-center p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="w-5 h-5 text-accent-600" />
-              <span className="text-sm font-medium text-accent-700">Monthly Total</span>
+              <span className="text-sm font-medium text-accent-700">Your Monthly Total</span>
             </div>
             <div className="text-2xl font-bold text-accent-600">{formatCurrency(stats.monthlyTotal)}</div>
           </CardContent>
@@ -173,7 +173,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
           <CardContent className="text-center p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-success-600" />
-              <span className="text-sm font-medium text-success-700">SwitchPilot Revenue</span>
+              <span className="text-sm font-medium text-success-700">Your SwitchPilot DDs</span>
             </div>
             <div className="text-2xl font-bold text-success-600">{formatCurrency(stats.switchPilotRevenue)}</div>
             <div className="text-xs text-success-600">{stats.switchPilotCount} active</div>
@@ -184,7 +184,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
           <CardContent className="text-center p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-neutral-600" />
-              <span className="text-sm font-medium text-neutral-700">Total Collected</span>
+              <span className="text-sm font-medium text-neutral-700">Your Total Collected</span>
             </div>
             <div className="text-2xl font-bold text-neutral-600">{formatCurrency(stats.totalCollected)}</div>
           </CardContent>
@@ -203,7 +203,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
                   <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
                     <SelectItem value="all">All</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
@@ -219,7 +219,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
                   <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
                     <SelectItem value="all">All</SelectItem>
                     <SelectItem value="switchpilot">SwitchPilot</SelectItem>
                     <SelectItem value="charity">Charities</SelectItem>
@@ -235,7 +235,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
                   <SelectTrigger className="w-40">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
                     <SelectItem value="setup_date">Setup Date</SelectItem>
                     <SelectItem value="amount">Amount</SelectItem>
                     <SelectItem value="next_collection">Next Collection</SelectItem>
