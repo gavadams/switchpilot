@@ -56,7 +56,7 @@ export default function ExternalDDDialog({ open, onOpenChange, onSuccess, switch
         amount: amountNum,
         frequency: frequency,
         auto_cancel_after_switch: false, // External DDs don't auto-cancel
-        stripe_payment_method_id: null
+        stripe_payment_method_id: undefined
       })
 
       console.log('External DD added successfully')
