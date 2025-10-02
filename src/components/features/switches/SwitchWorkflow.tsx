@@ -46,8 +46,14 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const [autoSaveTimeouts, setAutoSaveTimeouts] = useState<Record<string, NodeJS.Timeout>>({})
   const [autoSaving, setAutoSaving] = useState<Set<string>>(new Set())
   const [ddWizardOpen, setDdWizardOpen] = useState(false)
-  const [switchDDs, setSwitchDDs] = useState<any[]>([])
-  const [loadingDDs, setLoadingDDs] = useState(false)
+  const [switchDDs, setSwitchDDs] = useState<Array<{
+    id: string
+    provider: string
+    charity_name?: string | null
+    amount: number
+    frequency: string
+    status: string
+  }>>([])
 
   // Initialize step notes from existing step data
   useEffect(() => {
@@ -160,7 +166,6 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const fetchSwitchDDs = async () => {
     if (!userSwitch.id) return
     
-    setLoadingDDs(true)
     try {
       const dds = await getUserDirectDebits(userSwitch.user_id)
       // Filter DDs for this specific switch
@@ -168,8 +173,6 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
       setSwitchDDs(switchDDs)
     } catch (error) {
       console.error('Error fetching switch DDs:', error)
-    } finally {
-      setLoadingDDs(false)
     }
   }
 

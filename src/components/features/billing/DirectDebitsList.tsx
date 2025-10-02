@@ -34,7 +34,12 @@ type SortBy = 'amount' | 'setup_date' | 'next_collection' | 'provider'
 export default function DirectDebitsList({ onSetupNew, className }: DirectDebitsListProps) {
   const { user } = useAuth()
   const [directDebits, setDirectDebits] = useState<DirectDebit[]>([])
-  const [switches, setSwitches] = useState<any[]>([])
+  const [switches, setSwitches] = useState<Array<{
+    id: string
+    bank_deals?: {
+      bank_name: string
+    } | null
+  }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')

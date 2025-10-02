@@ -22,7 +22,12 @@ import { useAuth } from '../../../context/AuthContext'
 
 interface DirectDebitCardProps {
   directDebit: DirectDebit
-  switches?: any[]
+  switches?: Array<{
+    id: string
+    bank_deals?: {
+      bank_name: string
+    } | null
+  }>
   onUpdate: () => void
 }
 
