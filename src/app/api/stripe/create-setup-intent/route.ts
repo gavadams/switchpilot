@@ -14,6 +14,10 @@ interface CreateSetupIntentResponse {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
+    }
+
     const supabase = await createClient()
     
     // Get authenticated user

@@ -5,6 +5,10 @@ import type Stripe from 'stripe'
 
 export async function GET() {
   try {
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
+    }
+
     const supabase = await createClient()
     
     // Get authenticated user
