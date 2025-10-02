@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message)
+  } catch (err: unknown) {
+    console.error('Webhook signature verification failed:', (err as Error).message)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         
         console.log('Invoice payment succeeded:', invoice.id)
         
-        const subscriptionId = (invoice as any).subscription
+        const subscriptionId = (invoice as { subscription?: string }).subscription
         if (!subscriptionId) {
           console.log('No subscription found for invoice')
           break
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         
         console.log('Invoice payment failed:', invoice.id)
         
-        const subscriptionId = (invoice as any).subscription
+        const subscriptionId = (invoice as { subscription?: string }).subscription
         if (!subscriptionId) {
           console.log('No subscription found for invoice')
           break

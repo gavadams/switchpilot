@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '../../../../lib/stripe/config'
 import { createClient } from '../../../../lib/supabase/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient()
     
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No payment method found' }, { status: 404 })
     }
 
-    const paymentMethod = defaultPaymentMethod as any
+    const paymentMethod = defaultPaymentMethod as Stripe.PaymentMethod
 
     return NextResponse.json({
       payment_method: {

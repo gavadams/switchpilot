@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CreateSetupIntentRequest = await request.json()
-    const { amount, frequency } = body
+    const { amount } = body
 
     if (!amount || amount <= 0) {
       return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })

@@ -13,7 +13,6 @@ import {
   ArrowLeft, 
   ArrowRight, 
   Check, 
-  CheckCircle,
   AlertCircle,
   Info,
   CreditCard,
@@ -22,7 +21,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { createDirectDebit } from '../../../lib/supabase/direct-debits'
-import { DD_PROVIDERS, getProvidersByCategory, DDProvider } from '../../../lib/data/dd-providers'
+import { getProvidersByCategory, DDProvider } from '../../../lib/data/dd-providers'
 import PaymentMethodSetup from './PaymentMethodSetup'
 
 interface DDSetupWizardProps {

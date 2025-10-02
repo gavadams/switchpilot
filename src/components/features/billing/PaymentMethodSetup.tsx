@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
 import {
   Elements,
   CardElement,
@@ -11,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '../../ui/alert'
-import { Loader2, CreditCard, CheckCircle, AlertCircle } from 'lucide-react'
+import { Loader2, CreditCard, AlertCircle } from 'lucide-react'
 import { getStripe } from '../../../lib/stripe/client'
 
 interface PaymentMethodSetupProps {

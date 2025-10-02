@@ -34,7 +34,12 @@ interface DirectDebitCardProps {
 export default function DirectDebitCard({ directDebit, switches = [], onUpdate }: DirectDebitCardProps) {
   const [isCancelling, setIsCancelling] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [paymentHistory, setPaymentHistory] = useState<any[]>([])
+  const [paymentHistory, setPaymentHistory] = useState<Array<{
+    id: string
+    amount: number
+    status: string
+    payment_date: string
+  }>>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
   const { user } = useAuth()
   const provider = getProviderById(directDebit.provider)
@@ -271,7 +276,7 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
                 <div className="text-sm text-neutral-500">Loading payment history...</div>
               ) : paymentHistory.length > 0 ? (
                 <div className="space-y-1">
-                  {paymentHistory.slice(0, 3).map((payment, index) => (
+                  {paymentHistory.slice(0, 3).map((payment) => (
                     <div key={payment.id} className="flex justify-between items-center text-xs">
                       <span className="text-neutral-600">
                         {new Date(payment.payment_date).toLocaleDateString()}
