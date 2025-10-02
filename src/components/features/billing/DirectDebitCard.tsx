@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import { Database } from '../../../types/supabase'
 
 type DirectDebit = Database['public']['Tables']['direct_debits']['Row']
 import { getProviderById } from '../../../lib/data/dd-providers'
-import { cancelDirectDebit, deleteDirectDebit } from '../../../lib/supabase/direct-debits'
+import { cancelDirectDebit, deleteDirectDebit, getPaymentHistory } from '../../../lib/supabase/direct-debits'
 import { useAuth } from '../../../context/AuthContext'
 
 interface DirectDebitCardProps {
@@ -34,6 +34,8 @@ interface DirectDebitCardProps {
 export default function DirectDebitCard({ directDebit, switches = [], onUpdate }: DirectDebitCardProps) {
   const [isCancelling, setIsCancelling] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [paymentHistory, setPaymentHistory] = useState<any[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(false)
   const { user } = useAuth()
   const provider = getProviderById(directDebit.provider)
 
@@ -72,6 +74,24 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
   const isSwitchPilotDD = directDebit.provider === 'switchpilot'
   const isExternalDD = provider?.isExternal === true
   const isExternalManualDD = directDebit.provider === 'external_manual'
+
+  // Fetch payment history for SwitchPilot DDs
+  useEffect(() => {
+    if (isSwitchPilotDD && directDebit.id) {
+      const fetchHistory = async () => {
+        try {
+          setLoadingHistory(true)
+          const history = await getPaymentHistory(directDebit.id)
+          setPaymentHistory(history)
+        } catch (error) {
+          console.error('Error fetching payment history:', error)
+        } finally {
+          setLoadingHistory(false)
+        }
+      }
+      fetchHistory()
+    }
+  }, [isSwitchPilotDD, directDebit.id])
   
   // Find linked switch
   const linkedSwitch = directDebit.switch_id 
@@ -237,6 +257,53 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
               <span className="text-sm font-bold text-success-600">
                 {formatCurrency(directDebit.total_collected)}
               </span>
+            </div>
+          )}
+
+          {/* Payment History for SwitchPilot DDs */}
+          {isSwitchPilotDD && (
+            <div className="p-3 bg-neutral-50 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <CreditCard className="w-4 h-4 text-neutral-600" />
+                <span className="text-sm font-medium text-neutral-700">Payment History</span>
+              </div>
+              {loadingHistory ? (
+                <div className="text-sm text-neutral-500">Loading payment history...</div>
+              ) : paymentHistory.length > 0 ? (
+                <div className="space-y-1">
+                  {paymentHistory.slice(0, 3).map((payment, index) => (
+                    <div key={payment.id} className="flex justify-between items-center text-xs">
+                      <span className="text-neutral-600">
+                        {new Date(payment.payment_date).toLocaleDateString()}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className={`font-medium ${
+                          payment.status === 'succeeded' ? 'text-success-600' : 'text-error-600'
+                        }`}>
+                          {formatCurrency(payment.amount)}
+                        </span>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${
+                            payment.status === 'succeeded' 
+                              ? 'bg-success-50 text-success-700 border-success-200' 
+                              : 'bg-error-50 text-error-700 border-error-200'
+                          }`}
+                        >
+                          {payment.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                  {paymentHistory.length > 3 && (
+                    <div className="text-xs text-neutral-500">
+                      +{paymentHistory.length - 3} more payments
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-sm text-neutral-500">No payment history yet</div>
+              )}
             </div>
           )}
         </div>

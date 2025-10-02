@@ -301,3 +301,27 @@ export const deleteDirectDebit = async (ddId: string): Promise<void> => {
     throw error
   }
 }
+
+// Get payment history for a direct debit
+export const getPaymentHistory = async (ddId: string) => {
+  const supabase = createClient()
+  
+  try {
+    const { data, error } = await supabase
+      .from('dd_payments')
+      .select('*')
+      .eq('direct_debit_id', ddId)
+      .order('payment_date', { ascending: false })
+      .limit(5) // Last 5 payments
+
+    if (error) {
+      console.error('Error fetching payment history:', error)
+      throw new Error(`Failed to fetch payment history: ${error.message}`)
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Error in getPaymentHistory:', error)
+    throw error
+  }
+}

@@ -19,6 +19,7 @@ export interface Database {
           full_name: string | null
           subscription_tier: 'free' | 'standard' | 'premium'
           total_earnings: number
+          stripe_customer_id: string | null
           created_at: string
           updated_at: string
         }
@@ -28,6 +29,7 @@ export interface Database {
           full_name?: string | null
           subscription_tier?: 'free' | 'standard' | 'premium'
           total_earnings?: number
+          stripe_customer_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -37,6 +39,7 @@ export interface Database {
           full_name?: string | null
           subscription_tier?: 'free' | 'standard' | 'premium'
           total_earnings?: number
+          stripe_customer_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -209,6 +212,8 @@ export interface Database {
           auto_cancel_after_switch: boolean
           total_collected: number
           stripe_payment_method_id: string | null
+          stripe_subscription_id: string | null
+          stripe_customer_id: string | null
           created_at: string
           updated_at: string
         }
@@ -227,6 +232,8 @@ export interface Database {
           auto_cancel_after_switch?: boolean
           total_collected?: number
           stripe_payment_method_id?: string | null
+          stripe_subscription_id?: string | null
+          stripe_customer_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -245,6 +252,8 @@ export interface Database {
           auto_cancel_after_switch?: boolean
           total_collected?: number
           stripe_payment_method_id?: string | null
+          stripe_subscription_id?: string | null
+          stripe_customer_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -261,6 +270,44 @@ export interface Database {
             columns: ["switch_id"]
             isOneToOne: false
             referencedRelation: "user_switches"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      dd_payments: {
+        Row: {
+          id: string
+          direct_debit_id: string
+          stripe_invoice_id: string | null
+          amount: number
+          status: string
+          payment_date: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          direct_debit_id: string
+          stripe_invoice_id?: string | null
+          amount: number
+          status: string
+          payment_date?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          direct_debit_id?: string
+          stripe_invoice_id?: string | null
+          amount?: number
+          status?: string
+          payment_date?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dd_payments_direct_debit_id_fkey"
+            columns: ["direct_debit_id"]
+            isOneToOne: false
+            referencedRelation: "direct_debits"
             referencedColumns: ["id"]
           }
         ]

@@ -35,3 +35,7 @@ export const createServerSupabaseClient = async () => {
     }
   )
 }
+
+export const createClient = async () => {
+  return await createServerSupabaseClient()
+}

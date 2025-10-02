@@ -23,6 +23,7 @@ import {
 import { useAuth } from '../../../context/AuthContext'
 import { createDirectDebit } from '../../../lib/supabase/direct-debits'
 import { DD_PROVIDERS, getProvidersByCategory, DDProvider } from '../../../lib/data/dd-providers'
+import PaymentMethodSetup from './PaymentMethodSetup'
 
 interface DDSetupWizardProps {
   open: boolean
@@ -32,7 +33,7 @@ interface DDSetupWizardProps {
   requiredDDCount?: number // Number of DDs required for this switch
 }
 
-type WizardStep = 'provider' | 'amount' | 'confirmation'
+type WizardStep = 'provider' | 'amount' | 'payment' | 'confirmation'
 
 interface SelectedProvider {
   id: string
@@ -56,6 +57,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [paymentMethodId, setPaymentMethodId] = useState<string | null>(null)
   
 
   const switchPilotProviders = getProvidersByCategory('switchpilot')
@@ -91,15 +93,28 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
     if (currentStep === 'provider' && selectedProvider) {
       setCurrentStep('amount')
     } else if (currentStep === 'amount') {
+      // Check if this is a SwitchPilot DD that requires payment
+      if (selectedProvider?.category === 'switchpilot') {
+        setCurrentStep('payment')
+      } else {
+        setCurrentStep('confirmation')
+      }
+    } else if (currentStep === 'payment') {
       setCurrentStep('confirmation')
     }
   }
 
   const handleBack = () => {
-    if (currentStep === 'amount') {
-      setCurrentStep('provider')
-    } else if (currentStep === 'confirmation') {
+    if (currentStep === 'confirmation') {
+      if (selectedProvider?.category === 'switchpilot') {
+        setCurrentStep('payment')
+      } else {
+        setCurrentStep('amount')
+      }
+    } else if (currentStep === 'payment') {
       setCurrentStep('amount')
+    } else if (currentStep === 'amount') {
+      setCurrentStep('provider')
     }
   }
 
@@ -121,10 +136,39 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         amount: amount,
         frequency: frequency,
         auto_cancel_after_switch: selectedProvider.category === 'switchpilot' ? true : false,
-        stripe_payment_method_id: selectedProvider.category === 'switchpilot' ? 'pending_setup' : undefined
+        stripe_payment_method_id: selectedProvider.category === 'switchpilot' ? paymentMethodId || undefined : undefined
       })
 
       console.log('Direct debit created successfully:', newDD)
+
+      // If this is a SwitchPilot DD, create the Stripe subscription
+      if (selectedProvider.category === 'switchpilot' && paymentMethodId) {
+        try {
+          const subscriptionResponse = await fetch('/api/stripe/create-subscription', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              payment_method_id: paymentMethodId,
+              amount: amount,
+              dd_id: newDD.id,
+            }),
+          })
+
+          if (!subscriptionResponse.ok) {
+            throw new Error('Failed to create subscription')
+          }
+
+          const subscriptionData = await subscriptionResponse.json()
+          console.log('Subscription created:', subscriptionData)
+        } catch (subscriptionError) {
+          console.error('Error creating subscription:', subscriptionError)
+          setError('Direct debit created but payment setup failed. Please contact support.')
+          return
+        }
+      }
+
       onSuccess()
       onOpenChange(false)
       resetWizard()
@@ -143,6 +187,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
     setFrequency('monthly')
     setTermsAccepted(false)
     setError(null)
+    setPaymentMethodId(null)
   }
 
   const canProceed = () => {
@@ -151,6 +196,8 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         return selectedProvider !== null
       case 'amount':
         return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
+      case 'payment':
+        return paymentMethodId !== null
       case 'confirmation':
         return termsAccepted
       default:
@@ -161,7 +208,8 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   const renderStepIndicator = () => {
     const steps = [
       { key: 'provider', label: 'Provider', completed: currentStep !== 'provider' },
-      { key: 'amount', label: 'Amount', completed: currentStep === 'confirmation' },
+      { key: 'amount', label: 'Amount', completed: currentStep === 'payment' || currentStep === 'confirmation' },
+      ...(selectedProvider?.category === 'switchpilot' ? [{ key: 'payment', label: 'Payment', completed: currentStep === 'confirmation' }] : []),
       { key: 'confirmation', label: 'Confirm', completed: false }
     ]
 
@@ -436,7 +484,38 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
           </div>
         )}
 
-        {/* Step 3: Confirmation */}
+        {/* Step 3: Payment Method Setup */}
+        {currentStep === 'payment' && selectedProvider && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Payment Method</h3>
+              <p className="text-neutral-600">Add a payment method for your SwitchPilot Direct Debit</p>
+            </div>
+
+            <PaymentMethodSetup
+              amount={amount}
+              frequency={frequency}
+              onSuccess={(paymentMethodId) => {
+                setPaymentMethodId(paymentMethodId)
+                setError(null)
+              }}
+              onError={(error) => {
+                setError(error)
+              }}
+            />
+
+            {error && (
+              <div className="p-3 bg-error-50 border border-error-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-error-600 mt-0.5" />
+                  <p className="text-sm text-error-700">{error}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 4: Confirmation */}
         {currentStep === 'confirmation' && selectedProvider && (
           <div className="space-y-6">
             <div className="text-center">
