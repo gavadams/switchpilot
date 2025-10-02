@@ -13,6 +13,7 @@ import {
   ArrowLeft, 
   ArrowRight, 
   Check, 
+  CheckCircle,
   AlertCircle,
   Info,
   CreditCard,
@@ -55,6 +56,10 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // Multiple DD state
+  const [createdDDs, setCreatedDDs] = useState<Array<{provider: SelectedProvider, amount: number, frequency: string}>>([])
+  const [showAddAnother, setShowAddAnother] = useState(false)
 
   const switchPilotProviders = getProvidersByCategory('switchpilot')
   const charityProviders = getProvidersByCategory('charity')
@@ -123,15 +128,44 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
       })
 
       console.log('Direct debit created successfully:', newDD)
-      onSuccess()
-      onOpenChange(false)
-      resetWizard()
+      
+      // Add to created DDs list
+      const newCreatedDD = {
+        provider: selectedProvider,
+        amount: amount,
+        frequency: frequency
+      }
+      setCreatedDDs(prev => [...prev, newCreatedDD])
+      
+      // Check if we need more DDs
+      const totalCreated = createdDDs.length + 1
+      const stillNeeded = (requiredDDCount || 1) - totalCreated
+      
+      if (stillNeeded > 0) {
+        // Show "Add Another" option
+        setShowAddAnother(true)
+        setCurrentStep('provider')
+        resetCurrentDD()
+      } else {
+        // All DDs created, finish
+        onSuccess()
+        onOpenChange(false)
+        resetWizard()
+      }
     } catch (err) {
       console.error('Error creating direct debit:', err)
       setError('Failed to setup direct debit. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const resetCurrentDD = () => {
+    setSelectedProvider(null)
+    setAmount(1)
+    setFrequency('monthly')
+    setTermsAccepted(false)
+    setError(null)
   }
 
   const resetWizard = () => {
@@ -141,6 +175,8 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
     setFrequency('monthly')
     setTermsAccepted(false)
     setError(null)
+    setCreatedDDs([])
+    setShowAddAnother(false)
   }
 
   const canProceed = () => {
@@ -438,9 +474,33 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         {currentStep === 'confirmation' && selectedProvider && (
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Confirm Setup</h3>
-              <p className="text-neutral-600">Review your direct debit details</p>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                {showAddAnother ? 'Add Another Direct Debit' : 'Confirm Setup'}
+              </h3>
+              <p className="text-neutral-600">
+                {showAddAnother ? 'Set up another direct debit for this switch' : 'Review your direct debit details'}
+              </p>
             </div>
+
+            {/* Show created DDs if any */}
+            {createdDDs.length > 0 && (
+              <div className="p-4 bg-success-50 border border-success-200 rounded-lg">
+                <h4 className="font-semibold text-success-800 mb-3 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Direct Debits Created ({createdDDs.length}/{requiredDDCount || 1})
+                </h4>
+                <div className="space-y-2">
+                  {createdDDs.map((dd, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="text-success-700">{dd.provider.name}</span>
+                      <span className="font-medium text-success-800">
+                        {formatCurrency(dd.amount)} {dd.frequency}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <Card className="border-primary-200">
               <CardContent className="p-6">
@@ -535,13 +595,29 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
           </Button>
 
           {currentStep === 'confirmation' ? (
-            <Button
-              onClick={handleSubmit}
-              disabled={!canProceed() || isSubmitting}
-              className="bg-primary-500 hover:bg-primary-600 text-white"
-            >
-              {isSubmitting ? 'Setting up...' : 'Setup Direct Debit'}
-            </Button>
+            <div className="flex gap-2">
+              {showAddAnother && (
+                <Button
+                  onClick={() => {
+                    onSuccess()
+                    onOpenChange(false)
+                    resetWizard()
+                  }}
+                  variant="outline"
+                  className="bg-success-500 hover:bg-success-600 text-white border-success-500"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Finish Setup ({createdDDs.length} DDs)
+                </Button>
+              )}
+              <Button
+                onClick={handleSubmit}
+                disabled={!canProceed() || isSubmitting}
+                className="bg-primary-500 hover:bg-primary-600 text-white"
+              >
+                {isSubmitting ? 'Setting up...' : showAddAnother ? 'Add This DD' : 'Setup Direct Debit'}
+              </Button>
+            </div>
           ) : (
             <Button
               onClick={handleNext}
