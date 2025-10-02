@@ -41,14 +41,20 @@ export async function GET() {
 
     const paymentMethod = defaultPaymentMethod as Stripe.PaymentMethod
 
+    if (!paymentMethod.card) {
+      return NextResponse.json({ error: 'Card details not found' }, { status: 404 })
+    }
+
+    const card = paymentMethod.card
+
     return NextResponse.json({
       payment_method: {
         id: paymentMethod.id,
         card: {
-          brand: paymentMethod.card.brand,
-          last4: paymentMethod.card.last4,
-          exp_month: paymentMethod.card.exp_month,
-          exp_year: paymentMethod.card.exp_year,
+          brand: card.brand,
+          last4: card.last4,
+          exp_month: card.exp_month,
+          exp_year: card.exp_year,
         },
       },
     })
