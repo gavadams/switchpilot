@@ -113,6 +113,19 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
                 </div>
               </div>
 
+              {/* Direct Debit Requirements */}
+              {deal.required_direct_debits && (deal.required_direct_debits as number) > 0 && (
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg">
+                  <span className="text-sm font-medium text-accent-700 break-words">Direct Debits Required</span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <CreditCard className="w-4 h-4 text-accent-600" />
+                    <span className="text-sm font-bold text-accent-700 whitespace-nowrap">
+                      {(deal.required_direct_debits as number)} DD{(deal.required_direct_debits as number) > 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {requirements && typeof requirements === 'object' && 'maintain_balance' in requirements && Boolean(requirements.maintain_balance) && (
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-warning-50 to-warning-100 rounded-lg">
                   <span className="text-sm font-medium text-warning-700 break-words">Maintain Balance</span>

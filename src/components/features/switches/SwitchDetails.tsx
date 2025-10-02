@@ -30,6 +30,7 @@ type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
     reward_amount: number
     expiry_date: string | null
     time_to_payout: string | null
+    required_direct_debits: number
   } | null
 }
 

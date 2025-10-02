@@ -22,7 +22,15 @@ import {
 import DDSetupWizard from '../billing/DDSetupWizard'
 
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
-type UserSwitch = Database['public']['Tables']['user_switches']['Row']
+type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
+  bank_deals: {
+    bank_name: string
+    reward_amount: number
+    expiry_date: string | null
+    time_to_payout: string | null
+    required_direct_debits: number
+  } | null
+}
 
 interface SwitchWorkflowProps {
   userSwitch: UserSwitch
@@ -218,6 +226,24 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
               </span>
             </div>
           </div>
+
+          {/* Direct Debit Requirements */}
+          {userSwitch.bank_deals?.required_direct_debits && userSwitch.bank_deals.required_direct_debits > 0 && (
+            <div className="mb-4 p-4 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200">
+              <div className="flex items-center gap-2 mb-2">
+                <CreditCard className="w-5 h-5 text-accent-600" />
+                <span className="font-semibold text-accent-800">Direct Debit Requirements</span>
+              </div>
+              <p className="text-sm text-accent-700">
+                This switch requires <strong>{userSwitch.bank_deals.required_direct_debits} direct debit{userSwitch.bank_deals.required_direct_debits > 1 ? 's' : ''}</strong> to be set up.
+                {userSwitch.bank_deals.required_direct_debits > 1 && (
+                  <span className="block mt-1 text-xs text-accent-600">
+                    You can set up multiple DDs using the "Setup Direct Debits" button below.
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center justify-between p-3 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
@@ -418,6 +444,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
         onOpenChange={setDdWizardOpen}
         onSuccess={handleDDSetupSuccess}
         switchId={userSwitch.id}
+        requiredDDCount={userSwitch.bank_deals?.required_direct_debits}
       />
     </div>
   )

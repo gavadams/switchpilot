@@ -28,6 +28,7 @@ interface DDSetupWizardProps {
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
   switchId?: string // Optional switch ID for linking DDs to specific switches
+  requiredDDCount?: number // Number of DDs required for this switch
 }
 
 type WizardStep = 'provider' | 'amount' | 'confirmation'
@@ -45,7 +46,7 @@ interface SelectedProvider {
   isExternal?: boolean
 }
 
-export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId }: DDSetupWizardProps) {
+export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId, requiredDDCount }: DDSetupWizardProps) {
   const { user } = useAuth()
   const [currentStep, setCurrentStep] = useState<WizardStep>('provider')
   const [selectedProvider, setSelectedProvider] = useState<SelectedProvider | null>(null)
@@ -211,6 +212,24 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId 
               <h3 className="text-lg font-semibold text-neutral-800 mb-2">Choose a Provider</h3>
               <p className="text-neutral-600">Select a direct debit provider to get started</p>
             </div>
+
+            {/* DD Requirements Display */}
+            {requiredDDCount && requiredDDCount > 0 && (
+              <div className="p-4 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg border border-primary-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <CreditCard className="w-5 h-5 text-primary-600" />
+                  <span className="font-semibold text-primary-800">Switch Requirements</span>
+                </div>
+                <p className="text-sm text-primary-700">
+                  This bank switch requires <strong>{requiredDDCount} direct debit{requiredDDCount > 1 ? 's' : ''}</strong> to be set up.
+                  {requiredDDCount > 1 && (
+                    <span className="block mt-1 text-xs text-primary-600">
+                      You can set up multiple DDs in separate sessions or create them all at once.
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
 
             {/* SwitchPilot Providers - PRIMARY OPTION */}
             <div>
