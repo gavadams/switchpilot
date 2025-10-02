@@ -28,6 +28,8 @@ export default function LoginPage() {
         }
       }
       
+      console.log('Login redirect:', { redirectedFrom, redirectUrl, user: user.id })
+      
       // Use replace to avoid back button issues and clean up URL
       router.replace(redirectUrl)
     }

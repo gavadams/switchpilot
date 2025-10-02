@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { useAuth } from '../../context/AuthContext'
 import MainLayout from './MainLayout'
 import DashboardLayout from './DashboardLayout'
 
@@ -16,6 +17,7 @@ const mainLayoutRoutes = ['/login', '/register', '/']
 
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname()
+  const { user, loading } = useAuth()
 
   // Check if current route should use dashboard layout
   const shouldUseDashboardLayout = dashboardRoutes.some(route => 
@@ -27,8 +29,20 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
     pathname === route
   )
 
-  // Use dashboard layout for protected routes
-  if (shouldUseDashboardLayout) {
+  // Show loading state for protected routes while auth is loading
+  if (shouldUseDashboardLayout && loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Use dashboard layout for protected routes (only if user is authenticated)
+  if (shouldUseDashboardLayout && user) {
     // Determine title and breadcrumbs based on current route
     let title = 'Dashboard'
     let breadcrumbs: Array<{ label: string; href?: string }> = []
