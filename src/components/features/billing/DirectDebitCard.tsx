@@ -22,10 +22,11 @@ import { useAuth } from '../../../context/AuthContext'
 
 interface DirectDebitCardProps {
   directDebit: DirectDebit
+  switches?: any[]
   onUpdate: () => void
 }
 
-export default function DirectDebitCard({ directDebit, onUpdate }: DirectDebitCardProps) {
+export default function DirectDebitCard({ directDebit, switches = [], onUpdate }: DirectDebitCardProps) {
   const [isCancelling, setIsCancelling] = useState(false)
   const { user } = useAuth()
   const provider = getProviderById(directDebit.provider)
@@ -64,6 +65,11 @@ export default function DirectDebitCard({ directDebit, onUpdate }: DirectDebitCa
 
   const isSwitchPilotDD = directDebit.provider === 'switchpilot'
   const isExternalDD = provider?.isExternal === true
+  
+  // Find linked switch
+  const linkedSwitch = directDebit.switch_id 
+    ? switches.find(switch_ => switch_.id === directDebit.switch_id)
+    : null
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-GB', {
@@ -128,6 +134,11 @@ export default function DirectDebitCard({ directDebit, onUpdate }: DirectDebitCa
             <CardDescription className="text-neutral-600 break-words">
               {provider?.description || 'Direct debit provider'}
             </CardDescription>
+            {linkedSwitch && (
+              <div className="mt-2 text-xs text-primary-600 bg-primary-50 px-2 py-1 rounded border border-primary-200">
+                <span className="font-medium">Linked to:</span> {linkedSwitch.bank_deals?.bank_name || 'Bank Switch'}
+              </div>
+            )}
           </div>
           <Badge 
             variant="outline"

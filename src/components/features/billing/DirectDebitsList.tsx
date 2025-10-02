@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { getUserDirectDebits, getDirectDebitStats } from '../../../lib/supabase/direct-debits'
+import { getUserSwitches } from '../../../lib/supabase/switches'
 import { Database } from '../../../types/supabase'
 
 type DirectDebit = Database['public']['Tables']['direct_debits']['Row']
@@ -33,6 +34,7 @@ type SortBy = 'amount' | 'setup_date' | 'next_collection' | 'provider'
 export default function DirectDebitsList({ onSetupNew, className }: DirectDebitsListProps) {
   const { user } = useAuth()
   const [directDebits, setDirectDebits] = useState<DirectDebit[]>([])
+  const [switches, setSwitches] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
@@ -53,13 +55,15 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
       setLoading(true)
       setError(null)
       
-      const [ddData, statsData] = await Promise.all([
+      const [ddData, statsData, switchesData] = await Promise.all([
         getUserDirectDebits(user.id),
-        getDirectDebitStats(user.id)
+        getDirectDebitStats(user.id),
+        getUserSwitches(user.id)
       ])
       
       setDirectDebits(ddData)
       setStats(statsData)
+      setSwitches(switchesData)
     } catch (err) {
       console.error('Error fetching direct debits:', err)
       setError('Failed to load direct debits')
@@ -281,6 +285,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
             <DirectDebitCard
               key={directDebit.id}
               directDebit={directDebit}
+              switches={switches}
               onUpdate={fetchDirectDebits}
             />
           ))}

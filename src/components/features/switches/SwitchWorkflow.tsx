@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Textarea } from '@/components/ui/textarea'
 import { Database } from '../../../types/supabase'
 import { updateSwitchStep, calculateSwitchProgress, calculateEstimatedCompletion } from '../../../lib/supabase/switches'
+import { getUserDirectDebits } from '../../../lib/supabase/direct-debits'
 import { formatDistanceToNow, format } from 'date-fns'
 import { 
   CheckCircle, 
@@ -45,6 +46,8 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const [autoSaveTimeouts, setAutoSaveTimeouts] = useState<Record<string, NodeJS.Timeout>>({})
   const [autoSaving, setAutoSaving] = useState<Set<string>>(new Set())
   const [ddWizardOpen, setDdWizardOpen] = useState(false)
+  const [switchDDs, setSwitchDDs] = useState<any[]>([])
+  const [loadingDDs, setLoadingDDs] = useState(false)
 
   // Initialize step notes from existing step data
   useEffect(() => {
@@ -154,6 +157,22 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
     }
   }
 
+  const fetchSwitchDDs = async () => {
+    if (!userSwitch.id) return
+    
+    setLoadingDDs(true)
+    try {
+      const dds = await getUserDirectDebits(userSwitch.user_id)
+      // Filter DDs for this specific switch
+      const switchDDs = dds.filter(dd => dd.switch_id === userSwitch.id)
+      setSwitchDDs(switchDDs)
+    } catch (error) {
+      console.error('Error fetching switch DDs:', error)
+    } finally {
+      setLoadingDDs(false)
+    }
+  }
+
   const handleDDSetupSuccess = () => {
     // Find the "Set Up Direct Debits" step and mark it as completed
     const ddStep = steps.find(step => step.step_name === 'Set Up Direct Debits')
@@ -161,7 +180,14 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
       handleStepToggle(ddStep.id, true)
     }
     setDdWizardOpen(false)
+    // Refresh DDs
+    fetchSwitchDDs()
   }
+
+  // Fetch DDs when component mounts
+  useEffect(() => {
+    fetchSwitchDDs()
+  }, [userSwitch.id])
 
   const handleSaveNotes = async (stepId: string) => {
     setSavingNotes(prev => new Set(prev).add(stepId))
@@ -227,21 +253,64 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
             </div>
           </div>
 
-          {/* Direct Debit Requirements */}
+          {/* Direct Debit Requirements with Traffic Lights */}
           {userSwitch.bank_deals?.required_direct_debits && userSwitch.bank_deals.required_direct_debits > 0 && (
             <div className="mb-4 p-4 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <CreditCard className="w-5 h-5 text-accent-600" />
                 <span className="font-semibold text-accent-800">Direct Debit Requirements</span>
+                <span className="text-sm text-accent-600">
+                  ({switchDDs.length}/{userSwitch.bank_deals.required_direct_debits} completed)
+                </span>
               </div>
-              <p className="text-sm text-accent-700">
-                This switch requires <strong>{userSwitch.bank_deals.required_direct_debits} direct debit{userSwitch.bank_deals.required_direct_debits > 1 ? 's' : ''}</strong> to be set up.
-                {userSwitch.bank_deals.required_direct_debits > 1 && (
-                  <span className="block mt-1 text-xs text-accent-600">
-                    You can set up multiple DDs using the &quot;Setup Direct Debits&quot; button below.
-                  </span>
-                )}
-              </p>
+              
+              {/* Traffic Light Indicators */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {Array.from({ length: userSwitch.bank_deals.required_direct_debits }, (_, index) => {
+                  const ddForSlot = switchDDs[index]
+                  const isCompleted = !!ddForSlot
+                  const isActive = ddForSlot?.status === 'active'
+                  
+                  return (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-neutral-200">
+                      {/* Traffic Light */}
+                      <div className="flex items-center gap-1">
+                        <div className={`w-3 h-3 rounded-full ${
+                          isCompleted && isActive ? 'bg-green-500' : 
+                          isCompleted ? 'bg-yellow-500' : 'bg-red-500'
+                        }`} />
+                        <span className="text-xs font-medium text-neutral-600">
+                          DD {index + 1}
+                        </span>
+                      </div>
+                      
+                      {/* DD Info */}
+                      <div className="flex-1 min-w-0">
+                        {isCompleted ? (
+                          <div className="text-sm">
+                            <div className="font-medium text-neutral-800 truncate">
+                              {ddForSlot.provider === 'switchpilot' ? 'SwitchPilot DD' : ddForSlot.charity_name || ddForSlot.provider}
+                            </div>
+                            <div className="text-xs text-neutral-600">
+                              £{ddForSlot.amount} {ddForSlot.frequency}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-sm text-neutral-500">
+                            Not set up
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              
+              {switchDDs.length < userSwitch.bank_deals.required_direct_debits && (
+                <div className="mt-3 text-xs text-accent-600">
+                  {userSwitch.bank_deals.required_direct_debits - switchDDs.length} more DD{userSwitch.bank_deals.required_direct_debits - switchDDs.length > 1 ? 's' : ''} needed
+                </div>
+              )}
             </div>
           )}
 
