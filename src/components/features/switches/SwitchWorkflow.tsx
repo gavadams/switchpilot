@@ -18,9 +18,11 @@ import {
   FileText,
   Save,
   Loader2,
-  CreditCard
+  CreditCard,
+  Plus
 } from 'lucide-react'
 import DDSetupWizard from '../billing/DDSetupWizard'
+import ExternalDDDialog from '../billing/ExternalDDDialog'
 
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
@@ -46,6 +48,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const [autoSaveTimeouts, setAutoSaveTimeouts] = useState<Record<string, NodeJS.Timeout>>({})
   const [autoSaving, setAutoSaving] = useState<Set<string>>(new Set())
   const [ddWizardOpen, setDdWizardOpen] = useState(false)
+  const [externalDDDialogOpen, setExternalDDDialogOpen] = useState(false)
   const [switchDDs, setSwitchDDs] = useState<Array<{
     id: string
     provider: string
@@ -408,24 +411,35 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                         {/* Complete Button */}
                         <div className="flex-shrink-0 ml-4">
                           {step.step_name === 'Set Up Direct Debits' ? (
-                            // Always show DD button if not all DDs are satisfied
+                            // Always show DD buttons if not all DDs are satisfied
                             (() => {
                               const requiredDDs = userSwitch.bank_deals?.required_direct_debits || 0
                               const currentDDs = switchDDs.length
                               const allDDsSatisfied = currentDDs >= requiredDDs
                               
                               return (
-                                <Button
-                                  onClick={() => setDdWizardOpen(true)}
-                                  size="sm"
-                                  className={allDDsSatisfied 
-                                    ? "bg-success-500 hover:bg-success-600 text-white" 
-                                    : "bg-primary-500 hover:bg-primary-600 text-white"
-                                  }
-                                >
-                                  <CreditCard className="w-4 h-4 mr-2" />
-                                  {allDDsSatisfied ? 'Add More DDs' : 'Setup Direct Debits'}
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button
+                                    onClick={() => setDdWizardOpen(true)}
+                                    size="sm"
+                                    className={allDDsSatisfied 
+                                      ? "bg-success-500 hover:bg-success-600 text-white" 
+                                      : "bg-primary-500 hover:bg-primary-600 text-white"
+                                    }
+                                  >
+                                    <CreditCard className="w-4 h-4 mr-2" />
+                                    {allDDsSatisfied ? 'Add More DDs' : 'Setup Direct Debits'}
+                                  </Button>
+                                  <Button
+                                    onClick={() => setExternalDDDialogOpen(true)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="border-neutral-300 text-neutral-600 hover:bg-neutral-50"
+                                  >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Add External DD
+                                  </Button>
+                                </div>
                               )
                             })()
                           ) : !step.completed ? (
@@ -531,6 +545,15 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
         onSuccess={handleDDSetupSuccess}
         switchId={userSwitch.id}
         requiredDDCount={userSwitch.bank_deals?.required_direct_debits}
+      />
+
+      {/* External DD Dialog */}
+      <ExternalDDDialog 
+        open={externalDDDialogOpen}
+        onOpenChange={setExternalDDDialogOpen}
+        onSuccess={handleDDSetupSuccess}
+        switchId={userSwitch.id}
+        userId={userSwitch.user_id}
       />
     </div>
   )

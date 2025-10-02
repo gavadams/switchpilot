@@ -281,3 +281,23 @@ export const getSwitchPilotRevenue = async (userId: string) => {
     throw error
   }
 }
+
+// Delete a direct debit
+export const deleteDirectDebit = async (ddId: string): Promise<void> => {
+  const supabase = createClient()
+  
+  try {
+    const { error } = await supabase
+      .from('direct_debits')
+      .delete()
+      .eq('id', ddId)
+
+    if (error) {
+      console.error('Error deleting direct debit:', error)
+      throw new Error(`Failed to delete direct debit: ${error.message}`)
+    }
+  } catch (error) {
+    console.error('Error in deleteDirectDebit:', error)
+    throw error
+  }
+}

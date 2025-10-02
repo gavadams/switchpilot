@@ -17,7 +17,7 @@ import { Database } from '../../../types/supabase'
 
 type DirectDebit = Database['public']['Tables']['direct_debits']['Row']
 import { getProviderById } from '../../../lib/data/dd-providers'
-import { cancelDirectDebit } from '../../../lib/supabase/direct-debits'
+import { cancelDirectDebit, deleteDirectDebit } from '../../../lib/supabase/direct-debits'
 import { useAuth } from '../../../context/AuthContext'
 
 interface DirectDebitCardProps {
@@ -33,6 +33,7 @@ interface DirectDebitCardProps {
 
 export default function DirectDebitCard({ directDebit, switches = [], onUpdate }: DirectDebitCardProps) {
   const [isCancelling, setIsCancelling] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const { user } = useAuth()
   const provider = getProviderById(directDebit.provider)
 
@@ -70,6 +71,7 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
 
   const isSwitchPilotDD = directDebit.provider === 'switchpilot'
   const isExternalDD = provider?.isExternal === true
+  const isExternalManualDD = directDebit.provider === 'external_manual'
   
   // Find linked switch
   const linkedSwitch = directDebit.switch_id 
@@ -114,6 +116,27 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
     }
   }
 
+  const handleDelete = async () => {
+    if (!user?.id) return
+    
+    const confirmed = window.confirm(
+      `Are you sure you want to remove this external direct debit from tracking? This action cannot be undone.`
+    )
+    
+    if (!confirmed) return
+
+    try {
+      setIsDeleting(true)
+      await deleteDirectDebit(directDebit.id)
+      onUpdate()
+    } catch (error) {
+      console.error('Error deleting direct debit:', error)
+      alert('Failed to delete direct debit. Please try again.')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   const isCancellable = directDebit.status === 'active' || directDebit.status === 'pending'
 
   return (
@@ -130,14 +153,22 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
                   SwitchPilot
                 </Badge>
               )}
-              {isExternalDD && (
+              {isExternalManualDD && (
+                <Badge variant="outline" className="bg-neutral-100 text-neutral-600 border-neutral-200 text-xs">
+                  External
+                </Badge>
+              )}
+              {isExternalDD && !isExternalManualDD && (
                 <Badge variant="outline" className="bg-neutral-100 text-neutral-600 border-neutral-200 text-xs">
                   External
                 </Badge>
               )}
             </div>
             <CardDescription className="text-neutral-600 break-words">
-              {provider?.description || 'Direct debit provider'}
+              {isExternalManualDD 
+                ? `External direct debit: ${directDebit.charity_name || 'Unknown provider'}`
+                : provider?.description || 'Direct debit provider'
+              }
             </CardDescription>
             {linkedSwitch && (
               <div className="mt-2 text-xs text-primary-600 bg-primary-50 px-2 py-1 rounded border border-primary-200">
@@ -226,7 +257,7 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
           )}
 
           {/* Cancel Button */}
-          {isCancellable && (
+          {isCancellable && !isExternalManualDD && (
             <Button
               variant="destructive"
               size="sm"
@@ -235,6 +266,19 @@ export default function DirectDebitCard({ directDebit, switches = [], onUpdate }
               disabled={isCancelling}
             >
               {isCancelling ? 'Cancelling...' : 'Cancel Direct Debit'}
+            </Button>
+          )}
+
+          {/* Delete Button for External Manual DDs */}
+          {isExternalManualDD && (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="w-full"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Removing...' : 'Remove from Tracking'}
             </Button>
           )}
         </div>
