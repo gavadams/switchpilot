@@ -57,7 +57,14 @@ export async function middleware(req: NextRequest) {
 
   // Redirect authenticated users from auth routes to dashboard
   if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+    // Check if there's a redirect URL to avoid loops
+    const redirectedFrom = req.nextUrl.searchParams.get('redirectedFrom')
+    const redirectUrl = redirectedFrom || '/dashboard'
+    
+    // Only redirect if we're not already going to the same place
+    if (req.nextUrl.pathname !== redirectUrl) {
+      return NextResponse.redirect(new URL(redirectUrl, req.url))
+    }
   }
 
   return res

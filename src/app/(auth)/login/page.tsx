@@ -1,20 +1,37 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import LoginForm from '../../../components/features/auth/LoginForm'
 
 export default function LoginPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (!loading && user) {
-      // Use replace to avoid back button issues
-      router.replace('/dashboard')
+      // Check if there's a redirect URL from middleware
+      const redirectedFrom = searchParams.get('redirectedFrom')
+      
+      // Validate redirect URL to prevent malicious redirects
+      let redirectUrl = '/dashboard'
+      if (redirectedFrom) {
+        // Only allow internal redirects (starting with /)
+        if (redirectedFrom.startsWith('/') && !redirectedFrom.startsWith('//')) {
+          // Allow only specific protected routes
+          const allowedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
+          if (allowedRoutes.some(route => redirectedFrom.startsWith(route))) {
+            redirectUrl = redirectedFrom
+          }
+        }
+      }
+      
+      // Use replace to avoid back button issues and clean up URL
+      router.replace(redirectUrl)
     }
-  }, [user, loading, router])
+  }, [user, loading, router, searchParams])
 
   if (loading) {
     return (
@@ -42,7 +59,24 @@ export default function LoginPage() {
             Access your bank switching dashboard
           </p>
         </div>
-        <LoginForm onSuccess={() => router.replace('/dashboard')} />
+        <LoginForm onSuccess={() => {
+          const redirectedFrom = searchParams.get('redirectedFrom')
+          
+          // Validate redirect URL to prevent malicious redirects
+          let redirectUrl = '/dashboard'
+          if (redirectedFrom) {
+            // Only allow internal redirects (starting with /)
+            if (redirectedFrom.startsWith('/') && !redirectedFrom.startsWith('//')) {
+              // Allow only specific protected routes
+              const allowedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
+              if (allowedRoutes.some(route => redirectedFrom.startsWith(route))) {
+                redirectUrl = redirectedFrom
+              }
+            }
+          }
+          
+          router.replace(redirectUrl)
+        }} />
       </div>
     </div>
   )
