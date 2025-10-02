@@ -16,8 +16,10 @@ import {
   Calendar,
   FileText,
   Save,
-  Loader2
+  Loader2,
+  CreditCard
 } from 'lucide-react'
+import DDSetupWizard from '../billing/DDSetupWizard'
 
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 type UserSwitch = Database['public']['Tables']['user_switches']['Row']
@@ -34,6 +36,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set())
   const [autoSaveTimeouts, setAutoSaveTimeouts] = useState<Record<string, NodeJS.Timeout>>({})
   const [autoSaving, setAutoSaving] = useState<Set<string>>(new Set())
+  const [ddWizardOpen, setDdWizardOpen] = useState(false)
 
   // Initialize step notes from existing step data
   useEffect(() => {
@@ -141,6 +144,15 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
         return newSet
       })
     }
+  }
+
+  const handleDDSetupSuccess = () => {
+    // Find the "Set Up Direct Debits" step and mark it as completed
+    const ddStep = steps.find(step => step.step_name === 'Set Up Direct Debits')
+    if (ddStep) {
+      handleStepToggle(ddStep.id, true)
+    }
+    setDdWizardOpen(false)
   }
 
   const handleSaveNotes = async (stepId: string) => {
@@ -294,21 +306,32 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                         {/* Complete Button */}
                         <div className="flex-shrink-0 ml-4">
                           {!step.completed ? (
-                            <Button
-                              onClick={() => handleStepToggle(step.id, true)}
-                              disabled={isUpdating}
-                              size="sm"
-                              className="bg-success-500 hover:bg-success-600 text-white"
-                            >
-                              {isUpdating ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <CheckCircle className="w-4 h-4 mr-2" />
-                                  Mark Complete
-                                </>
-                              )}
-                            </Button>
+                            step.step_name === 'Set Up Direct Debits' ? (
+                              <Button
+                                onClick={() => setDdWizardOpen(true)}
+                                size="sm"
+                                className="bg-primary-500 hover:bg-primary-600 text-white"
+                              >
+                                <CreditCard className="w-4 h-4 mr-2" />
+                                Setup Direct Debits
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => handleStepToggle(step.id, true)}
+                                disabled={isUpdating}
+                                size="sm"
+                                className="bg-success-500 hover:bg-success-600 text-white"
+                              >
+                                {isUpdating ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <>
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Mark Complete
+                                  </>
+                                )}
+                              </Button>
+                            )
                           ) : (
                             <Button
                               onClick={() => handleStepToggle(step.id, false)}
@@ -388,6 +411,14 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
           </div>
         </CardContent>
       </Card>
+
+      {/* Direct Debit Setup Wizard */}
+      <DDSetupWizard 
+        open={ddWizardOpen}
+        onOpenChange={setDdWizardOpen}
+        onSuccess={handleDDSetupSuccess}
+        switchId={userSwitch.id}
+      />
     </div>
   )
 }
