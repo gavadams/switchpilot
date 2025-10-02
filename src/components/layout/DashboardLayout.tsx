@@ -73,7 +73,7 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r transform transition-transform duration-200 ease-in-out md:translate-x-0 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      }`} style={{ backgroundColor: 'white', opacity: 1 }}>
         <div className="flex h-full flex-col">
           {/* Sidebar header */}
           <div className="flex h-16 items-center justify-between px-6 border-b">

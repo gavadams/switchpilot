@@ -192,7 +192,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border shadow-lg backdrop-blur-none" style={{ backgroundColor: 'white', opacity: 1 }}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border shadow-lg backdrop-blur-none w-[95vw] max-w-[95vw] sm:max-w-4xl" style={{ backgroundColor: 'white', opacity: 1 }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <CreditCard className="w-6 h-6 text-primary-600" />
@@ -249,12 +249,12 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                     onClick={() => handleProviderSelect(provider)}
                   >
                     <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-lg">{provider.name}</CardTitle>
-                          <CardDescription className="text-sm">{provider.description}</CardDescription>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <CardTitle className="text-lg break-words">{provider.name}</CardTitle>
+                          <CardDescription className="text-sm break-words">{provider.description}</CardDescription>
                         </div>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs shrink-0">
                           {provider.setupTime}
                         </Badge>
                       </div>
@@ -304,12 +304,12 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                     onClick={() => handleProviderSelect(provider)}
                   >
                     <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-lg">{provider.name}</CardTitle>
-                          <CardDescription className="text-sm">{provider.description}</CardDescription>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <CardTitle className="text-lg break-words">{provider.name}</CardTitle>
+                          <CardDescription className="text-sm break-words">{provider.description}</CardDescription>
                         </div>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs shrink-0">
                           {provider.setupTime}
                         </Badge>
                       </div>
@@ -391,7 +391,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                     <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
                       <SelectItem value="monthly">Monthly</SelectItem>
                       <SelectItem value="one-time">One-time</SelectItem>
                     </SelectContent>
