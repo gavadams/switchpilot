@@ -28,7 +28,12 @@ export default function RegisterPage() {
         }
       }
       
-      router.replace(redirectUrl)
+      console.log('Register redirect:', { redirectedFrom, redirectUrl, user: user.id })
+      
+      // Add a small delay to ensure the auth state is fully settled
+      setTimeout(() => {
+        router.replace(redirectUrl)
+      }, 100)
     }
   }, [user, loading, router, searchParams])
 

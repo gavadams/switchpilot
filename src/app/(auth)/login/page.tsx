@@ -31,7 +31,10 @@ export default function LoginPage() {
       console.log('Login redirect:', { redirectedFrom, redirectUrl, user: user.id })
       
       // Use replace to avoid back button issues and clean up URL
-      router.replace(redirectUrl)
+      // Add a small delay to ensure the auth state is fully settled
+      setTimeout(() => {
+        router.replace(redirectUrl)
+      }, 100)
     }
   }, [user, loading, router, searchParams])
 
@@ -47,7 +50,15 @@ export default function LoginPage() {
   }
 
   if (user) {
-    return null // Will redirect
+    // Show a brief loading state while redirecting
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Redirecting...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -77,7 +88,12 @@ export default function LoginPage() {
             }
           }
           
-          router.replace(redirectUrl)
+          console.log('LoginForm onSuccess redirect:', { redirectedFrom, redirectUrl })
+          
+          // Add a small delay to ensure the auth state is fully settled
+          setTimeout(() => {
+            router.replace(redirectUrl)
+          }, 100)
         }} />
       </div>
     </div>
