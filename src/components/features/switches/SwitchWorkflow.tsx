@@ -177,14 +177,18 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
   }
 
   const handleDDSetupSuccess = () => {
-    // Find the "Set Up Direct Debits" step and mark it as completed
-    const ddStep = steps.find(step => step.step_name === 'Set Up Direct Debits')
-    if (ddStep) {
-      handleStepToggle(ddStep.id, true)
-    }
     setDdWizardOpen(false)
     // Refresh DDs
     fetchSwitchDDs()
+    
+    // Only mark step as complete if all required DDs are satisfied
+    const requiredDDs = userSwitch.bank_deals?.required_direct_debits || 0
+    if (switchDDs.length + 1 >= requiredDDs) {
+      const ddStep = steps.find(step => step.step_name === 'Set Up Direct Debits')
+      if (ddStep) {
+        handleStepToggle(ddStep.id, true)
+      }
+    }
   }
 
   // Fetch DDs when component mounts
@@ -403,33 +407,43 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
 
                         {/* Complete Button */}
                         <div className="flex-shrink-0 ml-4">
-                          {!step.completed ? (
-                            step.step_name === 'Set Up Direct Debits' ? (
-                              <Button
-                                onClick={() => setDdWizardOpen(true)}
-                                size="sm"
-                                className="bg-primary-500 hover:bg-primary-600 text-white"
-                              >
-                                <CreditCard className="w-4 h-4 mr-2" />
-                                Setup Direct Debits
-                              </Button>
-                            ) : (
-                              <Button
-                                onClick={() => handleStepToggle(step.id, true)}
-                                disabled={isUpdating}
-                                size="sm"
-                                className="bg-success-500 hover:bg-success-600 text-white"
-                              >
-                                {isUpdating ? (
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                    Mark Complete
-                                  </>
-                                )}
-                              </Button>
-                            )
+                          {step.step_name === 'Set Up Direct Debits' ? (
+                            // Always show DD button if not all DDs are satisfied
+                            (() => {
+                              const requiredDDs = userSwitch.bank_deals?.required_direct_debits || 0
+                              const currentDDs = switchDDs.length
+                              const allDDsSatisfied = currentDDs >= requiredDDs
+                              
+                              return (
+                                <Button
+                                  onClick={() => setDdWizardOpen(true)}
+                                  size="sm"
+                                  className={allDDsSatisfied 
+                                    ? "bg-success-500 hover:bg-success-600 text-white" 
+                                    : "bg-primary-500 hover:bg-primary-600 text-white"
+                                  }
+                                >
+                                  <CreditCard className="w-4 h-4 mr-2" />
+                                  {allDDsSatisfied ? 'Add More DDs' : 'Setup Direct Debits'}
+                                </Button>
+                              )
+                            })()
+                          ) : !step.completed ? (
+                            <Button
+                              onClick={() => handleStepToggle(step.id, true)}
+                              disabled={isUpdating}
+                              size="sm"
+                              className="bg-success-500 hover:bg-success-600 text-white"
+                            >
+                              {isUpdating ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark Complete
+                                </>
+                              )}
+                            </Button>
                           ) : (
                             <Button
                               onClick={() => handleStepToggle(step.id, false)}
