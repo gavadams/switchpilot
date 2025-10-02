@@ -238,7 +238,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                 This switch requires <strong>{userSwitch.bank_deals.required_direct_debits} direct debit{userSwitch.bank_deals.required_direct_debits > 1 ? 's' : ''}</strong> to be set up.
                 {userSwitch.bank_deals.required_direct_debits > 1 && (
                   <span className="block mt-1 text-xs text-accent-600">
-                    You can set up multiple DDs using the "Setup Direct Debits" button below.
+                    You can set up multiple DDs using the &quot;Setup Direct Debits&quot; button below.
                   </span>
                 )}
               </p>
