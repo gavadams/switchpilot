@@ -89,16 +89,21 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   }
 
   const handleNext = () => {
+    console.log('handleNext called', { currentStep, selectedProvider: selectedProvider?.category })
+    
     if (currentStep === 'provider' && selectedProvider) {
       setCurrentStep('amount')
     } else if (currentStep === 'amount') {
       // Check if this is a SwitchPilot DD that requires payment
       if (selectedProvider?.category === 'switchpilot') {
+        console.log('Going to payment step for SwitchPilot DD')
         setCurrentStep('payment')
       } else {
+        console.log('Going to confirmation step for external DD')
         setCurrentStep('confirmation')
       }
     } else if (currentStep === 'payment') {
+      console.log('Going to confirmation step after payment')
       setCurrentStep('confirmation')
     }
   }
@@ -538,6 +543,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
             <div className="text-center">
               <h3 className="text-lg font-semibold text-neutral-800 mb-2">Confirm Setup</h3>
               <p className="text-neutral-600">Review your direct debit details</p>
+              <p className="text-xs text-gray-500">DEBUG: Confirmation step for {selectedProvider.category} DD</p>
             </div>
 
             <Card className="border-primary-200">
