@@ -198,7 +198,10 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
             console.error('Error cleaning up failed DD:', cleanupError)
           }
           
-          setError(subscriptionError.message || 'Payment setup failed. Please try again.')
+          const errorMessage = subscriptionError instanceof Error 
+            ? subscriptionError.message 
+            : 'Payment setup failed. Please try again.'
+          setError(errorMessage)
           return
         }
       }
