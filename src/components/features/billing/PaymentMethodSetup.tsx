@@ -18,6 +18,7 @@ interface PaymentMethodSetupProps {
   frequency: 'monthly' | 'one-time'
   onSuccess: (paymentMethodId: string) => void
   onError: (error: string) => void
+  disabled?: boolean
 }
 
 const stripePromise = getStripe()
@@ -213,7 +214,29 @@ function PaymentMethodForm({ amount, frequency, onSuccess, onError }: PaymentMet
   )
 }
 
-export default function PaymentMethodSetup({ amount, frequency, onSuccess, onError }: PaymentMethodSetupProps) {
+export default function PaymentMethodSetup({ amount, frequency, onSuccess, onError, disabled = false }: PaymentMethodSetupProps) {
+  if (disabled) {
+    return (
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-800">
+            <CreditCard className="w-5 h-5" />
+            Payment Method Added
+          </CardTitle>
+          <CardDescription className="text-green-700">
+            Your payment method has been successfully set up
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 text-green-700">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm">Ready for direct debit setup</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Elements stripe={stripePromise}>
       <Card className="border-primary-200">
