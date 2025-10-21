@@ -118,7 +118,12 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   }
 
   const handleSubmit = async () => {
-    if (!user?.id || !selectedProvider) return
+    console.log('handleSubmit called', { user: user?.id, selectedProvider, canProceed: canProceed() })
+    
+    if (!user?.id || !selectedProvider) {
+      console.log('Missing user or provider')
+      return
+    }
 
     try {
       setIsSubmitting(true)
@@ -190,18 +195,31 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   }
 
   const canProceed = () => {
-    switch (currentStep) {
-      case 'provider':
-        return selectedProvider !== null
-      case 'amount':
-        return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
-      case 'payment':
-        return paymentMethodId !== null
-      case 'confirmation':
-        return termsAccepted
-      default:
-        return false
-    }
+    const result = (() => {
+      switch (currentStep) {
+        case 'provider':
+          return selectedProvider !== null
+        case 'amount':
+          return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
+        case 'payment':
+          return paymentMethodId !== null
+        case 'confirmation':
+          return termsAccepted
+        default:
+          return false
+      }
+    })()
+    
+    console.log('canProceed check', { 
+      currentStep, 
+      selectedProvider: !!selectedProvider, 
+      amount, 
+      paymentMethodId: !!paymentMethodId, 
+      termsAccepted, 
+      result 
+    })
+    
+    return result
   }
 
   const renderStepIndicator = () => {
@@ -616,7 +634,10 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
 
           {currentStep === 'confirmation' ? (
             <Button
-              onClick={handleSubmit}
+              onClick={() => {
+                console.log('Setup button clicked', { currentStep, canProceed: canProceed(), isSubmitting })
+                handleSubmit()
+              }}
               disabled={!canProceed() || isSubmitting}
               className="bg-primary-500 hover:bg-primary-600 text-white"
             >
