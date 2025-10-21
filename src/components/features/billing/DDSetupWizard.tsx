@@ -531,6 +531,10 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                 console.log('Payment method setup successful:', paymentMethodId)
                 setPaymentMethodId(paymentMethodId)
                 setError(null)
+                // Force a small delay to ensure state update
+                setTimeout(() => {
+                  console.log('State after timeout:', { paymentMethodId, termsAccepted })
+                }, 100)
               }}
               onError={(error) => {
                 console.log('Payment method setup failed:', error)
@@ -538,6 +542,13 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                 setPaymentMethodId(null)
               }}
             />
+
+            {/* Debug info */}
+            <div className="p-2 bg-gray-100 rounded text-xs">
+              <p>Payment Method ID: {paymentMethodId || 'Not set'}</p>
+              <p>Terms Accepted: {termsAccepted ? 'Yes' : 'No'}</p>
+              <p>Can Proceed: {canProceed() ? 'Yes' : 'No'}</p>
+            </div>
 
             {error && (
               <div className="p-4 bg-error-50 border border-error-200 rounded-lg">
