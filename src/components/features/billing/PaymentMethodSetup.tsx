@@ -35,6 +35,7 @@ const cardElementOptions = {
       color: '#9e2146',
     },
   },
+  hidePostalCode: true, // This removes the ZIP code requirement
 }
 
 function PaymentMethodForm({ amount, frequency, onSuccess, onError }: PaymentMethodSetupProps) {
