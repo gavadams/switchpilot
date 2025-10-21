@@ -100,15 +100,38 @@ function PaymentMethodForm({ amount, frequency, onSuccess, onError }: PaymentMet
       })
 
       if (error) {
-        setError(error.message || 'Payment setup failed')
-        onError(error.message || 'Payment setup failed')
+        console.error('Stripe error:', error)
+        
+        // Handle specific Stripe error types
+        let errorMessage = 'Payment setup failed'
+        
+        if (error.code === 'card_declined') {
+          errorMessage = 'Your card was declined. Please try a different card.'
+        } else if (error.code === 'expired_card') {
+          errorMessage = 'Your card has expired. Please use a different card.'
+        } else if (error.code === 'incorrect_cvc') {
+          errorMessage = 'Your card\'s security code is incorrect. Please check and try again.'
+        } else if (error.code === 'processing_error') {
+          errorMessage = 'An error occurred while processing your card. Please try again.'
+        } else if (error.code === 'authentication_required') {
+          errorMessage = 'Your card requires additional authentication. Please try again.'
+        } else if (error.type === 'validation_error') {
+          errorMessage = 'Please check your card details and try again.'
+        } else {
+          errorMessage = error.message || 'Payment setup failed. Please try again.'
+        }
+        
+        setError(errorMessage)
+        onError(errorMessage)
       } else if (setupIntent && setupIntent.payment_method) {
+        console.log('Payment method setup successful:', setupIntent.payment_method)
         onSuccess(setupIntent.payment_method as string)
       }
     } catch (err) {
       console.error('Error confirming card setup:', err)
-      setError('Payment setup failed')
-      onError('Payment setup failed')
+      const errorMessage = 'Payment setup failed. Please check your connection and try again.'
+      setError(errorMessage)
+      onError(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -152,6 +175,25 @@ function PaymentMethodForm({ amount, frequency, onSuccess, onError }: PaymentMet
           </div>
         </div>
       </div>
+
+      {/* Test Card Information - Only show in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="w-4 h-4 text-blue-600" />
+            <span className="font-medium text-blue-800">Test Mode</span>
+          </div>
+          <div className="text-xs text-blue-700 space-y-1">
+            <p className="font-medium">Test Cards:</p>
+            <ul className="ml-4 space-y-1">
+              <li>• <strong>Success:</strong> 4242 4242 4242 4242</li>
+              <li>• <strong>Declined:</strong> 4000 0000 0000 0002</li>
+              <li>• <strong>Auth Required:</strong> 4000 0025 0000 3155</li>
+            </ul>
+            <p className="mt-2 text-blue-600">Use any future expiry date and any 3-digit CVC.</p>
+          </div>
+        </div>
+      )}
 
       <Button
         type="submit"

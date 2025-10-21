@@ -32,7 +32,7 @@ interface DDSetupWizardProps {
   requiredDDCount?: number // Number of DDs required for this switch
 }
 
-type WizardStep = 'provider' | 'amount' | 'payment' | 'confirmation'
+type WizardStep = 'provider' | 'amount' | 'payment' | 'confirmation' | 'success'
 
 interface SelectedProvider {
   id: string
@@ -167,21 +167,52 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
           })
 
           if (!subscriptionResponse.ok) {
-            throw new Error('Failed to create subscription')
+            const errorData = await subscriptionResponse.json()
+            console.error('Subscription creation failed:', errorData)
+            
+            // Handle specific error types
+            if (subscriptionResponse.status === 402) {
+              throw new Error('Payment method was declined. Please try a different card.')
+            } else if (subscriptionResponse.status === 400) {
+              throw new Error('Invalid payment method. Please check your card details.')
+            } else if (subscriptionResponse.status === 500) {
+              throw new Error('Payment processing temporarily unavailable. Please try again in a few minutes.')
+            } else {
+              throw new Error(errorData.error || 'Payment setup failed. Please try again.')
+            }
           }
 
           const subscriptionData = await subscriptionResponse.json()
           console.log('Subscription created:', subscriptionData)
         } catch (subscriptionError) {
           console.error('Error creating subscription:', subscriptionError)
-          setError('Direct debit created but payment setup failed. Please contact support.')
+          
+          // Clean up the DD record since payment failed
+          try {
+            await fetch('/api/stripe/cleanup-failed-dd', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ dd_id: newDD.id })
+            })
+          } catch (cleanupError) {
+            console.error('Error cleaning up failed DD:', cleanupError)
+          }
+          
+          setError(subscriptionError.message || 'Payment setup failed. Please try again.')
           return
         }
       }
 
-      onSuccess()
-      onOpenChange(false)
-      resetWizard()
+      // Show success message
+      setError(null)
+      setCurrentStep('success')
+      
+      // Auto-close after 3 seconds and refresh
+      setTimeout(() => {
+        onSuccess()
+        onOpenChange(false)
+        resetWizard()
+      }, 3000)
     } catch (err) {
       console.error('Error creating direct debit:', err)
       setError('Failed to setup direct debit. Please try again.')
@@ -528,10 +559,35 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
             />
 
             {error && (
-              <div className="p-3 bg-error-50 border border-error-200 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 text-error-600 mt-0.5" />
-                  <p className="text-sm text-error-700">{error}</p>
+              <div className="p-4 bg-error-50 border border-error-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-error-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-error-800 mb-1">Payment Setup Failed</h4>
+                    <p className="text-sm text-error-700 mb-3">{error}</p>
+                    <div className="space-y-2">
+                      <p className="text-xs text-error-600 font-medium">What you can do:</p>
+                      <ul className="text-xs text-error-600 space-y-1 ml-4">
+                        <li>• Check your card details and try again</li>
+                        <li>• Try a different payment method</li>
+                        <li>• Contact your bank if the card is valid</li>
+                        <li>• Contact support if the problem persists</li>
+                      </ul>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-error-200">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setError(null)
+                          setPaymentMethodId(null)
+                        }}
+                        className="text-error-700 border-error-300 hover:bg-error-50"
+                      >
+                        Try Again
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -664,39 +720,100 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
           </div>
         )}
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between pt-6 border-t border-neutral-200">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStep === 'provider'}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+        {/* Step 5: Success */}
+        {currentStep === 'success' && selectedProvider && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-success-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-success-800 mb-2">Direct Debit Setup Complete!</h3>
+              <p className="text-neutral-600">Your direct debit has been successfully configured</p>
+            </div>
 
-          {currentStep === 'confirmation' ? (
+            <Card className="border-success-200 bg-success-50">
+              <CardContent className="p-6">
+                <h4 className="font-semibold text-success-800 mb-4">Setup Summary</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-success-700">Provider:</span>
+                    <span className="font-medium text-success-800">{selectedProvider.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-success-700">Amount:</span>
+                    <span className="font-medium text-success-800">{formatCurrency(amount)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-success-700">Frequency:</span>
+                    <span className="font-medium text-success-800 capitalize">{frequency}</span>
+                  </div>
+                  {selectedProvider.category === 'switchpilot' && (
+                    <div className="flex justify-between">
+                      <span className="text-success-700">Status:</span>
+                      <span className="font-medium text-success-800">Active - Payment Method Added</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="p-4 bg-info-50 border border-info-200 rounded-lg">
+              <div className="flex items-start gap-2">
+                <Info className="w-4 h-4 text-info-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-info-800">What happens next?</p>
+                  <ul className="text-xs text-info-700 mt-1 space-y-1">
+                    <li>• Your direct debit is now active and will appear in your billing page</li>
+                    <li>• {selectedProvider.category === 'switchpilot' ? 'Monthly payments will be processed automatically' : 'You can manage this DD through your account'}</li>
+                    <li>• You can cancel or modify this DD anytime from your billing page</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-neutral-500">
+                This window will close automatically in a few seconds...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Buttons */}
+        {currentStep !== 'success' && (
+          <div className="flex justify-between pt-6 border-t border-neutral-200">
             <Button
-              onClick={() => {
-                console.log('Setup button clicked', { currentStep, canProceed: canProceed(), isSubmitting })
-                handleSubmit()
-              }}
-              disabled={!canProceed() || isSubmitting}
-              className="bg-primary-500 hover:bg-primary-600 text-white"
+              variant="outline"
+              onClick={handleBack}
+              disabled={currentStep === 'provider'}
             >
-              {isSubmitting ? 'Setting up...' : 'Setup Direct Debit'}
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
             </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className="bg-primary-500 hover:bg-primary-600 text-white"
-            >
-              Next
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          )}
-        </div>
+
+            {currentStep === 'confirmation' ? (
+              <Button
+                onClick={() => {
+                  console.log('Setup button clicked', { currentStep, canProceed: canProceed(), isSubmitting })
+                  handleSubmit()
+                }}
+                disabled={!canProceed() || isSubmitting}
+                className="bg-primary-500 hover:bg-primary-600 text-white"
+              >
+                {isSubmitting ? 'Setting up...' : 'Setup Direct Debit'}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className="bg-primary-500 hover:bg-primary-600 text-white"
+              >
+                Next
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )
