@@ -463,10 +463,10 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                       <SelectItem value="one-time">One-time</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
               </div>
+            </div>
 
-              <div className="space-y-4">
+            <div className="space-y-4">
                 <div className="p-4 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200">
                   <h4 className="font-semibold text-accent-800 mb-2">Cost Summary</h4>
                   <div className="space-y-1 text-sm">
@@ -602,9 +602,12 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                 <Checkbox 
                   id="terms" 
                   checked={termsAccepted}
-                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                  onCheckedChange={(checked) => {
+                    console.log('Terms checkbox changed:', checked)
+                    setTermsAccepted(checked as boolean)
+                  }}
                 />
-                <Label htmlFor="terms" className="text-sm">
+                <Label htmlFor="terms" className="text-sm cursor-pointer">
                   I agree to the direct debit setup and understand that I can cancel at any time
                 </Label>
               </div>
