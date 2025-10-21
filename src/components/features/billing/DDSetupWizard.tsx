@@ -13,6 +13,7 @@ import {
   ArrowLeft, 
   ArrowRight, 
   Check, 
+  CheckCircle,
   AlertCircle,
   Info,
   CreditCard,
@@ -637,7 +638,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                   )}
                 </div>
                 
-                {selectedProvider.category === 'switchpilot' && (
+                {selectedProvider.category === 'switchpilot' && !paymentMethodId && (
                   <div className="mt-4 p-4 bg-warning-50 rounded-lg border border-warning-200">
                     <div className="flex items-start gap-3">
                       <AlertCircle className="w-5 h-5 text-warning-600 mt-0.5" />
@@ -645,6 +646,20 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                         <h4 className="font-semibold text-warning-800 mb-1">Payment Method Required</h4>
                         <p className="text-sm text-warning-700">
                           You&apos;ll need to add a payment method to complete this SwitchPilot direct debit setup.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedProvider.category === 'switchpilot' && paymentMethodId && (
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                      <div>
+                        <h4 className="font-semibold text-green-800 mb-1">Payment Method Added</h4>
+                        <p className="text-sm text-green-700">
+                          Your payment method has been successfully set up and is ready for direct debit.
                         </p>
                       </div>
                     </div>
