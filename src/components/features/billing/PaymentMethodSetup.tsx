@@ -67,7 +67,6 @@ function PaymentMethodForm({ amount, frequency, onSuccess, onError }: PaymentMet
         const data = await response.json()
         setClientSecret(data.client_secret)
       } catch (err) {
-        console.error('Error creating setup intent:', err)
         onError('Failed to initialize payment setup')
       }
     }
@@ -124,11 +123,9 @@ function PaymentMethodForm({ amount, frequency, onSuccess, onError }: PaymentMet
         setError(errorMessage)
         onError(errorMessage)
       } else if (setupIntent && setupIntent.payment_method) {
-        console.log('Payment method setup successful:', setupIntent.payment_method)
         onSuccess(setupIntent.payment_method as string)
       }
     } catch (err) {
-      console.error('Error confirming card setup:', err)
       const errorMessage = 'Payment setup failed. Please check your connection and try again.'
       setError(errorMessage)
       onError(errorMessage)

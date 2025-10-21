@@ -89,22 +89,17 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   }
 
   const handleNext = () => {
-    console.log('handleNext called', { currentStep, selectedProvider: selectedProvider?.category })
-    
     if (currentStep === 'provider' && selectedProvider) {
       setCurrentStep('amount')
     } else if (currentStep === 'amount') {
       // Check if this is a SwitchPilot DD that requires payment
       if (selectedProvider?.category === 'switchpilot') {
-        console.log('Going to payment step for SwitchPilot DD')
         setCurrentStep('payment')
       } else {
-        console.log('Going to confirmation step for external DD')
         setCurrentStep('confirmation')
       }
     } else if (currentStep === 'payment') {
       // For SwitchPilot DDs, go directly to confirmation after payment setup
-      console.log('Going to confirmation step after payment')
       setCurrentStep('confirmation')
     }
   }
@@ -124,10 +119,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   }
 
   const handleSubmit = async () => {
-    console.log('handleSubmit called', { user: user?.id, selectedProvider, canProceed: canProceed() })
-    
     if (!user?.id || !selectedProvider) {
-      console.log('Missing user or provider')
       return
     }
 
@@ -149,7 +141,6 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         stripe_payment_method_id: selectedProvider.category === 'switchpilot' ? paymentMethodId || undefined : undefined
       })
 
-      console.log('Direct debit created successfully:', newDD)
 
       // If this is a SwitchPilot DD, create the Stripe subscription
       if (selectedProvider.category === 'switchpilot' && paymentMethodId) {
@@ -183,9 +174,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
           }
 
           const subscriptionData = await subscriptionResponse.json()
-          console.log('Subscription created:', subscriptionData)
         } catch (subscriptionError) {
-          console.error('Error creating subscription:', subscriptionError)
           
           // Clean up the DD record since payment failed
           try {
@@ -195,7 +184,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
               body: JSON.stringify({ dd_id: newDD.id })
             })
           } catch (cleanupError) {
-            console.error('Error cleaning up failed DD:', cleanupError)
+            // Silent cleanup failure
           }
           
           const errorMessage = subscriptionError instanceof Error 
@@ -217,7 +206,6 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         resetWizard()
       }, 3000)
     } catch (err) {
-      console.error('Error creating direct debit:', err)
       setError('Failed to setup direct debit. Please try again.')
     } finally {
       setIsSubmitting(false)
@@ -235,31 +223,18 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
   }
 
   const canProceed = () => {
-    const result = (() => {
-      switch (currentStep) {
-        case 'provider':
-          return selectedProvider !== null
-        case 'amount':
-          return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
-        case 'payment':
-          return paymentMethodId !== null && termsAccepted
-        case 'confirmation':
-          return termsAccepted
-        default:
-          return false
-      }
-    })()
-    
-    console.log('canProceed check', { 
-      currentStep, 
-      selectedProvider: !!selectedProvider, 
-      amount, 
-      paymentMethodId: !!paymentMethodId, 
-      termsAccepted, 
-      result 
-    })
-    
-    return result
+    switch (currentStep) {
+      case 'provider':
+        return selectedProvider !== null
+      case 'amount':
+        return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
+      case 'payment':
+        return paymentMethodId !== null && termsAccepted
+      case 'confirmation':
+        return termsAccepted
+      default:
+        return false
+    }
   }
 
   const renderStepIndicator = () => {
@@ -553,11 +528,14 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
               amount={amount}
               frequency={frequency}
               onSuccess={(paymentMethodId) => {
+                console.log('Payment method setup successful:', paymentMethodId)
                 setPaymentMethodId(paymentMethodId)
                 setError(null)
               }}
               onError={(error) => {
+                console.log('Payment method setup failed:', error)
                 setError(error)
+                setPaymentMethodId(null)
               }}
             />
 
@@ -616,10 +594,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                   <Checkbox 
                     id="terms" 
                     checked={termsAccepted}
-                    onCheckedChange={(checked) => {
-                      console.log('Terms checkbox changed:', checked)
-                      setTermsAccepted(checked as boolean)
-                    }}
+                    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
                   />
                   <Label htmlFor="terms" className="text-sm cursor-pointer">
                     I agree to the direct debit setup and understand that I can cancel at any time
@@ -636,7 +611,6 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
             <div className="text-center">
               <h3 className="text-lg font-semibold text-neutral-800 mb-2">Confirm Setup</h3>
               <p className="text-neutral-600">Review your direct debit details</p>
-              <p className="text-xs text-gray-500">DEBUG: Confirmation step for {selectedProvider.category} DD</p>
             </div>
 
             <Card className="border-primary-200">
@@ -796,10 +770,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
 
             {currentStep === 'confirmation' ? (
               <Button
-                onClick={() => {
-                  console.log('Setup button clicked', { currentStep, canProceed: canProceed(), isSubmitting })
-                  handleSubmit()
-                }}
+                onClick={handleSubmit}
                 disabled={!canProceed() || isSubmitting}
                 className="bg-primary-500 hover:bg-primary-600 text-white"
               >
