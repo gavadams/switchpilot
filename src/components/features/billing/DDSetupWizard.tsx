@@ -103,6 +103,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         setCurrentStep('confirmation')
       }
     } else if (currentStep === 'payment') {
+      // For SwitchPilot DDs, go directly to confirmation after payment setup
       console.log('Going to confirmation step after payment')
       setCurrentStep('confirmation')
     }
@@ -207,7 +208,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         case 'amount':
           return selectedProvider && (!selectedProvider.minAmount || amount >= selectedProvider.minAmount)
         case 'payment':
-          return paymentMethodId !== null
+          return paymentMethodId !== null && termsAccepted
         case 'confirmation':
           return termsAccepted
         default:
@@ -531,6 +532,39 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
                 <div className="flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-error-600 mt-0.5" />
                   <p className="text-sm text-error-700">{error}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Terms and Conditions - Show after payment method is set up */}
+            {paymentMethodId && (
+              <div className="space-y-4">
+                <div className="p-4 bg-info-50 border border-info-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 text-info-600 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-info-800">Important Notes</p>
+                      <ul className="text-xs text-info-700 mt-1 space-y-1">
+                        <li>• Direct debit setup typically takes {selectedProvider.setupTime}</li>
+                        <li>• You can cancel or modify this direct debit at any time</li>
+                        <li>• This helps meet bank switching requirements</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <Checkbox 
+                    id="terms" 
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) => {
+                      console.log('Terms checkbox changed:', checked)
+                      setTermsAccepted(checked as boolean)
+                    }}
+                  />
+                  <Label htmlFor="terms" className="text-sm cursor-pointer">
+                    I agree to the direct debit setup and understand that I can cancel at any time
+                  </Label>
                 </div>
               </div>
             )}
