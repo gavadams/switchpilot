@@ -14,6 +14,7 @@ import AvailableDealsCard from '../../components/features/dashboard/AvailableDea
 import RecentActivityCard from '../../components/features/dashboard/RecentActivityCard'
 import QuickActions from '../../components/features/dashboard/QuickActions'
 import StatsOverview from '../../components/features/dashboard/StatsOverview'
+import AffiliateRevenue from '../../components/features/dashboard/AffiliateRevenue'
 
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth()
@@ -131,6 +132,11 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentActivityCard />
         <QuickActions />
+      </div>
+
+      {/* Row 4: Affiliate Revenue */}
+      <div className="grid grid-cols-1 gap-6">
+        <AffiliateRevenue />
       </div>
 
       {/* Debug Card - Only show in development */}

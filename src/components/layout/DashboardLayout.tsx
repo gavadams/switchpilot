@@ -16,7 +16,8 @@ import {
   Menu, 
   X,
   ChevronRight,
-  LogOut
+  LogOut,
+  Package
 } from 'lucide-react'
 import LogoutButton from '../features/auth/LogoutButton'
 
@@ -30,6 +31,7 @@ const sidebarNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Active Deals', href: '/deals', icon: CreditCard },
   { name: 'My Switches', href: '/switches', icon: ArrowRightLeft },
+  { name: 'Products', href: '/affiliate-products', icon: Package },
   { name: 'Billing', href: '/billing', icon: Receipt },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]

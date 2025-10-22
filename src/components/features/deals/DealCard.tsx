@@ -13,7 +13,9 @@ import {
   Clock, 
   TrendingUp,
   CheckCircle,
-  XCircle
+  XCircle,
+  ExternalLink,
+  DollarSign
 } from 'lucide-react'
 
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
@@ -28,6 +30,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
   const getNumber = (value: unknown): number => Number(value) || 0
   const getString = (value: unknown): string => String(value) || ''
   const [isStarting, setIsStarting] = useState(false)
+  const [isTrackingClick, setIsTrackingClick] = useState(false)
 
   const handleStartSwitch = async () => {
     setIsStarting(true)
@@ -35,6 +38,34 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
       await onStartSwitch((deal as BankDeal).id)
     } finally {
       setIsStarting(false)
+    }
+  }
+
+  const handleAffiliateClick = async () => {
+    if (!deal.affiliate_url) return
+
+    setIsTrackingClick(true)
+    try {
+      // Track the click
+      await fetch('/api/affiliate/click', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          clickType: 'bank_deal',
+          referenceId: deal.id
+        })
+      })
+
+      // Open affiliate link in new tab
+      window.open(deal.affiliate_url, '_blank', 'noopener,noreferrer')
+    } catch (error) {
+      console.error('Error tracking affiliate click:', error)
+      // Still open the link even if tracking fails
+      window.open(deal.affiliate_url, '_blank', 'noopener,noreferrer')
+    } finally {
+      setIsTrackingClick(false)
     }
   }
 
@@ -148,8 +179,22 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
           </div>
         </div>
 
-        {/* Start Switch Button */}
-        <div className="mt-auto">
+        {/* Affiliate Provider Badge */}
+        {deal.affiliate_provider && (
+          <div className="mb-4">
+            <Badge 
+              variant="outline" 
+              className="bg-gradient-to-r from-accent-50 to-accent-100 text-accent-700 border-accent-200"
+            >
+              <DollarSign className="w-3 h-3 mr-1" />
+              {deal.affiliate_provider} • £{deal.affiliate_commission || 0} commission
+            </Badge>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="mt-auto space-y-3">
+          {/* Start Switch Button */}
           <Button 
             onClick={handleStartSwitch}
             disabled={isStarting || expiryInfo.color === 'destructive'}
@@ -167,6 +212,28 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
               </>
             )}
           </Button>
+
+          {/* Apply Now Button (if affiliate URL exists) */}
+          {deal.affiliate_url && (
+            <Button 
+              onClick={handleAffiliateClick}
+              disabled={isTrackingClick || expiryInfo.color === 'destructive'}
+              variant="outline"
+              className="w-full border-accent-200 hover:bg-accent-50 text-accent-700 font-medium py-3"
+            >
+              {isTrackingClick ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-accent-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Opening...
+                </>
+              ) : (
+                <>
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Apply Now
+                </>
+              )}
+            </Button>
+          )}
           
           {expiryInfo.color === 'destructive' && (
             <p className="text-xs text-error-600 text-center mt-2">

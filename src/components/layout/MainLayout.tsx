@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Menu, X, CreditCard, ArrowRightLeft, Receipt, Home } from 'lucide-react'
+import { Menu, X, CreditCard, ArrowRightLeft, Receipt, Home, Package } from 'lucide-react'
 import LogoutButton from '../features/auth/LogoutButton'
 
 interface MainLayoutProps {
@@ -25,6 +25,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Active Deals', href: '/deals', icon: CreditCard },
   { name: 'My Switches', href: '/switches', icon: ArrowRightLeft },
+  { name: 'Products', href: '/affiliate-products', icon: Package },
   { name: 'Billing', href: '/billing', icon: Receipt },
 ]
 
