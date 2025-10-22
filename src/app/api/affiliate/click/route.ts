@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '../../../lib/supabase/server'
-import { trackAffiliateClick } from '../../../lib/supabase/affiliates'
+import { createServerClient } from '../../../../lib/supabase/server'
+import { trackAffiliateClick } from '../../../../lib/supabase/affiliates'
 
 export async function POST(request: NextRequest) {
   try {
