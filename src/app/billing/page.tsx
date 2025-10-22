@@ -91,20 +91,20 @@ export default function BillingPage() {
               <div>
                 <h4 className="font-semibold text-primary-800 mb-2">Pricing & Revenue Model</h4>
                 <p className="text-sm text-primary-700 mb-3">
-                  SwitchPilot DDs are charged separately from your subscription: £1/month per DD until your switch completes.
+                  SwitchPilot is completely free to use. You only pay for direct debits when you need them: £1/month per DD until your switch completes.
                 </p>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>Subscription (platform access):</span>
-                    <span className="font-medium">£4.99/month</span>
+                    <span>Platform access:</span>
+                    <span className="font-medium text-success-600">Free</span>
                   </div>
                   <div className="flex justify-between">
                     <span>SwitchPilot DDs (per DD needed):</span>
                     <span className="font-medium">£1/month each</span>
                   </div>
                   <div className="flex justify-between font-semibold text-primary-800">
-                    <span>Example: 3 DDs needed = £7.99/month total</span>
-                    <span>£4.99 + £3.00</span>
+                    <span>Example: 3 DDs needed = £3.00/month total</span>
+                    <span>£0.00 + £3.00</span>
                   </div>
                 </div>
               </div>

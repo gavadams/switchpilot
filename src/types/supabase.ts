@@ -17,7 +17,6 @@ export interface Database {
           id: string
           email: string
           full_name: string | null
-          subscription_tier: 'free' | 'standard' | 'premium'
           total_earnings: number
           stripe_customer_id: string | null
           created_at: string
@@ -27,7 +26,6 @@ export interface Database {
           id: string
           email: string
           full_name?: string | null
-          subscription_tier?: 'free' | 'standard' | 'premium'
           total_earnings?: number
           stripe_customer_id?: string | null
           created_at?: string
@@ -37,7 +35,6 @@ export interface Database {
           id?: string
           email?: string
           full_name?: string | null
-          subscription_tier?: 'free' | 'standard' | 'premium'
           total_earnings?: number
           stripe_customer_id?: string | null
           created_at?: string
@@ -320,7 +317,6 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      subscription_tier: 'free' | 'standard' | 'premium'
       switch_status: 'started' | 'in_progress' | 'waiting' | 'completed' | 'failed'
       dd_frequency: 'monthly' | 'one-time'
       dd_status: 'pending' | 'active' | 'cancelled' | 'failed'

@@ -81,9 +81,9 @@ export default function DashboardPage() {
                 <User className="w-6 h-6 text-white" />
               </div>
               <Badge className="bg-gradient-to-r from-primary-500 to-primary-600 text-white border-0 px-4 py-2 text-sm font-medium mb-2">
-                {profile?.subscription_tier || 'free'}
+                Free Platform
               </Badge>
-              <p className="text-sm font-medium text-neutral-600">Subscription</p>
+              <p className="text-sm font-medium text-neutral-600">Access Level</p>
             </div>
             <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-success-500 to-success-600 rounded-full mb-4">
@@ -163,9 +163,9 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg">
-                  <span className="font-medium text-primary-700">Subscription:</span>
+                  <span className="font-medium text-primary-700">Platform Access:</span>
                   <Badge className="bg-gradient-to-r from-primary-500 to-primary-600 text-white border-0">
-                    {profile?.subscription_tier || 'free'}
+                    Free Platform
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
