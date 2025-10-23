@@ -4,14 +4,12 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { AffiliateStats, getAffiliateStats, getRecentAffiliateClicks } from '../../../lib/supabase/affiliates'
+import { AffiliateStats, AffiliateClick, getAffiliateStats, getRecentAffiliateClicks } from '../../../lib/supabase/affiliates'
 import { 
   TrendingUp, 
   DollarSign, 
-  MousePointer, 
   CheckCircle,
   ExternalLink,
-  ArrowUpRight,
   BarChart3
 } from 'lucide-react'
 import Link from 'next/link'
@@ -22,7 +20,7 @@ interface AffiliateRevenueProps {
 
 export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
   const [stats, setStats] = useState<AffiliateStats | null>(null)
-  const [recentClicks, setRecentClicks] = useState<any[]>([])
+  const [recentClicks, setRecentClicks] = useState<AffiliateClick[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -59,7 +57,7 @@ export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
     return clickType === 'bank_deal' ? 'Bank Deal' : 'Product'
   }
 
-  const getClickName = (click: any) => {
+  const getClickName = (click: AffiliateClick) => {
     if (click.bank_deals) {
       return click.bank_deals.bank_name
     } else if (click.affiliate_products) {

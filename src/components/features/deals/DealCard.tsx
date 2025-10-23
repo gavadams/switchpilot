@@ -187,7 +187,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
               className="bg-gradient-to-r from-accent-50 to-accent-100 text-accent-700 border-accent-200"
             >
               <DollarSign className="w-3 h-3 mr-1" />
-              {deal.affiliate_provider} • £{deal.affiliate_commission || 0} commission
+              {deal.affiliate_provider} • £{deal.commission_rate || 0} commission
             </Badge>
           </div>
         )}

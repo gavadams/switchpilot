@@ -74,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     return icons[type as keyof typeof icons] || icons.other
   }
 
-  const keyFeatures = product.key_features as string[] || []
+  const keyFeatures = (product.key_features as unknown as string[]) || []
 
   return (
     <Card className="card-professional border-0 h-full flex flex-col">

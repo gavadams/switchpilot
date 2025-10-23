@@ -15,6 +15,23 @@ export interface AffiliateClick {
   converted: boolean
   conversion_date: string | null
   commission_earned: number
+  bank_deals?: {
+    id: string
+    bank_name: string
+    reward_amount: number
+    affiliate_url: string | null
+    affiliate_provider: string | null
+    affiliate_commission: number
+  } | null
+  affiliate_products?: {
+    id: string
+    product_name: string
+    provider_name: string
+    product_type: string
+    affiliate_url: string
+    affiliate_provider: string | null
+    affiliate_commission: number
+  } | null
 }
 
 export interface AffiliateClickInsert {

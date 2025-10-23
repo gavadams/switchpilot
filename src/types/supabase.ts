@@ -63,6 +63,10 @@ export interface Database {
           debit_card_transactions: number
           time_to_payout: string
           description: string | null
+          affiliate_url: string | null
+          commission_rate: number
+          tracking_enabled: boolean
+          affiliate_provider: string | null
           created_at: string
           updated_at: string
         }
@@ -78,6 +82,10 @@ export interface Database {
           debit_card_transactions?: number
           time_to_payout?: string
           description?: string | null
+          affiliate_url?: string | null
+          commission_rate?: number
+          tracking_enabled?: boolean
+          affiliate_provider?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -93,10 +101,123 @@ export interface Database {
           debit_card_transactions?: number
           time_to_payout?: string
           description?: string | null
+          affiliate_url?: string | null
+          commission_rate?: number
+          tracking_enabled?: boolean
+          affiliate_provider?: string | null
           created_at?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      affiliate_products: {
+        Row: {
+          id: string
+          product_name: string
+          provider_name: string
+          product_type: string
+          description: string | null
+          affiliate_url: string
+          affiliate_provider: string | null
+          affiliate_commission: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          product_name: string
+          provider_name: string
+          product_type: string
+          description?: string | null
+          affiliate_url: string
+          affiliate_provider?: string | null
+          affiliate_commission: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          product_name?: string
+          provider_name?: string
+          product_type?: string
+          description?: string | null
+          affiliate_url?: string
+          affiliate_provider?: string | null
+          affiliate_commission?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      affiliate_clicks: {
+        Row: {
+          id: string
+          user_id: string | null
+          deal_id: string | null
+          product_id: string | null
+          click_type: 'bank_deal' | 'affiliate_product'
+          clicked_at: string
+          ip_address: string | null
+          user_agent: string | null
+          referrer: string | null
+          converted: boolean
+          conversion_date: string | null
+          commission_earned: number
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          deal_id?: string | null
+          product_id?: string | null
+          click_type: 'bank_deal' | 'affiliate_product'
+          clicked_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          referrer?: string | null
+          converted?: boolean
+          conversion_date?: string | null
+          commission_earned?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          deal_id?: string | null
+          product_id?: string | null
+          click_type?: 'bank_deal' | 'affiliate_product'
+          clicked_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          referrer?: string | null
+          converted?: boolean
+          conversion_date?: string | null
+          commission_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_clicks_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "bank_deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_products"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       user_switches: {
         Row: {

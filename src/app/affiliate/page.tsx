@@ -8,12 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AffiliateClick, getAffiliateClicks, getAffiliateStats } from '../../lib/supabase/affiliates'
 import { 
-  TrendingUp, 
-  DollarSign, 
-  MousePointer, 
   CheckCircle,
   ExternalLink,
-  Filter,
   Download,
   Search,
   BarChart3,
@@ -22,7 +18,17 @@ import {
 
 export default function AffiliateTrackingPage() {
   const [clicks, setClicks] = useState<AffiliateClick[]>([])
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState<{
+    totalClicks: number;
+    totalConversions: number;
+    totalRevenue: number;
+    bankDealClicks: number;
+    productClicks: number;
+    bankDealConversions: number;
+    productConversions: number;
+    bankDealRevenue: number;
+    productRevenue: number;
+  } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
