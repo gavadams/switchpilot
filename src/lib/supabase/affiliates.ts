@@ -1,5 +1,5 @@
 import { createClient } from './client'
-import { createServerClient } from './server'
+import { createServerSupabaseClient } from './server'
 
 // Types for affiliate system
 export interface AffiliateClick {
@@ -70,7 +70,7 @@ export async function trackAffiliateClick(
     referrer?: string;
   }
 ): Promise<AffiliateClick> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   
   const clickData: AffiliateClickInsert = {
     user_id: userId,
@@ -105,7 +105,7 @@ export async function trackAffiliateClick(
 
 // Get user's affiliate clicks with details
 export async function getAffiliateClicks(userId: string): Promise<AffiliateClick[]> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   
   const { data, error } = await supabase
     .from('affiliate_clicks')
@@ -142,7 +142,7 @@ export async function getAffiliateClicks(userId: string): Promise<AffiliateClick
 
 // Get total affiliate revenue (admin function)
 export async function getTotalAffiliateRevenue(): Promise<number> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   
   const { data, error } = await supabase
     .from('affiliate_clicks')
@@ -160,7 +160,7 @@ export async function getTotalAffiliateRevenue(): Promise<number> {
 
 // Get affiliate stats for user or platform-wide
 export async function getAffiliateStats(userId?: string): Promise<AffiliateStats> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   
   let query = supabase
     .from('affiliate_clicks')
@@ -199,7 +199,7 @@ export async function markClickAsConverted(
   clickId: string,
   commissionEarned: number
 ): Promise<void> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   
   const { error } = await supabase
     .from('affiliate_clicks')
@@ -218,7 +218,7 @@ export async function markClickAsConverted(
 
 // Get recent clicks for dashboard
 export async function getRecentAffiliateClicks(userId: string, limit: number = 5): Promise<AffiliateClick[]> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   
   const { data, error } = await supabase
     .from('affiliate_clicks')
