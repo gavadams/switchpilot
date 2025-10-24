@@ -62,7 +62,7 @@ export default function AffiliateOfferModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-2 border-neutral-200">
         <DialogHeader>
           <div className="flex items-start gap-4">
             <div className="flex-1">
