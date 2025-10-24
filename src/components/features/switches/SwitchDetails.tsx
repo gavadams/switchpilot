@@ -31,6 +31,7 @@ type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
     expiry_date: string | null
     time_to_payout: string | null
     required_direct_debits: number
+    affiliate_url: string | null
   } | null
 }
 
