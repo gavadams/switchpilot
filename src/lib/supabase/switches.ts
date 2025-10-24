@@ -14,6 +14,7 @@ type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
     expiry_date: string | null
     time_to_payout: string | null
     required_direct_debits: number
+    affiliate_url: string | null
   } | null
 }
 type UserSwitchUpdate = Database['public']['Tables']['user_switches']['Update']
@@ -37,7 +38,8 @@ export const getUserSwitches = async (userId: string): Promise<UserSwitch[]> => 
           reward_amount,
           expiry_date,
           time_to_payout,
-          required_direct_debits
+          required_direct_debits,
+          affiliate_url
         )
       `)
       .eq('user_id', userId)
@@ -74,7 +76,8 @@ export const getUserSwitchesSimple = async (userId: string): Promise<UserSwitch[
           reward_amount,
           expiry_date,
           time_to_payout,
-          required_direct_debits
+          required_direct_debits,
+          affiliate_url
         )
       `)
       .eq('user_id', userId)
@@ -136,7 +139,8 @@ export const getSwitchById = async (switchId: string): Promise<UserSwitch | null
         reward_amount,
         expiry_date,
         time_to_payout,
-        required_direct_debits
+        required_direct_debits,
+        affiliate_url
       )
     `)
     .eq('id', switchId)
@@ -260,7 +264,8 @@ export const updateSwitchStatus = async (
         reward_amount,
         expiry_date,
         time_to_payout,
-        required_direct_debits
+        required_direct_debits,
+        affiliate_url
       )
     `)
     .single()
@@ -291,7 +296,8 @@ export const updateSwitchNotes = async (
         reward_amount,
         expiry_date,
         time_to_payout,
-        required_direct_debits
+        required_direct_debits,
+        affiliate_url
       )
     `)
     .single()
@@ -322,7 +328,8 @@ export const updateEarningsReceived = async (
         reward_amount,
         expiry_date,
         time_to_payout,
-        required_direct_debits
+        required_direct_debits,
+        affiliate_url
       )
     `)
     .single()

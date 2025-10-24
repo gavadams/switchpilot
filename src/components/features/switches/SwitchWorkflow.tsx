@@ -509,6 +509,8 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                           <div className="flex gap-2">
                             <Button
                               onClick={() => {
+                                if (!userSwitch.bank_deals?.affiliate_url) return
+                                
                                 // Track the click
                                 fetch('/api/affiliate/click', {
                                   method: 'POST',
@@ -522,7 +524,7 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                                 }).catch(console.error)
                                 
                                 // Open affiliate link
-                                window.open(userSwitch.bank_deals?.affiliate_url, '_blank', 'noopener,noreferrer')
+                                window.open(userSwitch.bank_deals.affiliate_url, '_blank', 'noopener,noreferrer')
                               }}
                               className="bg-primary-500 hover:bg-primary-600 text-white"
                             >
