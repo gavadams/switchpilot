@@ -496,8 +496,8 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                         )}
                       </div>
 
-                      {/* Affiliate Link Section - Only for Apply to Bank step */}
-                      {step.step_name === 'Apply to Bank' && userSwitch.bank_deals && (
+                      {/* Affiliate Link Section - Only for Apply for Account step */}
+                      {step.step_name === 'Apply for Account' && userSwitch.bank_deals && (
                         <div className="bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-lg p-4">
                           <div className="flex items-center gap-2 mb-3">
                             <ExternalLink className="w-4 h-4 text-primary-600" />

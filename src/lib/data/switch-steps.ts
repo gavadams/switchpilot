@@ -8,27 +8,27 @@ export interface SwitchStep {
 export const STANDARD_SWITCH_STEPS: SwitchStep[] = [
   {
     step_number: 1,
+    step_name: "Apply for Account",
+    description: "Complete application for the target bank account with switching service",
+    estimated_days: 1
+  },
+  {
+    step_number: 2,
     step_name: "Create Chase Burner Account",
     description: "Open a Chase current account that will be used as the account to switch FROM",
     estimated_days: 1
   },
   {
-    step_number: 2,
+    step_number: 3,
     step_name: "Set Up Direct Debits",
     description: "Add required direct debits to Chase account (onepounddd.com, PayPal, charities if needed)",
     estimated_days: 2
   },
   {
-    step_number: 3,
+    step_number: 4,
     step_name: "Wait for DD Confirmation",
     description: "Wait for direct debits to be confirmed and appear on account",
     estimated_days: 3
-  },
-  {
-    step_number: 4,
-    step_name: "Apply for New Bank Account",
-    description: "Complete application for the target bank account with switching service",
-    estimated_days: 1
   },
   {
     step_number: 5,
