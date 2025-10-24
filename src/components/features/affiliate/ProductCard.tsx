@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { useToast } from '../../ui/toast'
 import { AffiliateProduct } from '../../../lib/supabase/affiliate-products'
 import { 
   ExternalLink,
@@ -19,6 +20,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [isTrackingClick, setIsTrackingClick] = useState(false)
+  const { addToast } = useToast()
 
   const handleAffiliateClick = async () => {
     if (!product.affiliate_url) return
@@ -37,10 +39,27 @@ export default function ProductCard({ product }: ProductCardProps) {
         })
       })
 
+      // Show success toast
+      addToast({
+        title: "Click tracked!",
+        description: "Opening product page...",
+        variant: "success",
+        duration: 3000
+      })
+
       // Open affiliate link in new tab
       window.open(product.affiliate_url, '_blank', 'noopener,noreferrer')
     } catch (error) {
       console.error('Error tracking affiliate click:', error)
+      
+      // Show error toast but still open the link
+      addToast({
+        title: "Tracking failed",
+        description: "Opening product page anyway...",
+        variant: "warning",
+        duration: 3000
+      })
+      
       // Still open the link even if tracking fails
       window.open(product.affiliate_url, '_blank', 'noopener,noreferrer')
     } finally {

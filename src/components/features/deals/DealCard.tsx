@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { useToast } from '../../ui/toast'
 import { Database } from '../../../types/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { 
@@ -31,6 +32,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
   const getString = (value: unknown): string => String(value) || ''
   const [isStarting, setIsStarting] = useState(false)
   const [isTrackingClick, setIsTrackingClick] = useState(false)
+  const { addToast } = useToast()
 
   const handleStartSwitch = async () => {
     setIsStarting(true)
@@ -58,10 +60,27 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
         })
       })
 
+      // Show success toast
+      addToast({
+        title: "Click tracked!",
+        description: "Opening application...",
+        variant: "success",
+        duration: 3000
+      })
+
       // Open affiliate link in new tab
       window.open(deal.affiliate_url, '_blank', 'noopener,noreferrer')
     } catch (error) {
       console.error('Error tracking affiliate click:', error)
+      
+      // Show error toast but still open the link
+      addToast({
+        title: "Tracking failed",
+        description: "Opening application anyway...",
+        variant: "warning",
+        duration: 3000
+      })
+      
       // Still open the link even if tracking fails
       window.open(deal.affiliate_url, '_blank', 'noopener,noreferrer')
     } finally {

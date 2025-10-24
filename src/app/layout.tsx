@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
+import { ToastProvider } from "../components/ui/toast";
 import ConditionalLayout from "../components/layout/ConditionalLayout";
 
 // Use system fonts as fallback to avoid Google Fonts build issues
@@ -33,9 +34,11 @@ export default function RootLayout({
     <html lang="en" className={interFont.variable}>
       <body className={`min-h-screen bg-background font-sans antialiased ${interFont.className}`} style={interFont.style}>
         <AuthProvider>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <ToastProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>
