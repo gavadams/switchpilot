@@ -43,7 +43,9 @@ export default function DashboardPage() {
         ])
         
         setActiveSwitchesCount(count)
-        setTotalEarnings(earnings.totalLifetime)
+        // Combine bank switching earnings + affiliate commission earnings
+        const combinedEarnings = earnings.totalLifetime + affiliateStats.totalRevenue
+        setTotalEarnings(combinedEarnings)
         setAffiliateClicksCount(affiliateStats.totalClicks)
       } catch (error) {
         console.error('Error fetching welcome data:', error)
@@ -96,7 +98,7 @@ export default function DashboardPage() {
                   `£${totalEarnings}`
                 )}
               </p>
-              <p className="text-sm font-medium text-neutral-600">Total Earnings</p>
+              <p className="text-sm font-medium text-neutral-600">Total Earnings (Bank + Affiliate)</p>
             </div>
             <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full mb-4">

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -7,10 +8,33 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
+import { getAffiliateStats } from '../../lib/supabase/affiliates-client'
 import { User, Shield, Bell, Info, Lock, Key } from 'lucide-react'
 
 export default function SettingsPage() {
   const { user, profile, loading } = useAuth()
+  const [affiliateEarnings, setAffiliateEarnings] = useState(0)
+  const [loadingAffiliate, setLoadingAffiliate] = useState(true)
+
+  // Fetch affiliate earnings
+  useEffect(() => {
+    const fetchAffiliateEarnings = async () => {
+      if (!user?.id) return
+      
+      try {
+        setLoadingAffiliate(true)
+        const affiliateStats = await getAffiliateStats(user.id)
+        setAffiliateEarnings(affiliateStats.totalRevenue)
+      } catch (error) {
+        console.error('Error fetching affiliate earnings:', error)
+        setAffiliateEarnings(0)
+      } finally {
+        setLoadingAffiliate(false)
+      }
+    }
+
+    fetchAffiliateEarnings()
+  }, [user?.id])
 
   if (loading) {
     return (
@@ -159,8 +183,10 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-4">
               <div className="flex justify-between items-center p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
-                <span className="font-medium text-success-700">Total Earnings:</span>
-                <span className="text-lg font-bold text-success-600">£{profile?.total_earnings || 0}</span>
+                <span className="font-medium text-success-700">Total Earnings (Bank + Affiliate):</span>
+                <span className="text-lg font-bold text-success-600">
+                  £{loadingAffiliate ? '...' : ((profile?.total_earnings || 0) + affiliateEarnings).toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
