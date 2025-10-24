@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { 
   TrendingUp, 
-  TrendingDown, 
   MousePointer, 
   DollarSign,
   Download,
@@ -40,6 +39,9 @@ interface PerformanceData {
     }
   }>
 }
+
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
 
 export default function AffiliatePerformancePage() {
   const [performanceData, setPerformanceData] = useState<PerformanceData | null>(null)

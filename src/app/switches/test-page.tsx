@@ -2,6 +2,9 @@
 
 import { useAuth } from '../../context/AuthContext'
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function TestPage() {
   console.log('TestPage: Component rendering')
   

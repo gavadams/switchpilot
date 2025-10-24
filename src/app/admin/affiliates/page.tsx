@@ -26,6 +26,9 @@ import AffiliatePreview from '../../../components/features/admin/AffiliatePrevie
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 type AffiliateProduct = Database['public']['Tables']['affiliate_products']['Row']
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function AdminAffiliatesPage() {
   const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
   const [affiliateProducts, setAffiliateProducts] = useState<AffiliateProduct[]>([])

@@ -8,11 +8,13 @@ import { AffiliateProduct, getAffiliateProducts, getProductTypes, searchAffiliat
 import ProductCard from '../../components/features/affiliate/ProductCard'
 import { 
   Search, 
-  Grid, 
   Package, 
   Info,
   CheckCircle
 } from 'lucide-react'
+
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
 
 export default function AffiliateProductsPage() {
   const [products, setProducts] = useState<AffiliateProduct[]>([])

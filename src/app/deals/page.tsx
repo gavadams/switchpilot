@@ -11,6 +11,9 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function DealsPage() {
   const { loading: authLoading } = useAuth()
   const [deals, setDeals] = useState<BankDeal[]>([] as BankDeal[])

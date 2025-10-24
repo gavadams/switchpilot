@@ -93,12 +93,12 @@ export default function AddProductModal({
         provider_name: product.provider_name,
         product_name: product.product_name,
         description: product.description || '',
-        key_features: (product.key_features as string[]) || [''],
+        key_features: [],
         affiliate_url: product.affiliate_url,
         affiliate_provider: product.affiliate_provider || '',
         affiliate_commission: product.affiliate_commission.toString(),
         commission_type: 'CPA', // Default to CPA
-        image_url: product.image_url || '',
+        image_url: '',
         is_active: product.is_active
       })
     } else {

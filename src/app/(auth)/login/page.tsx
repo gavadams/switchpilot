@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import LoginForm from '../../../components/features/auth/LoginForm'
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function LoginPage() {
   const { user, loading } = useAuth()
   const router = useRouter()

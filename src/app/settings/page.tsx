@@ -11,6 +11,9 @@ import { Label } from '@/components/ui/label'
 import { getAffiliateStats } from '../../lib/supabase/affiliates-client'
 import { User, Shield, Bell, Info } from 'lucide-react'
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function SettingsPage() {
   const { user, profile, loading } = useAuth()
   const [affiliateEarnings, setAffiliateEarnings] = useState(0)

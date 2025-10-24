@@ -24,6 +24,9 @@ type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 
 type StatusFilter = 'all' | 'started' | 'in_progress' | 'waiting' | 'completed' | 'failed'
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function SwitchesPage() {
   const { user, loading: authLoading } = useAuth()
   

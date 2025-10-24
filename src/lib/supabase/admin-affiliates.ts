@@ -1,6 +1,8 @@
 import { createClient } from './client'
 import { Database } from '../../types/supabase'
 
+type AffiliateClick = Database['public']['Tables']['affiliate_clicks']['Row']
+
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 type AffiliateProduct = Database['public']['Tables']['affiliate_products']['Row']
 
@@ -23,10 +25,9 @@ export async function addBankDealAffiliate(dealId: string, affiliateData: {
       tracking_enabled: true,
       // Store additional data in a JSON field if needed
       requirements: {
-        ...((await supabase.from('bank_deals').select('requirements').eq('id', dealId).single()).data?.requirements as Record<string, unknown> || {}),
         affiliate_commission_type: affiliateData.affiliate_commission_type,
         affiliate_notes: affiliateData.affiliate_notes
-      } as Record<string, unknown>
+      }
     })
     .eq('id', dealId)
     .select()

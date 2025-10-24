@@ -17,6 +17,9 @@ import {
   Clock
 } from 'lucide-react'
 
+// Prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 export default function AffiliateTrackingPage() {
   const { user } = useAuth()
   const [clicks, setClicks] = useState<AffiliateClick[]>([])
