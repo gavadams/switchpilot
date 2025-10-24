@@ -19,7 +19,8 @@ import {
   Save,
   Loader2,
   CreditCard,
-  Plus
+  Plus,
+  ExternalLink
 } from 'lucide-react'
 import DDSetupWizard from '../billing/DDSetupWizard'
 import ExternalDDDialog from '../billing/ExternalDDDialog'
@@ -32,6 +33,7 @@ type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
     expiry_date: string | null
     time_to_payout: string | null
     required_direct_debits: number
+    affiliate_url: string | null
   } | null
 }
 
@@ -493,6 +495,52 @@ export default function SwitchWorkflow({ userSwitch, steps, onStepUpdate }: Swit
                           </div>
                         )}
                       </div>
+
+                      {/* Affiliate Link Section - Only for Apply to Bank step */}
+                      {step.step_name === 'Apply to Bank' && userSwitch.bank_deals && (
+                        <div className="bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <ExternalLink className="w-4 h-4 text-primary-600" />
+                            <h4 className="font-semibold text-primary-800">Apply to {userSwitch.bank_deals.bank_name}</h4>
+                          </div>
+                          <p className="text-sm text-primary-700 mb-3">
+                            Use our referral link to apply for this bank account. This helps us track your application and ensures you get the best deal.
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => {
+                                // Track the click
+                                fetch('/api/affiliate/click', {
+                                  method: 'POST',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  },
+                                  body: JSON.stringify({
+                                    clickType: 'bank_deal',
+                                    referenceId: userSwitch.deal_id
+                                  })
+                                }).catch(console.error)
+                                
+                                // Open affiliate link
+                                window.open(userSwitch.bank_deals?.affiliate_url, '_blank', 'noopener,noreferrer')
+                              }}
+                              className="bg-primary-500 hover:bg-primary-600 text-white"
+                            >
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              Apply Now
+                            </Button>
+                            <Button
+                              onClick={() => handleStepToggle(step.id, true)}
+                              disabled={isUpdating}
+                              variant="outline"
+                              className="border-success-200 text-success-700 hover:bg-success-50"
+                            >
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              I've Applied
+                            </Button>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Notes Section */}
                       <div className="space-y-2">
