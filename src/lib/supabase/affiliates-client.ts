@@ -1,6 +1,6 @@
-import { createServerSupabaseClient } from './server'
+import { createClient } from './client'
 
-// Types for affiliate system
+// Types for affiliate system (re-exported from main file)
 export interface AffiliateClick {
   id: string
   user_id: string | null
@@ -58,53 +58,9 @@ export interface AffiliateStats {
   productRevenue: number
 }
 
-// Track affiliate click
-export async function trackAffiliateClick(
-  userId: string | null,
-  clickType: 'bank_deal' | 'affiliate_product',
-  referenceId: string,
-  metadata: {
-    ipAddress?: string;
-    userAgent?: string;
-    referrer?: string;
-  }
-): Promise<AffiliateClick> {
-  const supabase = await createServerSupabaseClient()
-  
-  const clickData: AffiliateClickInsert = {
-    user_id: userId,
-    click_type: clickType,
-    ip_address: metadata.ipAddress || null,
-    user_agent: metadata.userAgent || null,
-    referrer: metadata.referrer || null,
-    converted: false,
-    commission_earned: 0
-  }
-
-  // Set the appropriate reference ID based on click type
-  if (clickType === 'bank_deal') {
-    clickData.deal_id = referenceId
-  } else {
-    clickData.product_id = referenceId
-  }
-
-  const { data, error } = await supabase
-    .from('affiliate_clicks')
-    .insert(clickData)
-    .select()
-    .single()
-
-  if (error) {
-    console.error('Error tracking affiliate click:', error)
-    throw new Error(`Failed to track click: ${error.message}`)
-  }
-
-  return data as AffiliateClick
-}
-
-// Server-side function for getting affiliate clicks (API routes only)
-export async function getAffiliateClicksServer(userId: string): Promise<AffiliateClick[]> {
-  const supabase = await createServerSupabaseClient()
+// Client-side functions for affiliate system
+export async function getAffiliateClicks(userId: string): Promise<AffiliateClick[]> {
+  const supabase = createClient()
   
   const { data, error } = await supabase
     .from('affiliate_clicks')
@@ -139,27 +95,8 @@ export async function getAffiliateClicksServer(userId: string): Promise<Affiliat
   return data as AffiliateClick[]
 }
 
-// Get total affiliate revenue (admin function)
-export async function getTotalAffiliateRevenue(): Promise<number> {
-  const supabase = await createServerSupabaseClient()
-  
-  const { data, error } = await supabase
-    .from('affiliate_clicks')
-    .select('commission_earned')
-    .eq('converted', true)
-
-  if (error) {
-    console.error('Error fetching total revenue:', error)
-    throw new Error(`Failed to fetch revenue: ${error.message}`)
-  }
-
-  const totalRevenue = data?.reduce((sum, click) => sum + (click.commission_earned || 0), 0) || 0
-  return totalRevenue
-}
-
-// Server-side function for getting affiliate stats (API routes only)
-export async function getAffiliateStatsServer(userId?: string): Promise<AffiliateStats> {
-  const supabase = await createServerSupabaseClient()
+export async function getAffiliateStats(userId?: string): Promise<AffiliateStats> {
+  const supabase = createClient()
   
   let query = supabase
     .from('affiliate_clicks')
@@ -193,31 +130,8 @@ export async function getAffiliateStatsServer(userId?: string): Promise<Affiliat
   return stats
 }
 
-// Mark click as converted (when user actually signs up)
-export async function markClickAsConverted(
-  clickId: string,
-  commissionEarned: number
-): Promise<void> {
-  const supabase = await createServerSupabaseClient()
-  
-  const { error } = await supabase
-    .from('affiliate_clicks')
-    .update({
-      converted: true,
-      conversion_date: new Date().toISOString(),
-      commission_earned: commissionEarned
-    })
-    .eq('id', clickId)
-
-  if (error) {
-    console.error('Error marking click as converted:', error)
-    throw new Error(`Failed to mark conversion: ${error.message}`)
-  }
-}
-
-// Server-side function for getting recent clicks (API routes only)
-export async function getRecentAffiliateClicksServer(userId: string, limit: number = 5): Promise<AffiliateClick[]> {
-  const supabase = await createServerSupabaseClient()
+export async function getRecentAffiliateClicks(userId: string, limit: number = 5): Promise<AffiliateClick[]> {
+  const supabase = createClient()
   
   const { data, error } = await supabase
     .from('affiliate_clicks')
