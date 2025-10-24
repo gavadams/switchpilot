@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-// import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 import { AffiliateProduct } from '../../../lib/supabase/affiliate-products'
 import { 
   ExternalLink,

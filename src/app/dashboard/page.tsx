@@ -17,9 +17,6 @@ import QuickActions from '../../components/features/dashboard/QuickActions'
 import StatsOverview from '../../components/features/dashboard/StatsOverview'
 import AffiliateRevenue from '../../components/features/dashboard/AffiliateRevenue'
 
-// Prevent static generation during build
-export const dynamic = 'force-dynamic'
-
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth()
   const [activeSwitchesCount, setActiveSwitchesCount] = useState(0)

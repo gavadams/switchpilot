@@ -22,9 +22,6 @@ type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
 
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 
-// Prevent static generation during build
-export const dynamic = 'force-dynamic'
-
 export default function SwitchDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -105,7 +102,7 @@ export default function SwitchDetailPage() {
       
       if (switchData) setUserSwitch(switchData)
       setSteps(stepsData)
-    } catch (error) {
+    } catch (err) {
       // Error refreshing data - could show a toast notification here
     }
   }

@@ -7,12 +7,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-// import { Separator } from '@/components/ui/separator'
+import { Separator } from '@/components/ui/separator'
 import { getAffiliateStats } from '../../lib/supabase/affiliates-client'
-import { User, Shield, Bell, Info } from 'lucide-react'
-
-// Prevent static generation during build
-export const dynamic = 'force-dynamic'
+import { User, Shield, Bell, Info, Lock, Key } from 'lucide-react'
 
 export default function SettingsPage() {
   const { user, profile, loading } = useAuth()

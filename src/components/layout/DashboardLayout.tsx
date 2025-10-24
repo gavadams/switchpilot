@@ -17,7 +17,8 @@ import {
   X,
   ChevronRight,
   LogOut,
-  Package
+  Package,
+  Shield
 } from 'lucide-react'
 import LogoutButton from '../features/auth/LogoutButton'
 
@@ -115,6 +116,28 @@ export default function DashboardLayout({
                 </Link>
               )
             })}
+            
+            {/* Admin Section */}
+            {profile?.is_admin && (
+              <>
+                <Separator className="my-4" />
+                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">
+                  ADMIN
+                </div>
+                <Link
+                  href="/admin/affiliates"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Affiliate Management</span>
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* User info and logout */}

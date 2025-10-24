@@ -1,11 +1,36 @@
 import { createClient } from './client'
 
-// Import from database types to maintain consistency
-import { Database } from '../../types/supabase'
+// Types for affiliate products
+export interface AffiliateProduct {
+  id: string
+  product_type: 'credit_card' | 'savings_account' | 'loan' | 'mortgage' | 'insurance' | 'investment' | 'other'
+  provider_name: string
+  product_name: string
+  description: string | null
+  key_features: Record<string, unknown> | null
+  affiliate_url: string
+  affiliate_provider: string | null
+  affiliate_commission: number
+  affiliate_commission_type: string
+  is_active: boolean
+  image_url: string | null
+  created_at: string
+  updated_at: string
+}
 
-// Use database types
-export type AffiliateProduct = Database['public']['Tables']['affiliate_products']['Row']
-export type AffiliateProductInsert = Database['public']['Tables']['affiliate_products']['Insert']
+export interface AffiliateProductInsert {
+  product_type: 'credit_card' | 'savings_account' | 'loan' | 'mortgage' | 'insurance' | 'investment' | 'other'
+  provider_name: string
+  product_name: string
+  description?: string | null
+  key_features?: Record<string, unknown> | null
+  affiliate_url: string
+  affiliate_provider?: string | null
+  affiliate_commission?: number
+  affiliate_commission_type?: string
+  is_active?: boolean
+  image_url?: string | null
+}
 
 // Get all active affiliate products
 export async function getAffiliateProducts(productType?: string): Promise<AffiliateProduct[]> {

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Database } from '../../types/supabase'
@@ -23,9 +24,6 @@ type UserSwitch = Database['public']['Tables']['user_switches']['Row'] & {
 type SwitchStep = Database['public']['Tables']['switch_steps']['Row']
 
 type StatusFilter = 'all' | 'started' | 'in_progress' | 'waiting' | 'completed' | 'failed'
-
-// Prevent static generation during build
-export const dynamic = 'force-dynamic'
 
 export default function SwitchesPage() {
   const { user, loading: authLoading } = useAuth()

@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Menu, X, CreditCard, ArrowRightLeft, Receipt, Home, Package } from 'lucide-react'
+import { Menu, X, CreditCard, ArrowRightLeft, Receipt, Home, Package, Shield } from 'lucide-react'
 import LogoutButton from '../features/auth/LogoutButton'
 
 interface MainLayoutProps {
@@ -132,6 +132,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       Billing
                     </Link>
                   </DropdownMenuItem>
+                  {profile?.is_admin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/affiliates" className="cursor-pointer">
+                          <Shield className="mr-2 h-4 w-4" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <LogoutButton className="w-full justify-start cursor-pointer">

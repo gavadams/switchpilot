@@ -10,9 +10,6 @@ import {
 import DirectDebitsList from '../../components/features/billing/DirectDebitsList'
 import DDSetupWizard from '../../components/features/billing/DDSetupWizard'
 
-// Prevent static generation during build
-export const dynamic = 'force-dynamic'
-
 export default function BillingPage() {
   const [setupWizardOpen, setSetupWizardOpen] = useState(false)
 

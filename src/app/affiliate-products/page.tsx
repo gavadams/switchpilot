@@ -1,20 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AffiliateProduct, getAffiliateProducts, getProductTypes, searchAffiliateProducts } from '../../lib/supabase/affiliate-products'
 import ProductCard from '../../components/features/affiliate/ProductCard'
 import { 
   Search, 
+  Grid, 
   Package, 
+  TrendingUp, 
+  DollarSign,
   Info,
-  CheckCircle
+  CheckCircle,
+  ExternalLink
 } from 'lucide-react'
-
-// Prevent static generation during build
-export const dynamic = 'force-dynamic'
 
 export default function AffiliateProductsPage() {
   const [products, setProducts] = useState<AffiliateProduct[]>([])

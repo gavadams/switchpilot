@@ -19,7 +19,6 @@ export interface Database {
           full_name: string | null
           total_earnings: number
           stripe_customer_id: string | null
-          is_admin: boolean
           created_at: string
           updated_at: string
         }
@@ -29,7 +28,6 @@ export interface Database {
           full_name?: string | null
           total_earnings?: number
           stripe_customer_id?: string | null
-          is_admin?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -39,7 +37,6 @@ export interface Database {
           full_name?: string | null
           total_earnings?: number
           stripe_customer_id?: string | null
-          is_admin?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -120,12 +117,9 @@ export interface Database {
           provider_name: string
           product_type: string
           description: string | null
-          key_features: string[]
           affiliate_url: string
           affiliate_provider: string | null
           affiliate_commission: number
-          commission_type: string
-          image_url: string | null
           is_active: boolean
           created_at: string
           updated_at: string
@@ -136,12 +130,9 @@ export interface Database {
           provider_name: string
           product_type: string
           description?: string | null
-          key_features?: string[]
           affiliate_url: string
           affiliate_provider?: string | null
           affiliate_commission: number
-          commission_type?: string
-          image_url?: string | null
           is_active?: boolean
           created_at?: string
           updated_at?: string
@@ -152,12 +143,9 @@ export interface Database {
           provider_name?: string
           product_type?: string
           description?: string | null
-          key_features?: string[]
           affiliate_url?: string
           affiliate_provider?: string | null
           affiliate_commission?: number
-          commission_type?: string
-          image_url?: string | null
           is_active?: boolean
           created_at?: string
           updated_at?: string
