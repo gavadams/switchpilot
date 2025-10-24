@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '../../../context/AuthContext'
 import { AffiliateStats, AffiliateClick, getAffiliateStats, getRecentAffiliateClicks } from '../../../lib/supabase/affiliates-client'
 import { 
   TrendingUp, 
@@ -19,19 +20,24 @@ interface AffiliateRevenueProps {
 }
 
 export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
+  const { user } = useAuth()
   const [stats, setStats] = useState<AffiliateStats | null>(null)
   const [recentClicks, setRecentClicks] = useState<AffiliateClick[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user?.id) return
+      
       try {
         setLoading(true)
         const [statsData, clicksData] = await Promise.all([
-          getAffiliateStats(),
-          getRecentAffiliateClicks('', 5) // Will be updated with actual user ID
+          getAffiliateStats(user.id),
+          getRecentAffiliateClicks(user.id, 5)
         ])
         
+        console.log('Affiliate stats data:', statsData)
+        console.log('Recent clicks data:', clicksData)
         setStats(statsData)
         setRecentClicks(clicksData)
       } catch (error) {
@@ -42,7 +48,7 @@ export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
     }
 
     fetchData()
-  }, [])
+  }, [user?.id])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
