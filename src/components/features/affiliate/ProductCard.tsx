@@ -12,7 +12,6 @@ import {
   Banknote,
   CheckCircle,
   Star,
-  TrendingUp,
   Coins
 } from 'lucide-react'
 
@@ -21,9 +20,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [isTrackingClick, setIsTrackingClick] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const { addToast } = useToast()
 
   const handleLearnMoreClick = () => {
     setShowModal(true)
@@ -118,12 +115,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <Banknote className="w-4 h-4 text-primary-600" />
                 <span className="font-semibold text-primary-800">What You Get</span>
               </div>
-              <p className="text-sm text-primary-700">
-                Earn <strong>£{product.affiliate_commission}</strong> when you successfully apply for this product through our link.
-              </p>
-              <p className="text-xs text-primary-600 mt-1">
-                Click "Learn More" to see full terms and how to qualify.
-              </p>
+                  <p className="text-sm text-primary-700">
+                    Earn <strong>£{product.affiliate_commission}</strong> when you successfully apply for this product through our link.
+                  </p>
+                  <p className="text-xs text-primary-600 mt-1">
+                    Click &quot;Learn More&quot; to see full terms and how to qualify.
+                  </p>
             </div>
           )}
 

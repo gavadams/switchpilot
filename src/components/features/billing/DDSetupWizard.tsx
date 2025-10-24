@@ -174,7 +174,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
             }
           }
 
-          const subscriptionData = await subscriptionResponse.json()
+          await subscriptionResponse.json()
         } catch (subscriptionError) {
           
           // Clean up the DD record since payment failed
@@ -184,7 +184,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ dd_id: newDD.id })
             })
-          } catch (cleanupError) {
+          } catch {
             // Silent cleanup failure
           }
           
@@ -206,7 +206,7 @@ export default function DDSetupWizard({ open, onOpenChange, onSuccess, switchId,
         onOpenChange(false)
         resetWizard()
       }, 3000)
-    } catch (err) {
+    } catch (error) {
       setError('Failed to setup direct debit. Please try again.')
     } finally {
       setIsSubmitting(false)

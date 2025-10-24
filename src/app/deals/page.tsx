@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { Database } from '../../types/supabase'
 import { getAllActiveDeals } from '../../lib/supabase/deals'
 import DealsGrid from '../../components/features/deals/DealsGrid'
@@ -13,7 +12,7 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 
 export default function DealsPage() {
-  const { user, profile, loading: authLoading } = useAuth()
+  const { loading: authLoading } = useAuth()
   const [deals, setDeals] = useState<BankDeal[]>([] as BankDeal[])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -101,7 +100,7 @@ export default function DealsPage() {
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-neutral-500 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-neutral-600">
-            <strong>Commission Disclosure:</strong> SwitchPilot may earn a commission when you apply for bank deals through our platform. This helps us provide our free service and doesn't affect the rewards you receive from the banks.
+                <strong>Commission Disclosure:</strong> SwitchPilot may earn a commission when you apply for bank deals through our platform. This helps us provide our free service and doesn&apos;t affect the rewards you receive from the banks.
           </div>
         </div>
       </div>
