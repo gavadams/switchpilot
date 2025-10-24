@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { User, Loader2 } from 'lucide-react'
 import { getActiveSwitchesCount, getUserEarnings } from '../../lib/supabase/analytics'
+import { getAffiliateStats } from '../../lib/supabase/affiliates-client'
 
 // Import dashboard components
 import EarningsCard from '../../components/features/dashboard/EarningsCard'
@@ -22,8 +23,10 @@ export default function DashboardPage() {
   const [loadingActiveCount, setLoadingActiveCount] = useState(true)
   const [totalEarnings, setTotalEarnings] = useState(0)
   const [loadingEarnings, setLoadingEarnings] = useState(true)
+  const [affiliateClicksCount, setAffiliateClicksCount] = useState(0)
+  const [loadingAffiliateClicks, setLoadingAffiliateClicks] = useState(true)
 
-  // Fetch active switches count and total earnings for welcome cards
+  // Fetch active switches count, total earnings, and affiliate clicks for welcome cards
   useEffect(() => {
     if (!user?.id) return
 
@@ -31,21 +34,26 @@ export default function DashboardPage() {
       try {
         setLoadingActiveCount(true)
         setLoadingEarnings(true)
+        setLoadingAffiliateClicks(true)
         
-        const [count, earnings] = await Promise.all([
+        const [count, earnings, affiliateStats] = await Promise.all([
           getActiveSwitchesCount(user.id),
-          getUserEarnings(user.id)
+          getUserEarnings(user.id),
+          getAffiliateStats(user.id)
         ])
         
         setActiveSwitchesCount(count)
         setTotalEarnings(earnings.totalLifetime)
+        setAffiliateClicksCount(affiliateStats.totalClicks)
       } catch (error) {
         console.error('Error fetching welcome data:', error)
         setActiveSwitchesCount(0)
         setTotalEarnings(0)
+        setAffiliateClicksCount(0)
       } finally {
         setLoadingActiveCount(false)
         setLoadingEarnings(false)
+        setLoadingAffiliateClicks(false)
       }
     }
 
@@ -107,7 +115,13 @@ export default function DashboardPage() {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-4">
                 <User className="w-6 h-6 text-white" />
               </div>
-              <p className="text-3xl font-bold text-primary-600 mb-2">0</p>
+              <p className="text-3xl font-bold text-primary-600 mb-2">
+                {loadingAffiliateClicks ? (
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+                ) : (
+                  affiliateClicksCount
+                )}
+              </p>
               <p className="text-sm font-medium text-neutral-600">Affiliate Clicks</p>
             </div>
           </div>

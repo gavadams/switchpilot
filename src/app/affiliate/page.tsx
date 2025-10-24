@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useAuth } from '../../context/AuthContext'
 import { AffiliateClick, getAffiliateClicks, getAffiliateStats } from '../../lib/supabase/affiliates-client'
 import { 
   CheckCircle,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react'
 
 export default function AffiliateTrackingPage() {
+  const { user } = useAuth()
   const [clicks, setClicks] = useState<AffiliateClick[]>([])
   const [stats, setStats] = useState<{
     totalClicks: number;
@@ -37,14 +39,15 @@ export default function AffiliateTrackingPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user?.id) return
+      
       try {
         setLoading(true)
         setError(null)
         
-        // This would need actual user ID in real implementation
         const [clicksData, statsData] = await Promise.all([
-          getAffiliateClicks(''), // Will be updated with actual user ID
-          getAffiliateStats()
+          getAffiliateClicks(user.id),
+          getAffiliateStats(user.id)
         ])
         
         setClicks(clicksData)
@@ -57,7 +60,7 @@ export default function AffiliateTrackingPage() {
     }
 
     fetchData()
-  }, [])
+  }, [user?.id])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
