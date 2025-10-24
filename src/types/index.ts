@@ -30,12 +30,4 @@ export interface Deal {
   created_at: string
 }
 
-// Billing types
-export interface Subscription {
-  id: string
-  user_id: string
-  plan: 'free' | 'premium'
-  status: 'active' | 'cancelled' | 'past_due'
-  current_period_end: string
-  created_at: string
-}
+// Billing types - Direct debit subscriptions only (no tier-based subscriptions)

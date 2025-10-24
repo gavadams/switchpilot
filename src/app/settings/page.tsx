@@ -141,7 +141,7 @@ export default function SettingsPage() {
             </div>
             Account Information
           </CardTitle>
-          <CardDescription>View your account details and platform access</CardDescription>
+          <CardDescription>View your account details</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -158,12 +158,6 @@ export default function SettingsPage() {
               </div>
             </div>
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg">
-                <span className="font-medium text-primary-700">Platform Access:</span>
-                <Badge className="bg-gradient-to-r from-primary-500 to-primary-600 text-white border-0">
-                  Free Platform
-                </Badge>
-              </div>
               <div className="flex justify-between items-center p-3 bg-gradient-to-r from-success-50 to-success-100 rounded-lg">
                 <span className="font-medium text-success-700">Total Earnings:</span>
                 <span className="text-lg font-bold text-success-600">£{profile?.total_earnings || 0}</span>
@@ -172,6 +166,7 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
     </div>
   )
 }
