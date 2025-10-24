@@ -8,10 +8,11 @@ import { useToast } from '../../ui/toast'
 import { AffiliateProduct } from '../../../lib/supabase/affiliate-products'
 import { 
   ExternalLink,
-  DollarSign,
+  Banknote,
   CheckCircle,
   Star,
-  TrendingUp
+  TrendingUp,
+  Coins
 } from 'lucide-react'
 
 interface ProductCardProps {
@@ -117,13 +118,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             </CardDescription>
           </div>
           {product.affiliate_commission > 0 && (
-            <Badge 
-              variant="outline" 
-              className="bg-gradient-to-r from-success-50 to-success-100 text-success-700 border-success-200 shrink-0"
-            >
-              <DollarSign className="w-3 h-3 mr-1" />
-              £{product.affiliate_commission}
-            </Badge>
+            <div className="bg-gradient-to-r from-success-500 to-success-600 text-white rounded-lg p-3 shrink-0 text-center min-w-[80px]">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Coins className="w-4 h-4" />
+                <span className="text-lg font-bold">£{product.affiliate_commission}</span>
+              </div>
+              <div className="text-xs font-medium opacity-90">You Earn</div>
+            </div>
           )}
         </div>
       </CardHeader>
@@ -134,6 +135,22 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="mb-4">
             <p className="text-sm text-neutral-600 leading-relaxed">
               {product.description}
+            </p>
+          </div>
+        )}
+
+        {/* What You Get Section */}
+        {product.affiliate_commission > 0 && (
+          <div className="mb-4 p-3 bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Banknote className="w-4 h-4 text-primary-600" />
+              <span className="font-semibold text-primary-800">What You Get</span>
+            </div>
+            <p className="text-sm text-primary-700">
+              Earn <strong>£{product.affiliate_commission}</strong> when you successfully apply for this product through our link.
+            </p>
+            <p className="text-xs text-primary-600 mt-1">
+              Click "Learn More" to see full terms and how to qualify.
             </p>
           </div>
         )}
@@ -161,18 +178,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Affiliate Provider Badge */}
-        {product.affiliate_provider && (
-          <div className="mb-4">
-            <Badge 
-              variant="outline" 
-              className="bg-gradient-to-r from-accent-50 to-accent-100 text-accent-700 border-accent-200"
-            >
-              <DollarSign className="w-3 h-3 mr-1" />
-              {product.affiliate_provider} • £{product.affiliate_commission || 0} commission
-            </Badge>
-          </div>
-        )}
 
         {/* Action Button */}
         <div className="mt-auto">

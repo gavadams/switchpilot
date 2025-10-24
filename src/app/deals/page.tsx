@@ -96,6 +96,16 @@ export default function DealsPage() {
         </p>
       </div>
 
+      {/* Commission Disclosure */}
+      <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 border border-neutral-200 rounded-lg p-4 max-w-4xl mx-auto">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-neutral-500 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-neutral-600">
+            <strong>Commission Disclosure:</strong> SwitchPilot may earn a commission when you apply for bank deals through our platform. This helps us provide our free service and doesn't affect the rewards you receive from the banks.
+          </div>
+        </div>
+      </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="card-professional border-0">

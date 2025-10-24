@@ -15,8 +15,7 @@ import {
   TrendingUp,
   CheckCircle,
   XCircle,
-  ExternalLink,
-  DollarSign
+  ExternalLink
 } from 'lucide-react'
 
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
@@ -198,18 +197,6 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
           </div>
         </div>
 
-        {/* Affiliate Provider Badge */}
-        {deal.affiliate_provider && (
-          <div className="mb-4">
-            <Badge 
-              variant="outline" 
-              className="bg-gradient-to-r from-accent-50 to-accent-100 text-accent-700 border-accent-200"
-            >
-              <DollarSign className="w-3 h-3 mr-1" />
-              {deal.affiliate_provider} • £{deal.commission_rate || 0} commission
-            </Badge>
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className="mt-auto space-y-3">
