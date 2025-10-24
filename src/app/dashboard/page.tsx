@@ -78,15 +78,6 @@ export default function DashboardPage() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-4">
-                <User className="w-6 h-6 text-white" />
-              </div>
-              <Badge className="bg-gradient-to-r from-primary-500 to-primary-600 text-white border-0 px-4 py-2 text-sm font-medium mb-2">
-                Free Platform
-              </Badge>
-              <p className="text-sm font-medium text-neutral-600">Access Level</p>
-            </div>
-            <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-success-500 to-success-600 rounded-full mb-4">
                 <User className="w-6 h-6 text-white" />
               </div>
@@ -112,31 +103,38 @@ export default function DashboardPage() {
               </p>
               <p className="text-sm font-medium text-neutral-600">Active Switches</p>
             </div>
+            <div className="text-center p-6 gradient-neutral rounded-xl border border-white/20 shadow-lg">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-4">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <p className="text-3xl font-bold text-primary-600 mb-2">0</p>
+              <p className="text-sm font-medium text-neutral-600">Affiliate Clicks</p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Row 1: Earnings and Stats */}
+      {/* Row 1: Earnings and Affiliate Revenue */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <EarningsCard />
-        <StatsOverview />
-      </div>
-
-      {/* Row 2: Active Switches and Available Deals */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ActiveSwitchesCard />
-        <AvailableDealsCard />
-      </div>
-
-      {/* Row 3: Recent Activity and Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentActivityCard />
-        <QuickActions />
-      </div>
-
-      {/* Row 4: Affiliate Revenue */}
-      <div className="grid grid-cols-1 gap-6">
         <AffiliateRevenue />
+      </div>
+
+      {/* Row 2: Stats and Active Switches */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <StatsOverview />
+        <ActiveSwitchesCard />
+      </div>
+
+      {/* Row 3: Available Deals and Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AvailableDealsCard />
+        <RecentActivityCard />
+      </div>
+
+      {/* Row 4: Quick Actions */}
+      <div className="grid grid-cols-1 gap-6">
+        <QuickActions />
       </div>
 
       {/* Debug Card - Only show in development */}

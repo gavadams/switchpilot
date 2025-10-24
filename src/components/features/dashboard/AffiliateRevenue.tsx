@@ -110,13 +110,29 @@ export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
                 <div className="text-2xl font-bold text-primary-600 mb-1">
                   {stats.totalClicks}
                 </div>
-                <p className="text-sm text-primary-700">Total Clicks</p>
+                <p className="text-sm text-primary-700">Total Clicks This Month</p>
               </div>
               <div className="text-center p-4 bg-gradient-to-r from-success-50 to-success-100 rounded-lg border border-success-200">
                 <div className="text-2xl font-bold text-success-600 mb-1">
+                  {stats.totalConversions}
+                </div>
+                <p className="text-sm text-success-700">Total Conversions</p>
+              </div>
+            </div>
+
+            {/* Conversion Rate and Commission */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg border border-accent-200">
+                <div className="text-2xl font-bold text-accent-600 mb-1">
+                  {stats.totalClicks > 0 ? ((stats.totalConversions / stats.totalClicks) * 100).toFixed(1) : 0}%
+                </div>
+                <p className="text-sm text-accent-700">Conversion Rate</p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg border border-neutral-200">
+                <div className="text-2xl font-bold text-neutral-600 mb-1">
                   £{stats.totalRevenue.toFixed(2)}
                 </div>
-                <p className="text-sm text-success-700">Total Revenue</p>
+                <p className="text-sm text-neutral-700">Total Commission Earned</p>
               </div>
             </div>
 
@@ -156,7 +172,7 @@ export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
             {recentClicks.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-neutral-800">Recent Clicks</h4>
+                  <h4 className="font-semibold text-neutral-800">Recent Clicks (Last 5)</h4>
                   <Link href="/affiliate">
                     <Button variant="outline" size="sm">
                       View All
@@ -165,7 +181,7 @@ export default function AffiliateRevenue({ className }: AffiliateRevenueProps) {
                 </div>
                 
                 <div className="space-y-2">
-                  {recentClicks.slice(0, 3).map((click) => (
+                  {recentClicks.slice(0, 5).map((click) => (
                     <div key={click.id} className="flex items-center justify-between p-2 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-lg">
                       <div className="flex items-center gap-2">
                         <Badge 

@@ -19,7 +19,7 @@ const Toast: React.FC<ToastProps> = ({
   description,
   variant = "default",
   onClose,
-  duration = 5000
+  duration = 10000
 }) => {
   const [isVisible, setIsVisible] = React.useState(true)
 
