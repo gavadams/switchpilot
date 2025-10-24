@@ -256,63 +256,53 @@ export async function getTopPerformingAffiliates(limit: number = 10): Promise<{
 }> {
   const supabase = createClient()
   
-  // Get top performing bank deals
-  const { data: bankDeals, error: bankError } = await supabase
+  // Get all bank deals first
+  const { data: allBankDeals, error: bankError } = await supabase
     .from('bank_deals')
-    .select(`
-      *,
-      affiliate_clicks!inner (
-        id,
-        converted,
-        commission_earned
-      )
-    `)
-    .eq('tracking_enabled', true)
-    .limit(limit)
+    .select('*')
+    .order('bank_name', { ascending: true })
 
-  // Get top performing products
-  const { data: products, error: productError } = await supabase
+  // Get all affiliate products
+  const { data: allProducts, error: productError } = await supabase
     .from('affiliate_products')
-    .select(`
-      *,
-      affiliate_clicks!inner (
-        id,
-        converted,
-        commission_earned
-      )
-    `)
-    .eq('is_active', true)
-    .limit(limit)
+    .select('*')
+    .order('product_name', { ascending: true })
 
   if (bankError || productError) {
-    console.error('Error fetching top performing affiliates:', bankError || productError)
-    throw new Error(`Failed to fetch top performing affiliates: ${(bankError || productError)?.message}`)
+    console.error('Error fetching affiliates:', bankError || productError)
+    throw new Error(`Failed to fetch affiliates: ${(bankError || productError)?.message}`)
   }
 
-  // Calculate performance metrics
-  const bankDealsWithPerformance = bankDeals?.map(deal => {
-    const clicks = (deal as BankDeal & { affiliate_clicks?: Array<{ converted: boolean; commission_earned: number }> }).affiliate_clicks || []
+  // Get all affiliate clicks
+  const { data: allClicks } = await supabase
+    .from('affiliate_clicks')
+    .select('*')
+
+  // Calculate performance metrics for bank deals
+  const bankDealsWithPerformance = (allBankDeals || []).map(deal => {
+    const dealClicks = (allClicks || []).filter(click => click.deal_id === deal.id)
     return {
       ...deal,
       performance: {
-        totalClicks: clicks.length,
-        totalConversions: clicks.filter(c => c.converted).length,
-        totalRevenue: clicks.filter(c => c.converted).reduce((sum, c) => sum + (c.commission_earned || 0), 0)
+        totalClicks: dealClicks.length,
+        totalConversions: dealClicks.filter(c => c.converted).length,
+        totalRevenue: dealClicks.filter(c => c.converted).reduce((sum, c) => sum + (c.commission_earned || 0), 0)
       }
     }
-  }) || []
+  })
 
-  const productsWithPerformance = products?.map(product => {
-    const clicks = (product as AffiliateProduct & { affiliate_clicks?: Array<{ converted: boolean; commission_earned: number }> }).affiliate_clicks || []
+  // Calculate performance metrics for products
+  const productsWithPerformance = (allProducts || []).map(product => {
+    const productClicks = (allClicks || []).filter(click => click.product_id === product.id)
     return {
       ...product,
       performance: {
-        totalClicks: clicks.length,
-        totalConversions: clicks.filter(c => c.converted).length,
-        totalRevenue: clicks.filter(c => c.converted).reduce((sum, c) => sum + (c.commission_earned || 0), 0)
+        totalClicks: productClicks.length,
+        totalConversions: productClicks.filter(c => c.converted).length,
+        totalRevenue: productClicks.filter(c => c.converted).reduce((sum, c) => sum + (c.commission_earned || 0), 0)
       }
     }
-  }) || []
+  })
 
   return {
     bankDeals: bankDealsWithPerformance,

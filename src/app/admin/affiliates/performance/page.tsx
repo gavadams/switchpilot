@@ -15,7 +15,7 @@ import {
   BarChart3,
   Target
 } from 'lucide-react'
-// import { getTopPerformingAffiliates, getAffiliatePerformance } from '../../../../lib/supabase/admin-affiliates'
+import { getTopPerformingAffiliates } from '../../../../lib/supabase/admin-affiliates'
 
 interface PerformanceData {
   bankDeals: Array<{
@@ -57,17 +57,55 @@ export default function AffiliatePerformancePage() {
   const fetchPerformanceData = async () => {
     try {
       setLoading(true)
-      // TODO: Implement real data fetching
-      // const data = await getTopPerformingAffiliates(20)
-      setPerformanceData({
-        bankDeals: [],
-        products: []
-      })
+      const data = await getTopPerformingAffiliates(20)
+      setPerformanceData(data)
     } catch (error) {
       console.error('Error fetching performance data:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleExportCSV = () => {
+    if (!performanceData) return
+
+    // Prepare CSV data
+    const csvRows = []
+    
+    // Headers
+    csvRows.push('Type,Name,Clicks,Conversions,Conversion Rate,Revenue')
+    
+    // Bank deals
+    performanceData.bankDeals.forEach(deal => {
+      const conversionRate = getConversionRate(deal.performance.totalClicks, deal.performance.totalConversions)
+      csvRows.push(
+        `Bank Deal,"${deal.bank_name}",${deal.performance.totalClicks},${deal.performance.totalConversions},${conversionRate}%,£${deal.performance.totalRevenue.toFixed(2)}`
+      )
+    })
+    
+    // Products
+    performanceData.products.forEach(product => {
+      const conversionRate = getConversionRate(product.performance.totalClicks, product.performance.totalConversions)
+      csvRows.push(
+        `Product,"${product.product_name}",${product.performance.totalClicks},${product.performance.totalConversions},${conversionRate}%,£${product.performance.totalRevenue.toFixed(2)}`
+      )
+    })
+    
+    // Create CSV string
+    const csvContent = csvRows.join('\n')
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', `affiliate-performance-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const getConversionRate = (clicks: number, conversions: number) => {
@@ -143,7 +181,7 @@ export default function AffiliatePerformancePage() {
           <h1 className="text-3xl font-bold text-neutral-800">Affiliate Performance</h1>
           <p className="text-neutral-600 mt-2">Track clicks, conversions, and revenue across all affiliates</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={handleExportCSV}>
           <Download className="w-4 h-4" />
           Export Data
         </Button>

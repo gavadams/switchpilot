@@ -42,6 +42,12 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith(route)
   )
 
+  // Admin routes
+  const adminRoutes = ['/admin']
+  const isAdminRoute = adminRoutes.some(route => 
+    req.nextUrl.pathname.startsWith(route)
+  )
+
   // Auth routes
   const authRoutes = ['/login', '/register']
   const isAuthRoute = authRoutes.some(route => 
@@ -49,10 +55,26 @@ export async function middleware(req: NextRequest) {
   )
 
   // Redirect unauthenticated users from protected routes to login
-  if (isProtectedRoute && !session) {
+  if ((isProtectedRoute || isAdminRoute) && !session) {
     const redirectUrl = new URL('/login', req.url)
     redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
     return NextResponse.redirect(redirectUrl)
+  }
+
+  // Check admin status for admin routes
+  if (isAdminRoute && session) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', session.user.id)
+      .single()
+
+    if (!profile || !profile.is_admin) {
+      // Redirect non-admin users to dashboard with error
+      const redirectUrl = new URL('/dashboard', req.url)
+      redirectUrl.searchParams.set('error', 'admin_required')
+      return NextResponse.redirect(redirectUrl)
+    }
   }
 
   // Redirect authenticated users from auth routes to dashboard

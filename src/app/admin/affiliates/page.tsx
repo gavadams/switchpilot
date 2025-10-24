@@ -12,16 +12,14 @@ import {
   Search, 
   Edit, 
   MoreHorizontal,
-  Filter,
-  Download,
-  Upload
+  Filter
 } from 'lucide-react'
 import AddBankAffiliateModal from '../../../components/features/admin/AddBankAffiliateModal'
 import AddProductModal from '../../../components/features/admin/AddProductModal'
 import QuickEditAffiliate from '../../../components/features/admin/QuickEditAffiliate'
 import BulkAffiliateActions from '../../../components/features/admin/BulkAffiliateActions'
 import AffiliatePreview from '../../../components/features/admin/AffiliatePreview'
-// import { getAllBankDealsWithAffiliates, getAllAffiliateProducts } from '../../../lib/supabase/admin-affiliates'
+import { getAllBankDealsWithAffiliates, getAllAffiliateProducts } from '../../../lib/supabase/admin-affiliates'
 
 type BankDeal = Database['public']['Tables']['bank_deals']['Row']
 type AffiliateProduct = Database['public']['Tables']['affiliate_products']['Row']
@@ -47,13 +45,12 @@ export default function AdminAffiliatesPage() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      // TODO: Implement real data fetching
-      // const [dealsData, productsData] = await Promise.all([
-      //   getAllBankDealsWithAffiliates(),
-      //   getAllAffiliateProducts()
-      // ])
-      setBankDeals([])
-      setAffiliateProducts([])
+      const [dealsData, productsData] = await Promise.all([
+        getAllBankDealsWithAffiliates(),
+        getAllAffiliateProducts()
+      ])
+      setBankDeals(dealsData || [])
+      setAffiliateProducts(productsData || [])
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -79,6 +76,183 @@ export default function AdminAffiliatesPage() {
   const handleEditProduct = (product: AffiliateProduct) => {
     setEditingProduct(product)
     setShowProductModal(true)
+  }
+
+  const handleBankAffiliateSave = async (data: {
+    dealId: string
+    affiliate_url: string
+    affiliate_provider: string
+    affiliate_commission: number
+    commission_type: string
+    notes?: string
+  }) => {
+    try {
+      const response = await fetch('/api/admin/affiliates/bank-deal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dealId: data.dealId,
+          affiliateData: {
+            affiliate_url: data.affiliate_url,
+            affiliate_provider: data.affiliate_provider,
+            affiliate_commission: data.affiliate_commission,
+            affiliate_commission_type: data.commission_type,
+            affiliate_notes: data.notes
+          }
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to save affiliate')
+      }
+
+      await fetchData()
+      setShowBankModal(false)
+    } catch (error) {
+      console.error('Error saving bank affiliate:', error)
+      throw error
+    }
+  }
+
+  const handleProductSave = async (data: {
+    product_type: string
+    provider_name: string
+    product_name: string
+    description: string
+    key_features: string[]
+    affiliate_url: string
+    affiliate_provider: string
+    affiliate_commission: number
+    commission_type: string
+    image_url?: string
+    is_active: boolean
+  }) => {
+    try {
+      const method = editingProduct ? 'PUT' : 'POST'
+      const body = editingProduct 
+        ? { productId: editingProduct.id, updates: data }
+        : { productData: data }
+
+      const response = await fetch('/api/admin/affiliates/product', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to save product')
+      }
+
+      await fetchData()
+      setShowProductModal(false)
+    } catch (error) {
+      console.error('Error saving product:', error)
+      throw error
+    }
+  }
+
+  const handleQuickEditURL = async (id: string, newValue: string, type: 'deal' | 'product') => {
+    try {
+      if (type === 'deal') {
+        const response = await fetch('/api/admin/affiliates/bank-deal', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dealId: id,
+            updates: { affiliate_url: newValue }
+          })
+        })
+
+        if (!response.ok) throw new Error('Failed to update URL')
+      } else {
+        const response = await fetch('/api/admin/affiliates/product', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productIds: id,
+            updates: { affiliate_url: newValue }
+          })
+        })
+
+        if (!response.ok) throw new Error('Failed to update URL')
+      }
+
+      await fetchData()
+    } catch (error) {
+      console.error('Error updating URL:', error)
+      throw error
+    }
+  }
+
+  const handleQuickEditCommission = async (id: string, newValue: string, type: 'deal' | 'product') => {
+    try {
+      const commission = parseFloat(newValue)
+      if (isNaN(commission)) throw new Error('Invalid commission value')
+
+      if (type === 'deal') {
+        const response = await fetch('/api/admin/affiliates/bank-deal', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dealId: id,
+            updates: { commission_rate: commission }
+          })
+        })
+
+        if (!response.ok) throw new Error('Failed to update commission')
+      } else {
+        const response = await fetch('/api/admin/affiliates/product', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productIds: id,
+            updates: { affiliate_commission: commission }
+          })
+        })
+
+        if (!response.ok) throw new Error('Failed to update commission')
+      }
+
+      await fetchData()
+    } catch (error) {
+      console.error('Error updating commission:', error)
+      throw error
+    }
+  }
+
+  const handleBulkAction = async (action: string, items: string[]) => {
+    try {
+      if (action === 'activate' || action === 'deactivate') {
+        const isActive = action === 'activate'
+        const response = await fetch('/api/admin/affiliates/product', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productIds: items,
+            updates: { is_active: isActive },
+            action: 'bulk'
+          })
+        })
+
+        if (!response.ok) throw new Error('Failed to bulk update')
+        await fetchData()
+      } else if (action === 'delete') {
+        // Delete each product individually
+        await Promise.all(
+          items.map(id =>
+            fetch(`/api/admin/affiliates/product?productId=${id}`, {
+              method: 'DELETE'
+            })
+          )
+        )
+        await fetchData()
+      }
+    } catch (error) {
+      console.error('Error performing bulk action:', error)
+      throw error
+    }
   }
 
   const filteredBankDeals = bankDeals.filter(deal =>
@@ -108,16 +282,6 @@ export default function AdminAffiliatesPage() {
         <div>
           <h1 className="text-3xl font-bold text-neutral-800">Affiliate Management</h1>
           <p className="text-neutral-600 mt-2">Manage bank deal and product affiliate links</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Upload className="w-4 h-4" />
-            Import
-          </Button>
         </div>
       </div>
 
@@ -149,10 +313,7 @@ export default function AdminAffiliatesPage() {
         <BulkAffiliateActions
           selectedItems={selectedItems}
           onClearSelection={() => setSelectedItems([])}
-          onBulkAction={(action) => {
-            console.log('Bulk action:', action, selectedItems)
-            // TODO: Implement bulk actions
-          }}
+          onBulkAction={handleBulkAction}
         />
       )}
 
@@ -237,10 +398,7 @@ export default function AdminAffiliatesPage() {
                             {deal.affiliate_url ? (
                               <QuickEditAffiliate
                                 value={deal.affiliate_url}
-                                onSave={(newValue) => {
-                                  // TODO: Update affiliate URL
-                                  console.log('Update URL:', deal.id, newValue)
-                                }}
+                                onSave={(newValue) => handleQuickEditURL(deal.id, newValue, 'deal')}
                                 type="url"
                               />
                             ) : (
@@ -256,10 +414,7 @@ export default function AdminAffiliatesPage() {
                             {deal.commission_rate ? (
                               <QuickEditAffiliate
                                 value={deal.commission_rate.toString()}
-                                onSave={(newValue) => {
-                                  // TODO: Update commission
-                                  console.log('Update commission:', deal.id, newValue)
-                                }}
+                                onSave={(newValue) => handleQuickEditCommission(deal.id, newValue, 'deal')}
                                 type="number"
                               />
                             ) : (
@@ -379,20 +534,14 @@ export default function AdminAffiliatesPage() {
                           <td className="p-3">
                             <QuickEditAffiliate
                               value={product.affiliate_url}
-                              onSave={(newValue) => {
-                                // TODO: Update affiliate URL
-                                console.log('Update URL:', product.id, newValue)
-                              }}
+                              onSave={(newValue) => handleQuickEditURL(product.id, newValue, 'product')}
                               type="url"
                             />
                           </td>
                           <td className="p-3">
                             <QuickEditAffiliate
                               value={product.affiliate_commission.toString()}
-                              onSave={(newValue) => {
-                                // TODO: Update commission
-                                console.log('Update commission:', product.id, newValue)
-                              }}
+                              onSave={(newValue) => handleQuickEditCommission(product.id, newValue, 'product')}
                               type="number"
                             />
                           </td>
@@ -437,22 +586,14 @@ export default function AdminAffiliatesPage() {
         isOpen={showBankModal}
         onClose={() => setShowBankModal(false)}
         deal={editingDeal}
-        onSave={(data) => {
-          console.log('Save bank affiliate:', data)
-          setShowBankModal(false)
-          fetchData()
-        }}
+        onSave={handleBankAffiliateSave}
       />
 
       <AddProductModal
         isOpen={showProductModal}
         onClose={() => setShowProductModal(false)}
         product={editingProduct}
-        onSave={(data) => {
-          console.log('Save product:', data)
-          setShowProductModal(false)
-          fetchData()
-        }}
+        onSave={handleProductSave}
       />
     </div>
   )

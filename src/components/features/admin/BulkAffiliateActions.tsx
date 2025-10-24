@@ -18,7 +18,6 @@ import {
   Trash2, 
   CheckCircle, 
   XCircle, 
-  Download, 
   Loader2,
   AlertTriangle
 } from 'lucide-react'
@@ -32,8 +31,7 @@ interface BulkAffiliateActionsProps {
 const BULK_ACTIONS = [
   { value: 'activate', label: 'Activate Selected', icon: CheckCircle },
   { value: 'deactivate', label: 'Deactivate Selected', icon: XCircle },
-  { value: 'delete', label: 'Delete Selected', icon: Trash2, destructive: true },
-  { value: 'export', label: 'Export Selected', icon: Download }
+  { value: 'delete', label: 'Delete Selected', icon: Trash2, destructive: true }
 ]
 
 export default function BulkAffiliateActions({
