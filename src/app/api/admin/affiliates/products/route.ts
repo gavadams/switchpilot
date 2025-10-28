@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 
 // GET - Fetch all products (including inactive)
 export async function GET() {
+  console.log('API: Products route called')
   try {
     console.log('API: Checking admin auth for products...')
     await requireAdmin()
