@@ -17,8 +17,8 @@ export async function isAdmin(): Promise<boolean> {
 
     // Check if user has admin role by checking admin_users table
     try {
-      const { data: adminUser, error: adminError } = await supabase
-        .from('admin_users' as any)
+      const { data: adminUser, error: adminError } = await (supabase as any)
+        .from('admin_users')
         .select('id')
         .eq('id', user.id)
         .single()
