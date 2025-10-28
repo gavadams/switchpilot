@@ -7,14 +7,14 @@ import { createServerSupabaseClient } from '../supabase/server'
 export async function isAdmin(): Promise<boolean> {
   try {
     const supabase = await createServerSupabaseClient()
-    
+
     // Get the current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return false
     }
-    
+
     // Check if user has admin role
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
@@ -22,7 +22,13 @@ export async function isAdmin(): Promise<boolean> {
       .eq('id', user.id)
       .single()
 
-    if (profileError || !profile) {
+    if (profileError) {
+      // If column doesn't exist yet, return false
+      console.warn('Admin check failed:', profileError.message)
+      return false
+    }
+
+    if (!profile) {
       return false
     }
 
