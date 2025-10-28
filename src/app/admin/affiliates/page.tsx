@@ -35,6 +35,8 @@ interface Product {
 }
 
 export default function AdminAffiliatesPage() {
+  console.log('AdminAffiliatesPage: Component rendered')
+
   const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -50,24 +52,40 @@ export default function AdminAffiliatesPage() {
 
   const fetchData = async () => {
     try {
+      console.log('Frontend: Starting data fetch...')
       setLoading(true)
       setError(null)
 
+      console.log('Frontend: Making API calls...')
       const [dealsRes, productsRes] = await Promise.all([
         fetch('/api/admin/affiliates/bank-deals'),
         fetch('/api/admin/affiliates/products')
       ])
 
+      console.log('Frontend: API responses received', {
+        dealsOk: dealsRes.ok,
+        dealsStatus: dealsRes.status,
+        productsOk: productsRes.ok,
+        productsStatus: productsRes.status
+      })
+
       if (!dealsRes.ok || !productsRes.ok) {
-        throw new Error('Failed to fetch data')
+        throw new Error(`Failed to fetch data: deals=${dealsRes.status}, products=${productsRes.status}`)
       }
 
       const dealsData = await dealsRes.json()
       const productsData = await productsRes.json()
 
+      console.log('Frontend: Data parsed', {
+        dealsCount: dealsData?.length || 0,
+        productsCount: productsData?.length || 0
+      })
+
       setBankDeals(dealsData)
       setProducts(productsData)
+      console.log('Frontend: Data set successfully')
     } catch (err) {
+      console.error('Frontend: Error fetching data:', err)
       setError(err instanceof Error ? err.message : 'Failed to load data')
     } finally {
       setLoading(false)
