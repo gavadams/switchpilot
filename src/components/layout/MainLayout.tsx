@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
+import { isAdmin } from '../../lib/auth/admin'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -31,8 +32,19 @@ const navigation = [
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isUserAdmin, setIsUserAdmin] = useState(false)
   const pathname = usePathname()
   const { user, profile, loading } = useAuth()
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        const adminStatus = await isAdmin()
+        setIsUserAdmin(adminStatus)
+      }
+    }
+    checkAdminStatus()
+  }, [user])
 
   const isActiveRoute = (href: string) => {
     if (href === '/dashboard') {
@@ -132,7 +144,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       Billing
                     </Link>
                   </DropdownMenuItem>
-                  {profile?.is_admin && (
+                  {isUserAdmin && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>

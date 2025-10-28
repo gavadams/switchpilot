@@ -4,30 +4,24 @@ import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 
 // GET - Fetch all bank deals with affiliate data (no active filter for admin)
 export async function GET() {
-  console.log('API: Bank deals route called - START')
-
   try {
-    console.log('API: About to check admin auth...')
     await requireAdmin()
-    console.log('API: Admin auth PASSED for bank deals')
 
     const supabase = await createServerSupabaseClient()
 
-    console.log('API: Querying bank_deals...')
     const { data, error } = await supabase
       .from('bank_deals')
       .select('*')
       .order('bank_name', { ascending: true })
 
     if (error) {
-      console.error('API: Error fetching bank deals:', error)
+      console.error('Error fetching bank deals:', error)
       return NextResponse.json(
         { error: 'Failed to fetch bank deals' },
         { status: 500 }
       )
     }
 
-    console.log('API: Returning bank deals data:', data?.length || 0, 'items')
     return NextResponse.json(data)
   } catch (error) {
     console.error('Admin auth error:', error)

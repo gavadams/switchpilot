@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
+import { isAdmin } from '../../lib/auth/admin'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
@@ -37,14 +38,25 @@ const sidebarNavigation = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
-export default function DashboardLayout({ 
-  children, 
+export default function DashboardLayout({
+  children,
   title = 'Dashboard',
   breadcrumbs = []
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isUserAdmin, setIsUserAdmin] = useState(false)
   const pathname = usePathname()
   const { user, profile } = useAuth()
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        const adminStatus = await isAdmin()
+        setIsUserAdmin(adminStatus)
+      }
+    }
+    checkAdminStatus()
+  }, [user])
 
   const isActiveRoute = (href: string) => {
     if (href === '/dashboard') {
@@ -118,7 +130,7 @@ export default function DashboardLayout({
             })}
             
             {/* Admin Section */}
-            {profile?.is_admin && (
+            {isUserAdmin && (
               <>
                 <Separator className="my-4" />
                 <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">
