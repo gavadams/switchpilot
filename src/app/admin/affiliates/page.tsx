@@ -35,6 +35,8 @@ interface Product {
 }
 
 export default function AdminAffiliatesPage() {
+  console.log('🔧 AdminAffiliatesPage: Component initializing')
+
   const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,14 +47,23 @@ export default function AdminAffiliatesPage() {
   const [productSearch, setProductSearch] = useState('')
 
   const fetchData = async () => {
+    console.log('🔧 AdminAffiliatesPage: fetchData called')
     try {
       setLoading(true)
       setError(null)
 
+      console.log('🔧 AdminAffiliatesPage: Making API calls...')
       const [dealsRes, productsRes] = await Promise.all([
         fetch('/api/admin/affiliates/bank-deals'),
         fetch('/api/admin/affiliates/products')
       ])
+
+      console.log('🔧 AdminAffiliatesPage: API responses received', {
+        dealsOk: dealsRes.ok,
+        dealsStatus: dealsRes.status,
+        productsOk: productsRes.ok,
+        productsStatus: productsRes.status
+      })
 
       if (!dealsRes.ok || !productsRes.ok) {
         throw new Error(`Failed to fetch data: deals=${dealsRes.status}, products=${productsRes.status}`)
@@ -61,17 +72,25 @@ export default function AdminAffiliatesPage() {
       const dealsData = await dealsRes.json()
       const productsData = await productsRes.json()
 
+      console.log('🔧 AdminAffiliatesPage: Data parsed', {
+        dealsCount: dealsData?.length || 0,
+        productsCount: productsData?.length || 0
+      })
+
       setBankDeals(dealsData)
       setProducts(productsData)
+      console.log('🔧 AdminAffiliatesPage: Data set successfully')
     } catch (err) {
-      console.error('Error fetching admin data:', err)
+      console.error('🔧 AdminAffiliatesPage: Error fetching admin data:', err)
       setError(err instanceof Error ? err.message : 'Failed to load data')
     } finally {
       setLoading(false)
+      console.log('🔧 AdminAffiliatesPage: Loading set to false')
     }
   }
 
   useEffect(() => {
+    console.log('🔧 AdminAffiliatesPage: useEffect triggered')
     fetchData()
   }, [])
 
@@ -161,11 +180,11 @@ export default function AdminAffiliatesPage() {
                     className="pl-8"
                   />
                 </div>
-              </div>
+                </div>
 
               {/* Table */}
               <div className="rounded-md border overflow-x-auto">
-                <table className="w-full">
+                  <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
                       <th className="p-4 text-left font-medium">Bank</th>
@@ -175,14 +194,14 @@ export default function AdminAffiliatesPage() {
                       <th className="p-4 text-left font-medium">Commission</th>
                       <th className="p-4 text-left font-medium">Status</th>
                       <th className="p-4 text-left font-medium">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                      </tr>
+                    </thead>
+                    <tbody>
                     {filteredBankDeals.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="p-8 text-center text-muted-foreground">
                           No bank deals found
-                        </td>
+                          </td>
                       </tr>
                     ) : (
                       filteredBankDeals.map(deal => (
@@ -220,9 +239,9 @@ export default function AdminAffiliatesPage() {
                         </tr>
                       ))
                     )}
-                  </tbody>
-                </table>
-              </div>
+                    </tbody>
+                  </table>
+                </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -253,11 +272,11 @@ export default function AdminAffiliatesPage() {
                     className="pl-8"
                   />
                 </div>
-              </div>
+                </div>
 
               {/* Table */}
               <div className="rounded-md border overflow-x-auto">
-                <table className="w-full">
+                  <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
                       <th className="p-4 text-left font-medium">Product</th>
@@ -266,14 +285,14 @@ export default function AdminAffiliatesPage() {
                       <th className="p-4 text-left font-medium">Commission</th>
                       <th className="p-4 text-left font-medium">Status</th>
                       <th className="p-4 text-left font-medium">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                      </tr>
+                    </thead>
+                    <tbody>
                     {filteredProducts.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="p-8 text-center text-muted-foreground">
                           No products found
-                        </td>
+                          </td>
                       </tr>
                     ) : (
                       filteredProducts.map(product => (
@@ -304,9 +323,9 @@ export default function AdminAffiliatesPage() {
                         </tr>
                       ))
                     )}
-                  </tbody>
-                </table>
-              </div>
+                    </tbody>
+                  </table>
+                </div>
             </CardContent>
           </Card>
         </TabsContent>
