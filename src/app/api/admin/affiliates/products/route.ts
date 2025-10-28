@@ -5,24 +5,28 @@ import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 // GET - Fetch all products (including inactive)
 export async function GET() {
   try {
+    console.log('API: Checking admin auth for products...')
     await requireAdmin()
-    
+    console.log('API: Admin auth passed for products')
+
     const supabase = await createServerSupabaseClient()
-    
+
+    console.log('API: Querying affiliate_products...')
     const { data, error } = await supabase
       .from('affiliate_products')
       .select('*')
       .order('provider_name', { ascending: true })
       .order('product_name', { ascending: true })
-    
+
     if (error) {
-      console.error('Error fetching affiliate products:', error)
+      console.error('API: Error fetching affiliate products:', error)
       return NextResponse.json(
         { error: 'Failed to fetch products' },
         { status: 500 }
       )
     }
-    
+
+    console.log('API: Returning products data:', data?.length || 0, 'items')
     return NextResponse.json(data)
   } catch (error) {
     console.error('Admin auth error:', error)
