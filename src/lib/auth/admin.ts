@@ -17,6 +17,7 @@ export async function isAdmin(): Promise<boolean> {
 
     // Check if user has admin role by checking admin_users table
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: adminUser, error: adminError } = await (supabase as any)
         .from('admin_users')
         .select('id')
