@@ -8,8 +8,8 @@ export async function GET() {
 
   try {
     console.log('API: About to check admin auth...')
-    // TEMPORARILY BYPASSED: await requireAdmin()
-    console.log('API: Admin auth BYPASSED for testing')
+    await requireAdmin()
+    console.log('API: Admin auth PASSED for bank deals')
 
     const supabase = await createServerSupabaseClient()
 

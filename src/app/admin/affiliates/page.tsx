@@ -35,7 +35,8 @@ interface Product {
 }
 
 export default function AdminAffiliatesPage() {
-  console.log('AdminAffiliatesPage: Component rendered')
+  try {
+    console.log('AdminAffiliatesPage: Component rendered')
 
   const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
   const [products, setProducts] = useState<Product[]>([])
@@ -330,5 +331,17 @@ export default function AdminAffiliatesPage() {
       </Tabs>
     </div>
   )
+  } catch (error) {
+    console.error('AdminAffiliatesPage: Render error:', error)
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600">Admin Page Error</h1>
+          <p className="text-muted-foreground">An error occurred while loading the admin page.</p>
+          <p className="text-sm text-red-500 mt-2">{error instanceof Error ? error.message : 'Unknown error'}</p>
+        </div>
+      </div>
+    )
+  }
 }
 
