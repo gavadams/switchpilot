@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { DateRange, DatePreset } from '@/types'
+import { DateRange, DatePreset } from '../../../types'
 import { Calendar, X } from 'lucide-react'
 
 interface DateRangeSelectorProps {

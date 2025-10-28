@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { AdminBankDeal } from '@/types'
+import { AdminBankDeal } from '../../../types'
 import { Edit, Save, X, ExternalLink, Trash2 } from 'lucide-react'
 
 interface BankDealRowProps {

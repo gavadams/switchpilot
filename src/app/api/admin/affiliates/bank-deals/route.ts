@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth/admin'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { requireAdmin } from '../../../../../lib/auth/admin'
+import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 
 // GET - Fetch all bank deals with affiliate data (no active filter for admin)
 export async function GET() {

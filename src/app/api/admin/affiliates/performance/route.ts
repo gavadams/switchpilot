@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth/admin'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { requireAdmin } from '../../../../../lib/auth/admin'
+import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 
 // GET - Performance metrics with date filtering
 export async function GET(request: NextRequest) {
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       revenue: number
     }>()
     
-    data?.forEach(click => {
+    data?.forEach((click: any) => {
       let key: string
       let name: string
       let type: 'bank_deal' | 'affiliate_product'
@@ -111,10 +111,10 @@ export async function GET(request: NextRequest) {
     // Calculate summary stats
     const summary = {
       totalClicks: data?.length || 0,
-      totalConversions: data?.filter(c => c.converted).length || 0,
-      totalRevenue: data?.reduce((sum, c) => sum + (c.commission_earned || 0), 0) || 0,
+      totalConversions: data?.filter((c: any) => c.converted).length || 0,
+      totalRevenue: data?.reduce((sum: number, c: any) => sum + (c.commission_earned || 0), 0) || 0,
       avgConversionRate: data && data.length > 0 
-        ? (data.filter(c => c.converted).length / data.length) * 100 
+        ? (data.filter((c: any) => c.converted).length / data.length) * 100 
         : 0
     }
     

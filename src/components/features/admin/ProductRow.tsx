@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AdminProduct } from '@/types'
+import { AdminProduct } from '../../../types'
 import { Edit, Save, X, ExternalLink, Trash2 } from 'lucide-react'
 
 interface ProductRowProps {
