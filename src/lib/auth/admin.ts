@@ -15,24 +15,26 @@ export async function isAdmin(): Promise<boolean> {
       return false
     }
 
-    // Check if user has admin role
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
+    // Check if user has admin role by checking admin_users table
+    try {
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users' as any)
+        .select('id')
+        .eq('id', user.id)
+        .single()
 
-    if (profileError) {
-      // If column doesn't exist yet, return false
-      console.warn('Admin check failed:', profileError.message)
+      if (adminError) {
+        // If table doesn't exist or user is not admin, return false
+        console.warn('Admin check failed:', adminError.message)
+        return false
+      }
+
+      return !!adminUser
+    } catch (error) {
+      // If table doesn't exist, fall back to false
+      console.warn('Admin table not accessible:', error)
       return false
     }
-
-    if (!profile) {
-      return false
-    }
-
-    return (profile as unknown as { is_admin: boolean }).is_admin === true
   } catch (error) {
     console.error('Error checking admin status:', error)
     return false
