@@ -1,20 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Input } from '@/components/ui/input'
-// Removed unused Select imports
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Search, Loader2, AlertCircle, TrendingUp, Plus, Edit, Trash2 } from 'lucide-react'
-import Link from 'next/link'
 
 // Force dynamic rendering to fix direct URL navigation issues
 export const dynamic = 'force-dynamic'
 
-// Bank deal type
+export default function AdminAffiliatesPage() {
+  const pathname = usePathname()
+  console.log('🔧 AdminAffiliatesPage: Component rendering!', { pathname })
+
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold">Admin Affiliates Test</h1>
+      <p>Path: {pathname}</p>
+      <p>Time: {new Date().toISOString()}</p>
+      <p>If you see this message, the component is working!</p>
+    </div>
+  )
+}
 interface BankDeal {
   id: string
   bank_name: string
@@ -40,18 +43,17 @@ interface Product {
 
 export default function AdminAffiliatesPage() {
   const pathname = usePathname()
-  console.log('🔧 AdminAffiliatesPage: Component initializing', { pathname })
+  console.log('🔧 AdminAffiliatesPage: Component rendering!', { pathname })
 
-  const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  // Filters
-  const [dealSearch, setDealSearch] = useState('')
-  const [productSearch, setProductSearch] = useState('')
-
-  const fetchData = async () => {
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold">Admin Affiliates Test</h1>
+      <p>Path: {pathname}</p>
+      <p>Time: {new Date().toISOString()}</p>
+      <p>If you see this message, the component is working!</p>
+    </div>
+  )
+}
     console.log('🔧 AdminAffiliatesPage: fetchData called')
     try {
       setLoading(true)
