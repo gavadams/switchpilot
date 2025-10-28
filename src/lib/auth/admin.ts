@@ -32,7 +32,7 @@ export async function isAdmin(): Promise<boolean> {
       return false
     }
 
-    return (profile as { is_admin: boolean }).is_admin === true
+    return (profile as unknown as { is_admin: boolean }).is_admin === true
   } catch (error) {
     console.error('Error checking admin status:', error)
     return false
