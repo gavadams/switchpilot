@@ -26,18 +26,15 @@ export async function isAdmin(): Promise<boolean> {
 
       if (adminError) {
         // If table doesn't exist or user is not admin, return false
-        console.warn('Admin check failed:', adminError.message)
         return false
       }
 
       return !!adminUser
     } catch (error) {
       // If table doesn't exist, fall back to false
-      console.warn('Admin table not accessible:', error)
       return false
     }
   } catch (error) {
-    console.error('Error checking admin status:', error)
     return false
   }
 }

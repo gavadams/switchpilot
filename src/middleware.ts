@@ -63,14 +63,22 @@ export async function middleware(req: NextRequest) {
 
   // Check admin status for admin routes
   if (isAdminRoute && session) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', session.user.id)
-      .single()
+    try {
+      // Check if user is in admin_users table
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', session.user.id)
+        .single()
 
-    if (!profile || !profile.is_admin) {
-      // Redirect non-admin users to dashboard with error
+      if (adminError || !adminUser) {
+        // User is not an admin, redirect to dashboard
+        const redirectUrl = new URL('/dashboard', req.url)
+        redirectUrl.searchParams.set('error', 'admin_required')
+        return NextResponse.redirect(redirectUrl)
+      }
+    } catch (error) {
+      // If admin_users table doesn't exist or query fails, deny access
       const redirectUrl = new URL('/dashboard', req.url)
       redirectUrl.searchParams.set('error', 'admin_required')
       return NextResponse.redirect(redirectUrl)
