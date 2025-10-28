@@ -35,8 +35,7 @@ interface Product {
 }
 
 export default function AdminAffiliatesPage() {
-  try {
-    console.log('AdminAffiliatesPage: Component rendered')
+  console.log('AdminAffiliatesPage: Component rendered')
 
   const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
   const [products, setProducts] = useState<Product[]>([])
@@ -46,10 +45,6 @@ export default function AdminAffiliatesPage() {
   // Filters
   const [dealSearch, setDealSearch] = useState('')
   const [productSearch, setProductSearch] = useState('')
-
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   const fetchData = async () => {
     try {
@@ -92,6 +87,12 @@ export default function AdminAffiliatesPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  try {
 
   // Filter data
   const filteredBankDeals = bankDeals.filter(deal =>
