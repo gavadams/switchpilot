@@ -66,7 +66,15 @@ export async function GET(request: NextRequest) {
       revenue: number
     }>()
     
-    data?.forEach((click: any) => {
+    data?.forEach((click: {
+      click_type: 'bank_deal' | 'affiliate_product';
+      deal_id: string | null;
+      product_id: string | null;
+      converted: boolean;
+      commission_earned: number;
+      bank_deals?: { bank_name: string } | null;
+      affiliate_products?: { provider_name: string; product_name: string } | null;
+    }) => {
       let key: string
       let name: string
       let type: 'bank_deal' | 'affiliate_product'
@@ -111,10 +119,10 @@ export async function GET(request: NextRequest) {
     // Calculate summary stats
     const summary = {
       totalClicks: data?.length || 0,
-      totalConversions: data?.filter((c: any) => c.converted).length || 0,
-      totalRevenue: data?.reduce((sum: number, c: any) => sum + (c.commission_earned || 0), 0) || 0,
+      totalConversions: data?.filter((c: { converted: boolean }) => c.converted).length || 0,
+      totalRevenue: data?.reduce((sum: number, c: { commission_earned: number }) => sum + (c.commission_earned || 0), 0) || 0,
       avgConversionRate: data && data.length > 0 
-        ? (data.filter((c: any) => c.converted).length / data.length) * 100 
+        ? (data.filter((c: { converted: boolean }) => c.converted).length / data.length) * 100 
         : 0
     }
     
