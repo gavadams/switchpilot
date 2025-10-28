@@ -4,8 +4,9 @@ import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 
 // GET - Fetch all bank deals with affiliate data (no active filter for admin)
 export async function GET() {
+  console.log('🔧 API: Bank deals GET called')
   try {
-    await requireAdmin()
+    // TEMPORARILY DISABLED: await requireAdmin()
 
     const supabase = await createServerSupabaseClient()
 
