@@ -5,6 +5,7 @@ export interface Profile {
   email: string
   full_name: string | null
   total_earnings: number // DECIMAL(10,2)
+  is_admin: boolean
   created_at: string // TIMESTAMP WITH TIME ZONE
   updated_at: string // TIMESTAMP WITH TIME ZONE
 }
@@ -73,6 +74,7 @@ export interface ProfileInsert {
   email: string
   full_name?: string | null
   total_earnings?: number
+  is_admin?: boolean
 }
 
 export interface BankDealInsert {
@@ -126,6 +128,7 @@ export interface ProfileUpdate {
   email?: string
   full_name?: string | null
   total_earnings?: number
+  is_admin?: boolean
 }
 
 export interface BankDealUpdate {
