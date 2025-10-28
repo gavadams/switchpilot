@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
@@ -9,6 +10,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Search, Loader2, AlertCircle, TrendingUp, Plus, Edit, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+
+// Force dynamic rendering to fix direct URL navigation issues
+export const dynamic = 'force-dynamic'
 
 // Bank deal type
 interface BankDeal {
@@ -35,7 +39,8 @@ interface Product {
 }
 
 export default function AdminAffiliatesPage() {
-  console.log('🔧 AdminAffiliatesPage: Component initializing')
+  const pathname = usePathname()
+  console.log('🔧 AdminAffiliatesPage: Component initializing', { pathname })
 
   const [bankDeals, setBankDeals] = useState<BankDeal[]>([])
   const [products, setProducts] = useState<Product[]>([])
@@ -128,7 +133,7 @@ export default function AdminAffiliatesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div key={pathname} className="container mx-auto py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Affiliate Management</h1>
