@@ -16,23 +16,17 @@ export async function isAdmin(): Promise<boolean> {
     }
     
     // Check if user has admin role
-    // For now, return false until database migration is run
-    // TODO: After running migrations/add_admin_role.sql, uncomment the code below
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
 
-    // const { data: profile, error: profileError } = await supabase
-    //   .from('profiles')
-    //   .select('is_admin')
-    //   .eq('id', user.id)
-    //   .single()
+    if (profileError || !profile) {
+      return false
+    }
 
-    // if (profileError || !profile) {
-    //   return false
-    // }
-
-    // return profile?.is_admin === true
-
-    // Temporary: return false for all users until admin role is set up
-    return false
+    return profile.is_admin === true
   } catch (error) {
     console.error('Error checking admin status:', error)
     return false
