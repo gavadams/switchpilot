@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import LoginForm from '../../../components/features/auth/LoginForm'
 
@@ -10,32 +9,15 @@ export const dynamic = 'force-dynamic'
 
 export default function LoginPage() {
   const { user, loading } = useAuth()
-  const router = useRouter()
 
   useEffect(() => {
     if (!loading && user) {
-      console.log('🔐 LoginPage: User authenticated, redirecting to dashboard')
-      console.log('🔐 LoginPage: Router object:', router)
-      try {
-        console.log('🔐 LoginPage: Attempting router.replace...')
-        router.replace('/dashboard')
-        console.log('🔐 LoginPage: router.replace completed')
-      } catch (error) {
-        console.error('🔐 LoginPage: Error calling router.replace:', error)
-        // Try fallback methods
-        try {
-          console.log('🔐 LoginPage: Trying router.push as fallback...')
-          router.push('/dashboard')
-          console.log('🔐 LoginPage: router.push completed')
-        } catch (pushError) {
-          console.error('🔐 LoginPage: router.push also failed:', pushError)
-          // Last resort: force navigation
-          console.log('🔐 LoginPage: Using window.location as last resort...')
-          window.location.href = '/dashboard'
-        }
-      }
+      console.log('🔐 LoginPage: User authenticated, forcing navigation to dashboard')
+
+      // Force navigation using window.location for reliability
+      window.location.href = '/dashboard'
     }
-  }, [user, loading, router])
+  }, [user, loading])
 
   if (loading) {
     return (
@@ -64,7 +46,7 @@ export default function LoginPage() {
           </p>
         </div>
         <LoginForm onSuccess={() => {
-          console.log('🔐 LoginForm onSuccess called - waiting for auth state update')
+          // Trigger auth state update
         }} />
       </div>
     </div>
