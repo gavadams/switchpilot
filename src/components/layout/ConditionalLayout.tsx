@@ -17,15 +17,19 @@ const mainLayoutRoutes = ['/login', '/register', '/']
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname()
 
+  console.log('🎯 ConditionalLayout: pathname =', pathname)
+
   // Check if current route should use dashboard layout
-  const shouldUseDashboardLayout = dashboardRoutes.some(route => 
+  const shouldUseDashboardLayout = dashboardRoutes.some(route =>
     pathname.startsWith(route)
   )
 
   // Check if current route should use main layout
-  const shouldUseMainLayout = mainLayoutRoutes.some(route => 
+  const shouldUseMainLayout = mainLayoutRoutes.some(route =>
     pathname === route
   )
+
+  console.log('🎯 ConditionalLayout: shouldUseDashboardLayout =', shouldUseDashboardLayout, 'shouldUseMainLayout =', shouldUseMainLayout)
 
   // Use dashboard layout for protected routes
   if (shouldUseDashboardLayout) {

@@ -1,4 +1,5 @@
 export default function Home() {
+  console.log('🏠 Homepage: Component rendering')
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Background with enhanced gradients */}

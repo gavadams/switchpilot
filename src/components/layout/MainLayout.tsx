@@ -30,6 +30,8 @@ const navigation = [
 ]
 
 export default function MainLayout({ children }: MainLayoutProps) {
+  console.log('🏠 MainLayout: Rendering for pathname =', usePathname())
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const { user, profile, loading } = useAuth()
