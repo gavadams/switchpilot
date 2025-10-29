@@ -7,4 +7,6 @@ export { default as PerformanceCard } from './PerformanceCard'
 export { default as EditBankDealModal } from './EditBankDealModal'
 export { default as EditProductModal } from './EditProductModal'
 export { default as ConfirmDeleteDialog } from './ConfirmDeleteDialog'
+export { default as AddBankDealModal } from './AddBankDealModal'
+export { default as AddProductModal } from './AddProductModal'
 

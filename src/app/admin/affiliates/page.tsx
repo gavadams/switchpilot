@@ -6,11 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Search, Loader2, AlertCircle, TrendingUp, Plus, Edit, Trash2, ExternalLink } from 'lucide-react'
+import { Search, Loader2, AlertCircle, TrendingUp, Edit, Trash2, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import EditBankDealModal from '../../../components/features/admin/EditBankDealModal'
 import EditProductModal from '../../../components/features/admin/EditProductModal'
 import ConfirmDeleteDialog from '../../../components/features/admin/ConfirmDeleteDialog'
+import AddBankDealModal from '../../../components/features/admin/AddBankDealModal'
+import AddProductModal from '../../../components/features/admin/AddProductModal'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -55,6 +57,8 @@ export default function AdminAffiliatesPage() {
   const [deletingBankDeal, setDeletingBankDeal] = useState<BankDeal | null>(null)
   const [deletingProduct, setDeletingProduct] = useState<AffiliateProduct | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showAddBankDeal, setShowAddBankDeal] = useState(false)
+  const [showAddProduct, setShowAddProduct] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
@@ -187,6 +191,68 @@ export default function AdminAffiliatesPage() {
     }
   }
 
+  const handleAddBankDeal = async (dealId: string, data: {
+    affiliateUrl: string
+    affiliateProvider: string
+    commissionRate: number
+    trackingEnabled: boolean
+  }) => {
+    try {
+      const response = await fetch('/api/admin/affiliates/bank-deals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dealId,
+          affiliateUrl: data.affiliateUrl,
+          affiliateProvider: data.affiliateProvider,
+          commissionRate: data.commissionRate
+        })
+      })
+
+      if (!response.ok) throw new Error('Failed to add bank deal affiliate')
+
+      await fetchData() // Refresh data
+    } catch (error) {
+      console.error('Error adding bank deal affiliate:', error)
+      throw error
+    }
+  }
+
+  const handleAddProduct = async (data: {
+    productName: string
+    providerName: string
+    productType: string
+    description: string
+    affiliateUrl: string
+    affiliateProvider: string
+    affiliateCommission: number
+    isActive: boolean
+  }) => {
+    try {
+      const response = await fetch('/api/admin/affiliates/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productName: data.productName,
+          providerName: data.providerName,
+          productType: data.productType,
+          description: data.description,
+          affiliateUrl: data.affiliateUrl,
+          affiliateProvider: data.affiliateProvider,
+          affiliateCommission: data.affiliateCommission,
+          isActive: data.isActive
+        })
+      })
+
+      if (!response.ok) throw new Error('Failed to create product')
+
+      await fetchData() // Refresh data
+    } catch (error) {
+      console.error('Error creating product:', error)
+      throw error
+    }
+  }
+
   useEffect(() => {
     fetchData()
   }, [fetchData])
@@ -243,22 +309,41 @@ export default function AdminAffiliatesPage() {
             <TabsTrigger value="bank-deals">Bank Deals ({filteredBankDeals.length})</TabsTrigger>
             <TabsTrigger value="products">Products ({filteredProducts.length})</TabsTrigger>
           </TabsList>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search..."
-              className="pl-9 w-64"
-              value={dealSearch}
-              onChange={e => setDealSearch(e.target.value)}
-            />
+                  <div className="flex gap-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search bank deals..."
+                        className="pl-9 w-64"
+                        value={dealSearch}
+                        onChange={e => setDealSearch(e.target.value)}
+                      />
+                    </div>
+              <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                        placeholder="Search products..."
+                        className="pl-9 w-64"
+                        value={productSearch}
+                        onChange={e => setProductSearch(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
-        </div>
 
         <TabsContent value="bank-deals" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Bank Deal Affiliates</CardTitle>
-              <CardDescription>Manage affiliate links for various bank deals.</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Bank Deal Affiliates</CardTitle>
+                  <CardDescription>Manage affiliate links for various bank deals.</CardDescription>
+                </div>
+                <Button onClick={() => setShowAddBankDeal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Affiliate
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {filteredBankDeals.length === 0 ? (
@@ -328,8 +413,16 @@ export default function AdminAffiliatesPage() {
         <TabsContent value="products" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Affiliate Products</CardTitle>
-              <CardDescription>Manage various affiliate products.</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Affiliate Products</CardTitle>
+                  <CardDescription>Manage various affiliate products.</CardDescription>
+                </div>
+                <Button onClick={() => setShowAddProduct(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Product
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {filteredProducts.length === 0 ? (
@@ -430,6 +523,19 @@ export default function AdminAffiliatesPage() {
         confirmText="Delete Product"
         onConfirm={handleDeleteProduct}
         isDeleting={isDeleting}
+      />
+
+      <AddBankDealModal
+        deals={bankDeals}
+        open={showAddBankDeal}
+        onOpenChange={setShowAddBankDeal}
+        onSave={handleAddBankDeal}
+      />
+
+      <AddProductModal
+        open={showAddProduct}
+        onOpenChange={setShowAddProduct}
+        onSave={handleAddProduct}
       />
     </div>
   )
