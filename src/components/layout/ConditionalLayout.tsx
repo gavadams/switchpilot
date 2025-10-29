@@ -9,7 +9,7 @@ interface ConditionalLayoutProps {
 }
 
 // Routes that should use the dashboard layout (with sidebar)
-const dashboardRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings']
+const dashboardRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings', '/admin']
 
 // Routes that should use the main layout (with header)
 const mainLayoutRoutes = ['/login', '/register', '/']
@@ -45,6 +45,18 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
     } else if (pathname.startsWith('/settings')) {
       title = 'Settings'
       breadcrumbs = [{ label: 'Settings' }]
+    } else if (pathname.startsWith('/admin/affiliates')) {
+      if (pathname === '/admin/affiliates') {
+        title = 'Affiliate Management'
+        breadcrumbs = [{ label: 'Admin', href: '/admin/affiliates' }, { label: 'Affiliates' }]
+      } else if (pathname.startsWith('/admin/affiliates/performance')) {
+        title = 'Affiliate Performance'
+        breadcrumbs = [
+          { label: 'Admin', href: '/admin/affiliates' },
+          { label: 'Affiliates', href: '/admin/affiliates' },
+          { label: 'Performance' }
+        ]
+      }
     }
 
     return (
