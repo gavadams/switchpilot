@@ -7,18 +7,19 @@ import { useAuth } from '../../context/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Home, 
-  CreditCard, 
-  ArrowRightLeft, 
-  Receipt, 
-  Settings, 
-  Menu, 
+import {
+  Home,
+  CreditCard,
+  ArrowRightLeft,
+  Receipt,
+  Settings,
+  Menu,
   X,
   ChevronRight,
   LogOut,
   Package,
-  Shield
+  Shield,
+  BarChart3
 } from 'lucide-react'
 import LogoutButton from '../features/auth/LogoutButton'
 
@@ -33,6 +34,7 @@ const sidebarNavigation = [
   { name: 'Active Deals', href: '/deals', icon: CreditCard },
   { name: 'My Switches', href: '/switches', icon: ArrowRightLeft },
   { name: 'Products', href: '/affiliate-products', icon: Package },
+  { name: 'Affiliate Tracking', href: '/affiliate', icon: BarChart3 },
   { name: 'Billing', href: '/billing', icon: Receipt },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]

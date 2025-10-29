@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import RegisterForm from '../../../components/features/auth/RegisterForm'
 
@@ -11,6 +11,8 @@ export const dynamic = 'force-dynamic'
 export default function RegisterPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectedFrom = searchParams.get('redirectedFrom')
 
   useEffect(() => {
     if (!loading && user) {
@@ -44,7 +46,10 @@ export default function RegisterPage() {
             Start earning from bank switching rewards
           </p>
         </div>
-        <RegisterForm onSuccess={() => router.push('/login')} />
+        <RegisterForm onSuccess={() => {
+          const loginUrl = redirectedFrom ? `/login?redirectedFrom=${encodeURIComponent(redirectedFrom)}` : '/login'
+          router.push(loginUrl)
+        }} />
       </div>
     </div>
   )

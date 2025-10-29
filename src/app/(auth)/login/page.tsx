@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import LoginForm from '../../../components/features/auth/LoginForm'
 
@@ -11,13 +11,18 @@ export const dynamic = 'force-dynamic'
 export default function LoginPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectedFrom = searchParams.get('redirectedFrom')
+
+  // Decode the redirectedFrom parameter
+  const redirectTo = redirectedFrom ? decodeURIComponent(redirectedFrom) : '/dashboard'
 
   useEffect(() => {
     if (!loading && user) {
       // Use replace to avoid back button issues
-      router.replace('/dashboard')
+      router.replace(redirectTo)
     }
-  }, [user, loading, router])
+  }, [user, loading, router, redirectTo])
 
   if (loading) {
     return (
@@ -45,7 +50,7 @@ export default function LoginPage() {
             Access your bank switching dashboard
           </p>
         </div>
-        <LoginForm onSuccess={() => router.replace('/dashboard')} />
+        <LoginForm onSuccess={() => router.replace(redirectTo)} />
       </div>
     </div>
   )
