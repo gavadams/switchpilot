@@ -20,8 +20,10 @@ export async function GET(request: NextRequest) {
     console.log('🔧 Checking affiliate_clicks table...')
     const { data: tableCheck, error: tableError } = await supabase
       .from('affiliate_clicks')
-      .select('id')
-      .limit(1)
+      .select('id, deal_id, product_id, click_type, converted, commission_earned')
+      .limit(5)
+
+    console.log('🔧 Table check result:', { data: tableCheck, error: tableError })
 
     if (tableError) {
       console.error('🔧 affiliate_clicks table error:', tableError)
@@ -39,29 +41,37 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('🔧 affiliate_clicks table exists, building query')
+
+    // First, get all affiliate clicks without joins
+    const { data: clicksData, error: clicksError } = await supabase
+      .from('affiliate_clicks')
+      .select('*')
+
+    console.log('🔧 Raw clicks data:', clicksData?.length, 'records, first record:', clicksData?.[0])
+
+    if (clicksError || !clicksData) {
+      console.error('🔧 Error fetching clicks:', clicksError)
+      return NextResponse.json({
+        summary: { totalClicks: 0, totalConversions: 0, totalRevenue: 0, avgConversionRate: 0 },
+        performance: []
+      })
+    }
+
+    // Get related data separately
+    const { data: dealsData, error: dealsError } = await supabase
+      .from('bank_deals')
+      .select('id, bank_name')
+
+    const { data: productsData, error: productsError } = await supabase
+      .from('affiliate_products')
+      .select('id, product_name, provider_name')
+
+    console.log('🔧 Related data - deals:', dealsData?.length, 'products:', productsData?.length)
+
+    // Build query without complex joins first
     let query = supabase
       .from('affiliate_clicks')
-      .select(`
-        id,
-        deal_id,
-        product_id,
-        click_type,
-        clicked_at,
-        converted,
-        commission_earned,
-        bank_deals!affiliate_clicks_deal_id_fkey (
-          id,
-          bank_name,
-          affiliate_url,
-          commission_rate
-        ),
-        affiliate_products!affiliate_clicks_product_id_fkey (
-          id,
-          product_name,
-          provider_name,
-          affiliate_commission
-        )
-      `)
+      .select('id, deal_id, product_id, click_type, clicked_at, converted, commission_earned')
 
     if (startDate) {
       query = query.gte('clicked_at', startDate)
@@ -91,7 +101,11 @@ export async function GET(request: NextRequest) {
         performance: []
       })
     }
-    
+
+    // Create lookup maps for deals and products
+    const dealsMap = new Map(dealsData?.map(deal => [deal.id, deal.bank_name]) || [])
+    const productsMap = new Map(productsData?.map(product => [product.id, `${product.provider_name} - ${product.product_name}`]) || [])
+
     // Aggregate data by affiliate
     const performanceMap = new Map<string, {
       id: string
@@ -101,32 +115,30 @@ export async function GET(request: NextRequest) {
       conversions: number
       revenue: number
     }>()
-    
+
     data?.forEach((click: {
       click_type: 'bank_deal' | 'affiliate_product';
       deal_id: string | null;
       product_id: string | null;
       converted: boolean;
       commission_earned: number;
-      bank_deals?: { bank_name: string } | null;
-      affiliate_products?: { provider_name: string; product_name: string } | null;
     }) => {
       let key: string
       let name: string
       let type: 'bank_deal' | 'affiliate_product'
-      
-      if (click.click_type === 'bank_deal' && click.bank_deals) {
+
+      if (click.click_type === 'bank_deal' && click.deal_id) {
         key = `bank_deal_${click.deal_id}`
-        name = click.bank_deals.bank_name
+        name = dealsMap.get(click.deal_id) || `Bank Deal ${click.deal_id.slice(0, 8)}`
         type = 'bank_deal'
-      } else if (click.click_type === 'affiliate_product' && click.affiliate_products) {
+      } else if (click.click_type === 'affiliate_product' && click.product_id) {
         key = `affiliate_product_${click.product_id}`
-        name = `${click.affiliate_products.provider_name} - ${click.affiliate_products.product_name}`
+        name = productsMap.get(click.product_id) || `Product ${click.product_id.slice(0, 8)}`
         type = 'affiliate_product'
       } else {
         return // Skip if no valid affiliate data
       }
-      
+
       if (!performanceMap.has(key)) {
         performanceMap.set(key, {
           id: (click.deal_id || click.product_id) as string,
@@ -137,7 +149,7 @@ export async function GET(request: NextRequest) {
           revenue: 0
         })
       }
-      
+
       const stats = performanceMap.get(key)!
       stats.clicks++
       if (click.converted) {
