@@ -1,7 +1,7 @@
+'use client'
+
 // Force dynamic rendering to prevent caching issues
 export const dynamic = 'force-dynamic'
-
-'use client'
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
