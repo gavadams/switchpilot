@@ -15,7 +15,25 @@ export default function LoginPage() {
   useEffect(() => {
     if (!loading && user) {
       console.log('🔐 LoginPage: User authenticated, redirecting to dashboard')
-      router.replace('/dashboard')
+      console.log('🔐 LoginPage: Router object:', router)
+      try {
+        console.log('🔐 LoginPage: Attempting router.replace...')
+        router.replace('/dashboard')
+        console.log('🔐 LoginPage: router.replace completed')
+      } catch (error) {
+        console.error('🔐 LoginPage: Error calling router.replace:', error)
+        // Try fallback methods
+        try {
+          console.log('🔐 LoginPage: Trying router.push as fallback...')
+          router.push('/dashboard')
+          console.log('🔐 LoginPage: router.push completed')
+        } catch (pushError) {
+          console.error('🔐 LoginPage: router.push also failed:', pushError)
+          // Last resort: force navigation
+          console.log('🔐 LoginPage: Using window.location as last resort...')
+          window.location.href = '/dashboard'
+        }
+      }
     }
   }, [user, loading, router])
 

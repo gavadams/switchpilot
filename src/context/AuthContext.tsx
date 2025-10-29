@@ -70,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔐 AuthContext: Auth state change event:', event, { hasSession: !!session, userId: session?.user?.id })
+
         setSession(session)
         setUser(session?.user ?? null)
 
@@ -79,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setProfile(null)
         }
 
+        console.log('🔐 AuthContext: Setting loading to false after auth change')
         setLoading(false)
       }
     )
