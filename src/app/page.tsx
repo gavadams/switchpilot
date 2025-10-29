@@ -1,4 +1,4 @@
-// Static homepage - no dynamic rendering needed
+// Static homepage - pre-rendered for performance
 export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">

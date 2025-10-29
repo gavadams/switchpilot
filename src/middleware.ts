@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession()
 
   // Protected routes
-  const protectedRoutes = ['/dashboard', '/deals', '/switches', '/billing']
+  const protectedRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings', '/affiliate', '/affiliate-products']
   const isProtectedRoute = protectedRoutes.some(route => 
     req.nextUrl.pathname.startsWith(route)
   )

@@ -80,26 +80,28 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span className="font-bold text-xl">SwitchPilot</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              {navigation.map((item) => {
-                const Icon = item.icon
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActiveRoute(item.href)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </Link>
-                )
-              })}
-            </nav>
+            {/* Desktop Navigation - Only show for authenticated users */}
+            {user && (
+              <nav className="hidden md:flex items-center space-x-6">
+                {navigation.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        isActiveRoute(item.href)
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  )
+                })}
+              </nav>
+            )}
           </div>
 
           {/* User Menu */}
@@ -166,24 +168,26 @@ export default function MainLayout({ children }: MainLayoutProps) {
               </div>
             )}
 
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </Button>
+            {/* Mobile menu button - Only show for authenticated users */}
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
+        {/* Mobile Navigation - Only show for authenticated users */}
+        {mobileMenuOpen && user && (
           <div className="md:hidden border-t bg-background">
             <div className="container py-4">
               <nav className="flex flex-col space-y-2">
