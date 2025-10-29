@@ -70,13 +70,11 @@ export default function AddBankDealModal({ deals, open, onOpenChange, onSave }: 
     resetForm()
   }
 
-  const availableDeals = deals.filter(deal =>
-    !deal.affiliate_url || deal.affiliate_url.trim() === ''
-  )
+  const availableDeals = deals
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white border-neutral-200 shadow-xl">
         <DialogHeader>
           <DialogTitle>Add Bank Deal Affiliate</DialogTitle>
           <DialogDescription>

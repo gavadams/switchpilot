@@ -83,7 +83,7 @@ export default function EditBankDealModal({ deal, open, onOpenChange, onSave }: 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white border-neutral-200 shadow-xl">
         <DialogHeader>
           <DialogTitle>Edit Bank Deal Affiliate</DialogTitle>
           <DialogDescription>

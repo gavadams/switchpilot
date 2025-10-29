@@ -115,7 +115,7 @@ export default function EditProductModal({ product, open, onOpenChange, onSave }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-white border-neutral-200 shadow-xl">
         <DialogHeader>
           <DialogTitle>Edit Affiliate Product</DialogTitle>
           <DialogDescription>
