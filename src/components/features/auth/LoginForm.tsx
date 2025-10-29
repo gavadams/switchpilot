@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -18,15 +17,13 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 interface LoginFormProps {
   onSuccess?: () => void
-  redirectUrl?: string
 }
 
-export default function LoginForm({ onSuccess, redirectUrl = '/dashboard' }: LoginFormProps) {
+export default function LoginForm({ onSuccess }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
   const { user } = useAuth()
-  const router = useRouter()
 
   // Auto-redirect when user becomes available (for backward compatibility)
   useEffect(() => {
@@ -58,10 +55,8 @@ export default function LoginForm({ onSuccess, redirectUrl = '/dashboard' }: Log
         return
       }
 
-      // Redirect immediately after successful login
-      router.push(redirectUrl)
-
-      // Also call onSuccess if provided (for backward compatibility)
+      // Call onSuccess to trigger auth state updates
+      // The LoginPage will handle the redirect when user state is confirmed
       if (onSuccess) {
         onSuccess()
       }
