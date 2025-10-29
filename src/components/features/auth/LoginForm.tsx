@@ -27,7 +27,9 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
   // Auto-redirect when user becomes available
   useEffect(() => {
+    console.log('🔐 LoginForm useEffect: user =', !!user, 'onSuccess =', !!onSuccess)
     if (user && onSuccess) {
+      console.log('🔐 LoginForm: Calling onSuccess callback')
       onSuccess()
     }
   }, [user, onSuccess])
@@ -41,22 +43,27 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   })
 
   const onSubmit = async (data: LoginFormData) => {
+    console.log('🔐 LoginForm: Starting login attempt for', data.email)
     setIsLoading(true)
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       })
+
+      console.log('🔐 LoginForm: Supabase response:', { hasData: !!authData, error: error?.message })
 
       if (error) {
         setError(error.message)
         return
       }
 
+      console.log('🔐 LoginForm: Login successful, waiting for user state update')
       // The redirect will be handled by the useEffect when user state updates
-    } catch {
+    } catch (err) {
+      console.error('🔐 LoginForm: Exception during login:', err)
       setError('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)

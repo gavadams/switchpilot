@@ -49,7 +49,10 @@ export default function LoginPage() {
             Access your bank switching dashboard
           </p>
         </div>
-        <LoginForm onSuccess={() => router.replace('/dashboard')} />
+        <LoginForm onSuccess={() => {
+          console.log('🔐 LoginForm success callback triggered')
+          router.replace('/dashboard')
+        }} />
       </div>
     </div>
   )
