@@ -45,11 +45,14 @@ export async function isAdmin(): Promise<boolean> {
  * @throws Error if user is not authenticated or not an admin
  */
 export async function requireAdmin(): Promise<void> {
+  console.log('🔧 requireAdmin called')
   const adminStatus = await isAdmin()
-  
+  console.log('🔧 Admin status result:', adminStatus)
+
   if (!adminStatus) {
     throw new Error('Unauthorized: Admin access required')
   }
+  console.log('🔧 Admin check passed successfully')
 }
 
 /**
