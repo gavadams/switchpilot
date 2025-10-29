@@ -1,18 +1,16 @@
 'use client'
 
-import { useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import RegisterForm from '../../../components/features/auth/RegisterForm'
 
 // Prevent static generation during build
 export const dynamic = 'force-dynamic'
 
-function RegisterPageContent() {
+export default function RegisterPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirectedFrom = searchParams.get('redirectedFrom')
 
   useEffect(() => {
     if (!loading && user) {
@@ -46,26 +44,8 @@ function RegisterPageContent() {
             Start earning from bank switching rewards
           </p>
         </div>
-        <RegisterForm onSuccess={() => {
-          const loginUrl = redirectedFrom ? `/login?redirectedFrom=${encodeURIComponent(redirectedFrom)}` : '/login'
-          router.push(loginUrl)
-        }} />
+        <RegisterForm onSuccess={() => router.push('/login')} />
       </div>
     </div>
-  )
-}
-
-export default function RegisterPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    }>
-      <RegisterPageContent />
-    </Suspense>
   )
 }

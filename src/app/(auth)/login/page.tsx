@@ -1,28 +1,23 @@
 'use client'
 
-import { useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '../../../context/AuthContext'
 import LoginForm from '../../../components/features/auth/LoginForm'
 
 // Prevent static generation during build
 export const dynamic = 'force-dynamic'
 
-function LoginPageContent() {
+export default function LoginPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirectedFrom = searchParams.get('redirectedFrom')
-
-  // Decode the redirectedFrom parameter
-  const redirectTo = redirectedFrom ? decodeURIComponent(redirectedFrom) : '/dashboard'
 
   useEffect(() => {
     if (!loading && user) {
-      // Use replace to avoid back button issues
-      router.replace(redirectTo)
+      // Always redirect to dashboard after login
+      router.replace('/dashboard')
     }
-  }, [user, loading, router, redirectTo])
+  }, [user, loading, router])
 
   if (loading) {
     return (
@@ -50,23 +45,8 @@ function LoginPageContent() {
             Access your bank switching dashboard
           </p>
         </div>
-        <LoginForm onSuccess={() => router.replace(redirectTo)} />
+        <LoginForm onSuccess={() => router.replace('/dashboard')} />
       </div>
     </div>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    }>
-      <LoginPageContent />
-    </Suspense>
   )
 }
