@@ -12,8 +12,12 @@ export default function LoginPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
+  console.log('🔐 LoginPage: user =', user, 'loading =', loading)
+
   useEffect(() => {
+    console.log('🔐 LoginPage useEffect: checking redirect', { user: !!user, loading })
     if (!loading && user) {
+      console.log('🔐 LoginPage: Redirecting to dashboard')
       // Always redirect to dashboard after login
       router.replace('/dashboard')
     }

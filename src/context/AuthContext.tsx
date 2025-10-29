@@ -44,15 +44,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        await fetchProfile(session.user.id)
+      try {
+        console.log('🔐 AuthContext: Getting initial session...')
+        const { data: { session }, error } = await supabase.auth.getSession()
+
+        if (error) {
+          console.error('🔐 AuthContext: Error getting session:', error)
+        }
+
+        console.log('🔐 AuthContext: Session result:', { hasSession: !!session, userId: session?.user?.id })
+
+        setSession(session)
+        setUser(session?.user ?? null)
+
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        }
+
+        setLoading(false)
+        console.log('🔐 AuthContext: Initial loading complete, loading = false')
+      } catch (error) {
+        console.error('🔐 AuthContext: Exception in getInitialSession:', error)
+        setLoading(false)
       }
-      
-      setLoading(false)
     }
 
     getInitialSession()
@@ -60,15 +74,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔐 AuthContext: Auth state change:', event, { hasSession: !!session, userId: session?.user?.id })
+
         setSession(session)
         setUser(session?.user ?? null)
-        
+
         if (session?.user) {
           await fetchProfile(session.user.id)
         } else {
           setProfile(null)
         }
-        
+
         setLoading(false)
       }
     )
