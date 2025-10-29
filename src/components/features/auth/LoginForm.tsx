@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,19 +18,19 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 interface LoginFormProps {
   onSuccess?: () => void
+  redirectUrl?: string
 }
 
-export default function LoginForm({ onSuccess }: LoginFormProps) {
+export default function LoginForm({ onSuccess, redirectUrl = '/dashboard' }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
   const { user } = useAuth()
+  const router = useRouter()
 
-  // Auto-redirect when user becomes available
+  // Auto-redirect when user becomes available (for backward compatibility)
   useEffect(() => {
-    console.log('🔐 LoginForm useEffect: user =', !!user, 'onSuccess =', !!onSuccess)
     if (user && onSuccess) {
-      console.log('🔐 LoginForm: Calling onSuccess callback')
       onSuccess()
     }
   }, [user, onSuccess])
@@ -43,27 +44,29 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   })
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log('🔐 LoginForm: Starting login attempt for', data.email)
     setIsLoading(true)
     setError(null)
 
     try {
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       })
-
-      console.log('🔐 LoginForm: Supabase response:', { hasData: !!authData, error: error?.message })
 
       if (error) {
         setError(error.message)
         return
       }
 
-      console.log('🔐 LoginForm: Login successful, waiting for user state update')
-      // The redirect will be handled by the useEffect when user state updates
+      // Redirect immediately after successful login
+      router.push(redirectUrl)
+
+      // Also call onSuccess if provided (for backward compatibility)
+      if (onSuccess) {
+        onSuccess()
+      }
     } catch (err) {
-      console.error('🔐 LoginForm: Exception during login:', err)
+      console.error('Exception during login:', err)
       setError('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)
