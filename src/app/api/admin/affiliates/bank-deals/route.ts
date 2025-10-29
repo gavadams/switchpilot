@@ -102,35 +102,16 @@ export async function PUT(request: NextRequest) {
     const supabase = await createServerSupabaseClient()
     console.log('🔧 Supabase client created')
 
-    // Check which columns exist in the table
-    const { data: columnCheck } = await supabase
-      .from('information_schema.columns')
-      .select('column_name')
-      .eq('table_schema', 'public')
-      .eq('table_name', 'bank_deals')
-      .in('column_name', ['affiliate_url', 'affiliate_provider', 'commission_rate', 'tracking_enabled'])
-
-    console.log('🔧 Available columns:', columnCheck?.map(c => c.column_name))
-
+    // Prepare update data - assume columns exist (they should after running migrations)
     const updateData: Record<string, string | number | boolean | null> = {
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      affiliate_url: affiliateUrl || null,
+      affiliate_provider: affiliateProvider || null,
+      commission_rate: commissionRate || 0,
+      tracking_enabled: trackingEnabled ?? !!affiliateUrl
     }
 
-    // Only add columns that exist
-    if (columnCheck?.some(c => c.column_name === 'affiliate_url')) {
-      updateData.affiliate_url = affiliateUrl || null
-    }
-    if (columnCheck?.some(c => c.column_name === 'affiliate_provider')) {
-      updateData.affiliate_provider = affiliateProvider || null
-    }
-    if (columnCheck?.some(c => c.column_name === 'commission_rate')) {
-      updateData.commission_rate = commissionRate || 0
-    }
-    if (columnCheck?.some(c => c.column_name === 'tracking_enabled')) {
-      updateData.tracking_enabled = trackingEnabled ?? !!affiliateUrl
-    }
-
-    console.log('🔧 Final update data:', updateData)
+    console.log('🔧 Update data:', updateData)
 
     const { data, error } = await supabase
       .from('bank_deals')
