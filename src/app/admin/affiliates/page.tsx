@@ -8,6 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Search, Loader2, AlertCircle, TrendingUp, Plus, Edit, Trash2, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import EditBankDealModal from '../../../components/features/admin/EditBankDealModal'
+import EditProductModal from '../../../components/features/admin/EditProductModal'
+import ConfirmDeleteDialog from '../../../components/features/admin/ConfirmDeleteDialog'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -46,6 +49,13 @@ export default function AdminAffiliatesPage() {
   const [dealSearch, setDealSearch] = useState('')
   const [productSearch, setProductSearch] = useState('')
 
+  // Modal state
+  const [editingBankDeal, setEditingBankDeal] = useState<BankDeal | null>(null)
+  const [editingProduct, setEditingProduct] = useState<AffiliateProduct | null>(null)
+  const [deletingBankDeal, setDeletingBankDeal] = useState<BankDeal | null>(null)
+  const [deletingProduct, setDeletingProduct] = useState<AffiliateProduct | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
@@ -71,6 +81,111 @@ export default function AdminAffiliatesPage() {
       setLoading(false)
     }
   }, [])
+
+  // Handler functions
+  const handleUpdateBankDeal = async (dealId: string, data: {
+    affiliateUrl: string
+    affiliateProvider: string
+    commissionRate: number
+    trackingEnabled: boolean
+  }) => {
+    try {
+      const response = await fetch('/api/admin/affiliates/bank-deals', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dealId,
+          affiliateUrl: data.affiliateUrl,
+          affiliateProvider: data.affiliateProvider,
+          commissionRate: data.commissionRate,
+          trackingEnabled: data.trackingEnabled
+        })
+      })
+
+      if (!response.ok) throw new Error('Failed to update bank deal')
+
+      await fetchData() // Refresh data
+    } catch (error) {
+      console.error('Error updating bank deal:', error)
+      throw error
+    }
+  }
+
+  const handleUpdateProduct = async (productId: string, data: {
+    productName: string
+    providerName: string
+    productType: string
+    description: string
+    affiliateUrl: string
+    affiliateProvider: string
+    affiliateCommission: number
+    isActive: boolean
+  }) => {
+    try {
+      const response = await fetch('/api/admin/affiliates/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId,
+          productName: data.productName,
+          providerName: data.providerName,
+          productType: data.productType,
+          description: data.description,
+          affiliateUrl: data.affiliateUrl,
+          affiliateProvider: data.affiliateProvider,
+          affiliateCommission: data.affiliateCommission,
+          isActive: data.isActive
+        })
+      })
+
+      if (!response.ok) throw new Error('Failed to update product')
+
+      await fetchData() // Refresh data
+    } catch (error) {
+      console.error('Error updating product:', error)
+      throw error
+    }
+  }
+
+  const handleDeleteBankDeal = async () => {
+    if (!deletingBankDeal) return
+
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/admin/affiliates/bank-deals?dealId=${deletingBankDeal.id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) throw new Error('Failed to delete bank deal affiliate')
+
+      await fetchData() // Refresh data
+      setDeletingBankDeal(null)
+    } catch (error) {
+      console.error('Error deleting bank deal affiliate:', error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const handleDeleteProduct = async () => {
+    if (!deletingProduct) return
+
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/admin/affiliates/products?productId=${deletingProduct.id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) throw new Error('Failed to delete product')
+
+      await fetchData() // Refresh data
+      setDeletingProduct(null)
+    } catch (error) {
+      console.error('Error deleting product:', error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   useEffect(() => {
     fetchData()
@@ -184,10 +299,18 @@ export default function AdminAffiliatesPage() {
                           </td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <Button variant="outline" size="sm">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditingBankDeal(deal)}
+                              >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="destructive" size="sm">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setDeletingBankDeal(deal)}
+                              >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -247,10 +370,18 @@ export default function AdminAffiliatesPage() {
                           </td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <Button variant="outline" size="sm">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditingProduct(product)}
+                              >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="destructive" size="sm">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setDeletingProduct(product)}
+                              >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -265,6 +396,41 @@ export default function AdminAffiliatesPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Modals */}
+      <EditBankDealModal
+        deal={editingBankDeal}
+        open={!!editingBankDeal}
+        onOpenChange={(open) => !open && setEditingBankDeal(null)}
+        onSave={handleUpdateBankDeal}
+      />
+
+      <EditProductModal
+        product={editingProduct}
+        open={!!editingProduct}
+        onOpenChange={(open) => !open && setEditingProduct(null)}
+        onSave={handleUpdateProduct}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!deletingBankDeal}
+        onOpenChange={(open) => !open && setDeletingBankDeal(null)}
+        title="Delete Bank Deal Affiliate"
+        description={`Are you sure you want to remove affiliate data from "${deletingBankDeal?.bank_name}"? This will disable tracking and remove commission settings.`}
+        confirmText="Remove Affiliate"
+        onConfirm={handleDeleteBankDeal}
+        isDeleting={isDeleting}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!deletingProduct}
+        onOpenChange={(open) => !open && setDeletingProduct(null)}
+        title="Delete Affiliate Product"
+        description={`Are you sure you want to delete "${deletingProduct?.product_name}"? This action cannot be undone.`}
+        confirmText="Delete Product"
+        onConfirm={handleDeleteProduct}
+        isDeleting={isDeleting}
+      />
     </div>
   )
 }

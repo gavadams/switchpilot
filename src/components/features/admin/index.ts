@@ -4,4 +4,7 @@ export { default as AddBankDealAffiliateDialog } from './AddBankDealAffiliateDia
 export { default as AddProductDialog } from './AddProductDialog'
 export { default as DateRangeSelector } from './DateRangeSelector'
 export { default as PerformanceCard } from './PerformanceCard'
+export { default as EditBankDealModal } from './EditBankDealModal'
+export { default as EditProductModal } from './EditProductModal'
+export { default as ConfirmDeleteDialog } from './ConfirmDeleteDialog'
 
