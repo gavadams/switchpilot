@@ -229,7 +229,7 @@ export default function AffiliateTrackingPage() {
             </div>
             <div className="flex gap-2">
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32 bg-white border-neutral-200">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -240,7 +240,7 @@ export default function AffiliateTrackingPage() {
               </Select>
               
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32 bg-white border-neutral-200">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>

@@ -103,7 +103,7 @@ export async function PUT(request: NextRequest) {
     console.log('🔧 Supabase client created')
 
     // Check which columns exist in the table
-    const { data: columnCheck, error: columnError } = await supabase
+    const { data: columnCheck } = await supabase
       .from('information_schema.columns')
       .select('column_name')
       .eq('table_schema', 'public')
@@ -112,7 +112,7 @@ export async function PUT(request: NextRequest) {
 
     console.log('🔧 Available columns:', columnCheck?.map(c => c.column_name))
 
-    const updateData: any = {
+    const updateData: Record<string, string | number | boolean | null> = {
       updated_at: new Date().toISOString()
     }
 

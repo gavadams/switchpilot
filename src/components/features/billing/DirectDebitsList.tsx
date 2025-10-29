@@ -209,7 +209,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
                 <Filter className="w-4 h-4 text-neutral-600" />
                 <label className="text-sm font-medium text-neutral-700">Status:</label>
                 <Select value={statusFilter} onValueChange={(value: StatusFilter) => setStatusFilter(value)}>
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger className="w-32 bg-white border-neutral-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
@@ -225,7 +225,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-neutral-700">Category:</label>
                 <Select value={categoryFilter} onValueChange={(value: CategoryFilter) => setCategoryFilter(value)}>
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger className="w-32 bg-white border-neutral-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
@@ -241,7 +241,7 @@ export default function DirectDebitsList({ onSetupNew, className }: DirectDebits
                 <SortAsc className="w-4 h-4 text-neutral-600" />
                 <label className="text-sm font-medium text-neutral-700">Sort:</label>
                 <Select value={sortBy} onValueChange={(value: SortBy) => setSortBy(value)}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-40 bg-white border-neutral-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>

@@ -63,6 +63,10 @@
   --color-error-50: #fef2f2;
   --color-error-500: #ef4444;
   --color-error-600: #dc2626;
+
+  /* Popover colors for dropdown menus */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #374151;
 }
 
 @layer base {

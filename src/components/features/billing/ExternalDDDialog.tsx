@@ -145,7 +145,7 @@ export default function ExternalDDDialog({ open, onOpenChange, onSuccess, switch
             <div>
               <Label htmlFor="frequency">Frequency</Label>
               <Select value={frequency} onValueChange={(value: 'monthly' | 'one-time') => setFrequency(value)}>
-                <SelectTrigger className="mt-1">
+                <SelectTrigger className="mt-1 bg-white border-neutral-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border shadow-lg" style={{ backgroundColor: 'white', opacity: 1 }}>
