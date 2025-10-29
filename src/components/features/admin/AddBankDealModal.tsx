@@ -86,7 +86,7 @@ export default function AddBankDealModal({ deals, open, onOpenChange, onSave }: 
           <div className="space-y-2">
             <Label htmlFor="dealSelect">Select Bank Deal</Label>
             <Select value={selectedDealId} onValueChange={setSelectedDealId} required>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-neutral-200">
                 <SelectValue placeholder="Choose a bank deal" />
               </SelectTrigger>
               <SelectContent>

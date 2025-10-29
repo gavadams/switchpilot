@@ -151,7 +151,7 @@ export default function EditProductModal({ product, open, onOpenChange, onSave }
           <div className="space-y-2">
             <Label htmlFor="productType">Product Type</Label>
             <Select value={productType} onValueChange={setProductType} required>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-neutral-200">
                 <SelectValue placeholder="Select product type" />
               </SelectTrigger>
               <SelectContent>
