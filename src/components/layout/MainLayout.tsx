@@ -30,8 +30,6 @@ const navigation = [
 ]
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  console.log('🏠 MainLayout: Rendering for pathname =', usePathname())
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const { user, profile, loading } = useAuth()
@@ -53,7 +51,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
       .slice(0, 2)
   }
 
-  if (loading) {
+  // Only show loading for authenticated pages (dashboard routes)
+  // Public pages (like homepage) should render immediately
+  const isPublicPage = pathname === '/' || pathname === '/login' || pathname === '/register'
+
+  if (loading && !isPublicPage) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
