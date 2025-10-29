@@ -118,7 +118,7 @@ export default function AddProductDialog({ onAdd }: AddProductDialogProps) {
                 value={formData.productType}
                 onValueChange={(value) => setFormData({ ...formData, productType: value as AdminProduct['product_type'] })}
               >
-                <SelectTrigger id="product-type">
+                <SelectTrigger id="product-type" className="bg-white border-neutral-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -180,7 +180,7 @@ export default function AddProductDialog({ onAdd }: AddProductDialogProps) {
                 value={formData.isActive ? 'true' : 'false'}
                 onValueChange={(value) => setFormData({ ...formData, isActive: value === 'true' })}
               >
-                <SelectTrigger id="is-active">
+                <SelectTrigger id="is-active" className="bg-white border-neutral-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

@@ -64,22 +64,30 @@ export default function AdminAffiliatesPage() {
     try {
       setLoading(true)
       setError(null)
+      console.log('🔧 Admin page: Fetching data...')
 
       const [dealsRes, productsRes] = await Promise.all([
         fetch('/api/admin/affiliates/bank-deals'),
         fetch('/api/admin/affiliates/products')
       ])
 
+      console.log('🔧 Admin page: API responses - deals:', dealsRes.status, 'products:', productsRes.status)
+
       if (!dealsRes.ok || !productsRes.ok) {
+        const dealsError = await dealsRes.text()
+        const productsError = await productsRes.text()
+        console.error('🔧 Admin page: API errors - deals:', dealsError, 'products:', productsError)
         throw new Error(`Failed to fetch data: deals=${dealsRes.status}, products=${productsRes.status}`)
       }
 
       const dealsData = await dealsRes.json()
       const productsData = await productsRes.json()
+      console.log('🔧 Admin page: Data loaded - deals:', dealsData.length, 'products:', productsData.length)
 
       setBankDeals(dealsData)
       setProducts(productsData)
     } catch (err) {
+      console.error('🔧 Admin page: Fetch error:', err)
       setError(err instanceof Error ? err.message : 'Failed to load data')
     } finally {
       setLoading(false)

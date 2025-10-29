@@ -112,7 +112,7 @@ export default function ProductRow({ product, onUpdate, onDelete }: ProductRowPr
             value={editedData.productType}
             onValueChange={(value) => setEditedData({ ...editedData, productType: value as AdminProduct['product_type'] })}
           >
-            <SelectTrigger className="max-w-[150px]">
+            <SelectTrigger className="max-w-[150px] bg-white border-neutral-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -168,7 +168,7 @@ export default function ProductRow({ product, onUpdate, onDelete }: ProductRowPr
             value={editedData.isActive ? 'true' : 'false'}
             onValueChange={(value) => setEditedData({ ...editedData, isActive: value === 'true' })}
           >
-            <SelectTrigger className="max-w-[100px]">
+            <SelectTrigger className="max-w-[100px] bg-white border-neutral-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

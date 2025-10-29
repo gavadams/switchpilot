@@ -77,7 +77,7 @@ export default function AddBankDealAffiliateDialog({ deals, onAdd }: AddBankDeal
                 onValueChange={setSelectedDealId}
                 required
               >
-                <SelectTrigger id="deal">
+                <SelectTrigger id="deal" className="bg-white border-neutral-200">
                   <SelectValue placeholder="Select a bank deal" />
                 </SelectTrigger>
                 <SelectContent>

@@ -23,14 +23,28 @@ import Link from 'next/link'
 interface PerformanceItem {
     id: string
   name: string
-  type: 'bank_deal' | 'product'
+  type: 'bank_deal' | 'affiliate_product'
   clicks: number
   conversions: number
   revenue: number
+  conversionRate: number
+}
+
+interface PerformanceSummary {
+      totalClicks: number
+      totalConversions: number
+      totalRevenue: number
+  avgConversionRate: number
+}
+
+interface PerformanceResponse {
+  summary: PerformanceSummary
+  performance: PerformanceItem[]
 }
 
 export default function AdminPerformancePage() {
   const [performanceData, setPerformanceData] = useState<PerformanceItem[]>([])
+  const [summaryData, setSummaryData] = useState<PerformanceSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -47,8 +61,9 @@ export default function AdminPerformancePage() {
 
       if (!res.ok) throw new Error('Failed to fetch performance data')
 
-      const data = await res.json()
-      setPerformanceData(data)
+      const data: PerformanceResponse = await res.json()
+      setPerformanceData(data.performance || [])
+      setSummaryData(data.summary || null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load performance data')
     } finally {
@@ -62,7 +77,7 @@ export default function AdminPerformancePage() {
     const csvContent = [
       'Type,Name,Clicks,Conversions,Conversion Rate,Revenue',
       ...performanceData.map(item =>
-        `${item.type},${item.name},${item.clicks},${item.conversions},${item.clicks > 0 ? ((item.conversions / item.clicks) * 100).toFixed(1) : '0.0'}%,£${item.revenue.toFixed(2)}`
+        `${item.type},${item.name},${item.clicks},${item.conversions},${item.conversionRate.toFixed(1)}%,£${item.revenue.toFixed(2)}`
       )
     ].join('\n')
 
@@ -75,10 +90,11 @@ export default function AdminPerformancePage() {
     URL.revokeObjectURL(url)
   }
 
-  const totalClicks = performanceData.reduce((sum, item) => sum + item.clicks, 0)
-  const totalConversions = performanceData.reduce((sum, item) => sum + item.conversions, 0)
-  const totalRevenue = performanceData.reduce((sum, item) => sum + item.revenue, 0)
-  const avgConversionRate = totalClicks > 0 ? ((totalConversions / totalClicks) * 100).toFixed(1) : '0.0'
+  // Use summary data from API or fallback to empty values
+  const totalClicks = summaryData?.totalClicks || 0
+  const totalConversions = summaryData?.totalConversions || 0
+  const totalRevenue = summaryData?.totalRevenue || 0
+  const avgConversionRate = summaryData ? summaryData.avgConversionRate.toFixed(1) : '0.0'
 
   if (loading) {
     return (
@@ -211,7 +227,7 @@ export default function AdminPerformancePage() {
                       <td className="p-4">{item.clicks}</td>
                       <td className="p-4">{item.conversions}</td>
                       <td className="p-4">
-                        {item.clicks > 0 ? ((item.conversions / item.clicks) * 100).toFixed(1) : '0.0'}%
+                        {item.conversionRate.toFixed(1)}%
                       </td>
                       <td className="p-4">£{item.revenue.toFixed(2)}</td>
                     </tr>
