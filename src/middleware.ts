@@ -61,29 +61,29 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // TEMPORARILY DISABLED: Check admin status for admin routes
-  // if (isAdminRoute && session) {
-  //   try {
-  //     // Check if user is in admin_users table
-  //     const { data: adminUser, error: adminError } = await supabase
-  //       .from('admin_users')
-  //       .select('id')
-  //       .eq('id', session.user.id)
-  //       .single()
+  // Check admin status for admin routes
+  if (isAdminRoute && session) {
+    try {
+      // Check if user is in admin_users table
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', session.user.id)
+        .single()
 
-  //     if (adminError || !adminUser) {
-  //       // User is not an admin, redirect to dashboard
-  //       const redirectUrl = new URL('/dashboard', req.url)
-  //       redirectUrl.searchParams.set('error', 'admin_required')
-  //       return NextResponse.redirect(redirectUrl)
-  //     }
-  //   } catch (error) {
-  //     // If admin_users table doesn't exist or query fails, deny access
-  //     const redirectUrl = new URL('/dashboard', req.url)
-  //     redirectUrl.searchParams.set('error', 'admin_required')
-  //     return NextResponse.redirect(redirectUrl)
-  //   }
-  // }
+      if (adminError || !adminUser) {
+        // User is not an admin, redirect to dashboard
+        const redirectUrl = new URL('/dashboard', req.url)
+        redirectUrl.searchParams.set('error', 'admin_required')
+        return NextResponse.redirect(redirectUrl)
+      }
+    } catch (error) {
+      // If admin_users table doesn't exist or query fails, deny access
+      const redirectUrl = new URL('/dashboard', req.url)
+      redirectUrl.searchParams.set('error', 'admin_required')
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
 
   // Redirect authenticated users from auth routes to dashboard
   if (isAuthRoute && session) {

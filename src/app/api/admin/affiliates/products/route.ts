@@ -6,7 +6,7 @@ import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
 export async function GET() {
   console.log('🔧 API: Products GET called')
   try {
-    // TEMPORARILY DISABLED: await requireAdmin()
+    await requireAdmin()
 
     const supabase = await createServerSupabaseClient()
 

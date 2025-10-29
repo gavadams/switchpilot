@@ -9,7 +9,7 @@ interface ConditionalLayoutProps {
 }
 
 // Routes that should use the dashboard layout (with sidebar)
-const dashboardRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings', '/admin']
+const dashboardRoutes = ['/dashboard', '/deals', '/switches', '/billing', '/settings', '/admin', '/affiliate-products', '/affiliate']
 
 // Routes that should use the main layout (with header)
 const mainLayoutRoutes = ['/login', '/register', '/']
@@ -55,6 +55,24 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
           { label: 'Admin', href: '/admin/affiliates' },
           { label: 'Affiliates', href: '/admin/affiliates' },
           { label: 'Performance' }
+        ]
+      }
+    } else if (pathname === '/affiliate-products') {
+      title = 'Affiliate Products'
+      breadcrumbs = [{ label: 'Products' }]
+    } else if (pathname === '/affiliate') {
+      title = 'Affiliate Tracking'
+      breadcrumbs = [{ label: 'Affiliate' }]
+    } else if (pathname.startsWith('/switches/')) {
+      if (pathname === '/switches') {
+        title = 'My Switches'
+        breadcrumbs = [{ label: 'Switches' }]
+      } else {
+        // Dynamic switch detail page
+        title = 'Switch Details'
+        breadcrumbs = [
+          { label: 'Switches', href: '/switches' },
+          { label: 'Details' }
         ]
       }
     }
