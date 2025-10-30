@@ -37,8 +37,10 @@ export async function GET() {
 // POST - Create new product
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST products called')
     await requireAdmin()
-    
+    console.log('Admin check passed for POST')
+
     const body = await request.json()
     const {
       productName,
@@ -50,45 +52,79 @@ export async function POST(request: NextRequest) {
       affiliateCommission,
       isActive
     } = body
-    
+
+    console.log('POST request data:', {
+      productName,
+      providerName,
+      productType,
+      description,
+      affiliateUrl,
+      affiliateProvider,
+      affiliateCommission,
+      isActive
+    })
+
     if (!productName || !providerName || !productType || !affiliateUrl) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
-    
+
     const supabase = await createServerSupabaseClient()
-    
+    console.log('Supabase client created')
+
+    // Convert display names to database enum values
+    const productTypeMap: { [key: string]: string } = {
+      'Credit Cards': 'credit_card',
+      'Loans': 'loan',
+      'Savings': 'savings_account',
+      'Insurance': 'insurance',
+      'Investments': 'investment',
+      'Banking': 'other',
+      'Other': 'other'
+    }
+
+    const dbProductType = productTypeMap[productType] || 'other'
+
+    const insertData = {
+      product_name: productName,
+      provider_name: providerName,
+      product_type: dbProductType,
+      description: description || null,
+      affiliate_url: affiliateUrl,
+      affiliate_provider: affiliateProvider || null,
+      affiliate_commission: affiliateCommission || 0,
+      affiliate_commission_type: 'cpa', // Required field
+      commission_type: 'CPA', // Required field
+      is_active: isActive ?? true
+    }
+
+    console.log('Insert data:', insertData)
+
     const { data, error } = await supabase
       .from('affiliate_products')
-      .insert({
-        product_name: productName,
-        provider_name: providerName,
-        product_type: productType,
-        description: description || null,
-        affiliate_url: affiliateUrl,
-        affiliate_provider: affiliateProvider || null,
-        affiliate_commission: affiliateCommission || 0,
-        is_active: isActive ?? true
-      })
+      .insert(insertData)
       .select()
       .single()
-    
+
+    console.log('Insert result:', data, 'error:', error)
+
     if (error) {
       console.error('Error creating affiliate product:', error)
       return NextResponse.json(
-        { error: 'Failed to create product' },
+        { error: `Failed to create product: ${error.message}` },
         { status: 500 }
       )
     }
-    
+
+    console.log('Product created successfully')
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Admin auth error:', error)
+    console.error('POST products error:', error)
     return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
+      { error: `Server error: ${error instanceof Error ? error.message : 'Unknown error'}` },
+      { status: error instanceof Error && error.message.includes('Admin') ? 401 : 500 }
     )
   }
 }

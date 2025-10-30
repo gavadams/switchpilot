@@ -253,23 +253,34 @@ export default function AdminAffiliatesPage() {
     isActive: boolean
   }) => {
     try {
+      console.log('Adding new product:', data)
+      const requestBody = {
+        productName: data.productName,
+        providerName: data.providerName,
+        productType: data.productType,
+        description: data.description,
+        affiliateUrl: data.affiliateUrl,
+        affiliateProvider: data.affiliateProvider,
+        affiliateCommission: data.affiliateCommission,
+        isActive: data.isActive
+      }
+      console.log('Request body:', requestBody)
+
       const response = await fetch('/api/admin/affiliates/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productName: data.productName,
-          providerName: data.providerName,
-          productType: data.productType,
-          description: data.description,
-          affiliateUrl: data.affiliateUrl,
-          affiliateProvider: data.affiliateProvider,
-          affiliateCommission: data.affiliateCommission,
-          isActive: data.isActive
-        })
+        body: JSON.stringify(requestBody)
       })
 
-      if (!response.ok) throw new Error('Failed to create product')
+      console.log('POST response status:', response.status)
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('POST error response:', errorData)
+        throw new Error(`Failed to create product: ${errorData.error || response.statusText}`)
+      }
+
+      console.log('Product created successfully, refreshing data')
       await fetchData() // Refresh data
     } catch (error) {
       console.error('Error creating product:', error)
