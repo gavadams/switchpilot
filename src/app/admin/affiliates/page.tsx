@@ -102,6 +102,7 @@ export default function AdminAffiliatesPage() {
     trackingEnabled: boolean
   }) => {
     try {
+      console.log('Updating bank deal:', dealId)
       const response = await fetch('/api/admin/affiliates/bank-deals', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -114,11 +115,15 @@ export default function AdminAffiliatesPage() {
         })
       })
 
+      console.log('API response status:', response.status)
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('API error response:', errorData)
         throw new Error(`Failed to update bank deal: ${errorData.error || response.statusText}`)
       }
 
+      console.log('Update successful, refreshing data')
       await fetchData() // Refresh data
     } catch (error) {
       console.error('Error updating bank deal:', error)
