@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Loader2, RefreshCw, AlertCircle, CheckCircle2, Activity } from 'lucide-react'
 import Link from 'next/link'
-import { ScrapeProgress, HealthStatusBadge } from '@/components/features/admin'
+import ScrapeProgress from '@/components/features/admin/ScrapeProgress'
+import HealthStatusBadge from '@/components/features/admin/HealthStatusBadge'
 import { ScrapingSource, SyncResult, HealthStatus } from '@/types/scraping'
 
 export const dynamic = 'force-dynamic'
