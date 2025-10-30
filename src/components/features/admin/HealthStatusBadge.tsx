@@ -1,3 +1,5 @@
+'use client'
+
 import { Badge } from '@/components/ui/badge'
 import { AlertCircle, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { HealthStatus } from '@/types/scraping'
