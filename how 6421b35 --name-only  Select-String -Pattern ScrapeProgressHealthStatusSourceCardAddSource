@@ -1,0 +1,32 @@
+[1mdiff --git a/src/app/admin/scraping/page.tsx b/src/app/admin/scraping/page.tsx[m
+[1mindex 4558893..8282601 100644[m
+[1m--- a/src/app/admin/scraping/page.tsx[m
+[1m+++ b/src/app/admin/scraping/page.tsx[m
+[36m@@ -5,8 +5,8 @@[m [mimport { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com[m
+ import { Button } from '@/components/ui/button'[m
+ import { Loader2, RefreshCw, AlertCircle, CheckCircle2, Activity } from 'lucide-react'[m
+ import Link from 'next/link'[m
+[31m-import ScrapeProgress from '@/components/features/admin/ScrapeProgress'[m
+[31m-import HealthStatusBadge from '@/components/features/admin/HealthStatusBadge'[m
+[32m+[m[32mimport ScrapeProgress from '@/components/features/admin/ScrapeProgress.tsx'[m
+[32m+[m[32mimport HealthStatusBadge from '@/components/features/admin/HealthStatusBadge.tsx'[m
+ import { ScrapingSource, SyncResult, HealthStatus } from '@/types/scraping'[m
+ [m
+ export const dynamic = 'force-dynamic'[m
+[1mdiff --git a/src/app/admin/scraping/sources/page.tsx b/src/app/admin/scraping/sources/page.tsx[m
+[1mindex ee3b004..2520fd3 100644[m
+[1m--- a/src/app/admin/scraping/sources/page.tsx[m
+[1m+++ b/src/app/admin/scraping/sources/page.tsx[m
+[36m@@ -6,9 +6,9 @@[m [mimport { Button } from '@/components/ui/button'[m
+ import { Input } from '@/components/ui/input'[m
+ import { Badge } from '@/components/ui/badge'[m
+ import { Loader2, Plus, Search, Edit, Trash2 } from 'lucide-react'[m
+[31m-import SourceCard from '@/components/features/admin/SourceCard'[m
+[31m-import AddSourceModal from '@/components/features/admin/AddSourceModal'[m
+[31m-import ConfirmDeleteDialog from '@/components/features/admin/ConfirmDeleteDialog'[m
+[32m+[m[32mimport SourceCard from '@/components/features/admin/SourceCard.tsx'[m
+[32m+[m[32mimport AddSourceModal from '@/components/features/admin/AddSourceModal.tsx'[m
+[32m+[m[32mimport ConfirmDeleteDialog from '@/components/features/admin/ConfirmDeleteDialog.tsx'[m
+ import { ScrapingSource } from '@/types/scraping'[m
+ [m
+ export const dynamic = 'force-dynamic'[m
