@@ -9,4 +9,8 @@ export { default as EditProductModal } from './EditProductModal'
 export { default as ConfirmDeleteDialog } from './ConfirmDeleteDialog'
 export { default as AddBankDealModal } from './AddBankDealModal'
 export { default as AddProductModal } from './AddProductModal'
+export { default as ScrapeProgress } from './ScrapeProgress'
+export { default as HealthStatusBadge } from './HealthStatusBadge'
+export { default as SourceCard } from './SourceCard'
+export { default as AddSourceModal } from './AddSourceModal'
 
