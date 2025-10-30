@@ -1,0 +1,16 @@
+name: Daily Multi-Source Scraping
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  scrape-all-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger scraping API
+        run: |
+          curl -X GET "${{ secrets.APP_URL }}/api/cron/daily-scrape" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
