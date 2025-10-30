@@ -84,13 +84,10 @@ export async function POST(request: NextRequest) {
 // PUT - Update affiliate fields
 export async function PUT(request: NextRequest) {
   try {
-    console.log('🔧 Bank deals PUT called')
     await requireAdmin()
-    console.log('🔧 Admin check passed for PUT')
 
     const body = await request.json()
     const { dealId, affiliateUrl, affiliateProvider, commissionRate, trackingEnabled } = body
-    console.log('🔧 PUT request data:', { dealId, affiliateUrl, affiliateProvider, commissionRate, trackingEnabled })
 
     if (!dealId) {
       return NextResponse.json(
@@ -100,7 +97,6 @@ export async function PUT(request: NextRequest) {
     }
 
     const supabase = await createServerSupabaseClient()
-    console.log('🔧 Supabase client created')
 
     // Prepare update data - assume columns exist (they should after running migrations)
     const updateData: Record<string, string | number | boolean | null> = {
@@ -111,16 +107,12 @@ export async function PUT(request: NextRequest) {
       tracking_enabled: trackingEnabled ?? !!affiliateUrl
     }
 
-    console.log('🔧 Update data:', updateData)
-
     const { data, error } = await supabase
       .from('bank_deals')
       .update(updateData)
       .eq('id', dealId)
       .select()
       .single()
-
-    console.log('🔧 Supabase query result - data:', data, 'error:', error)
 
     if (error) {
       console.error('Error updating bank deal affiliate:', error)
@@ -130,11 +122,9 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    console.log('🔧 Bank deal updated successfully')
     return NextResponse.json(data)
   } catch (error) {
-    console.error('🔧 Bank deals PUT error:', error)
-    console.error('🔧 Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    console.error('Bank deals PUT error:', error)
     return NextResponse.json(
       { error: `Server error: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: error instanceof Error && error.message.includes('Admin') ? 401 : 500 }
