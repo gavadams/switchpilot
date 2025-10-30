@@ -319,7 +319,7 @@ export default function AddSourceModal({ open, onOpenChange, onSave, source }: A
                       ...scraperConfig,
                       options: { ...scraperConfig.options, retryAttempts: parseInt(e.target.value) || 3 }
                     })
-                  -*-
+                  }
                 />
               </div>
             </div>
