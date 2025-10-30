@@ -135,20 +135,39 @@ export async function PUT(request: NextRequest) {
 // DELETE - Remove affiliate from bank deal (set fields to null)
 export async function DELETE(request: NextRequest) {
   try {
+    console.log('DELETE called for bank deals')
     await requireAdmin()
-    
+
     const { searchParams } = new URL(request.url)
     const dealId = searchParams.get('dealId')
-    
+    console.log('Deal ID to delete:', dealId)
+
     if (!dealId) {
       return NextResponse.json(
         { error: 'Deal ID is required' },
         { status: 400 }
       )
     }
-    
+
     const supabase = await createServerSupabaseClient()
-    
+
+    // First check if the deal exists
+    const { data: existingDeal, error: fetchError } = await supabase
+      .from('bank_deals')
+      .select('id, bank_name')
+      .eq('id', dealId)
+      .single()
+
+    console.log('Existing deal:', existingDeal, 'fetch error:', fetchError)
+
+    if (fetchError || !existingDeal) {
+      console.error('Deal not found:', fetchError)
+      return NextResponse.json(
+        { error: 'Bank deal not found' },
+        { status: 404 }
+      )
+    }
+
     const { data, error } = await supabase
       .from('bank_deals')
       .update({
@@ -161,21 +180,24 @@ export async function DELETE(request: NextRequest) {
       .eq('id', dealId)
       .select()
       .single()
-    
+
+    console.log('Update result:', data, 'error:', error)
+
     if (error) {
       console.error('Error removing affiliate from bank deal:', error)
       return NextResponse.json(
-        { error: 'Failed to remove affiliate data' },
+        { error: `Failed to remove affiliate data: ${error.message}` },
         { status: 500 }
       )
     }
-    
+
+    console.log('Successfully removed affiliate data')
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Admin auth error:', error)
+    console.error('DELETE error:', error)
     return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
+      { error: `Server error: ${error instanceof Error ? error.message : 'Unknown error'}` },
+      { status: error instanceof Error && error.message.includes('Admin') ? 401 : 500 }
     )
   }
 }

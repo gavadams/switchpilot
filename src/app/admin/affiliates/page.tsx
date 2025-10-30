@@ -172,12 +172,20 @@ export default function AdminAffiliatesPage() {
 
     setIsDeleting(true)
     try {
+      console.log('Deleting bank deal affiliate:', deletingBankDeal.id)
       const response = await fetch(`/api/admin/affiliates/bank-deals?dealId=${deletingBankDeal.id}`, {
         method: 'DELETE'
       })
 
-      if (!response.ok) throw new Error('Failed to delete bank deal affiliate')
+      console.log('DELETE response status:', response.status)
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('DELETE error response:', errorData)
+        throw new Error(`Failed to delete bank deal affiliate: ${errorData.error || response.statusText}`)
+      }
+
+      console.log('DELETE successful, refreshing data')
       await fetchData() // Refresh data
       setDeletingBankDeal(null)
     } catch (error) {
