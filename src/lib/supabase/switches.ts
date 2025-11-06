@@ -118,10 +118,11 @@ export const testSupabaseConnection = async (): Promise<boolean> => {
 
     const result = await Promise.race([queryPromise, timeoutPromise])
     const queryResult = result as { data: { count: number }[] | null; error: { message: string } | null } | Error
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { data, error } = queryResult as { data: { count: number }[] | null; error: { message: string } | null }
     
     return !error
-  } catch (err) {
+  } catch {
     return false
   }
 }
@@ -382,6 +383,7 @@ export const calculateEstimatedCompletion = (
   })
   
   // Add estimated days for remaining steps
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remainingSteps.forEach(step => {
     totalDays += 1 // Default 1 day per step
   })

@@ -65,6 +65,7 @@ export async function middleware(req: NextRequest) {
   if (isAdminRoute && session) {
     try {
       // Check if user is in admin_users table
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: adminUser, error: adminError } = await (supabase as any)
         .from('admin_users')
         .select('id')
@@ -77,8 +78,8 @@ export async function middleware(req: NextRequest) {
         redirectUrl.searchParams.set('error', 'admin_required')
         return NextResponse.redirect(redirectUrl)
       }
-    } catch (error) {
-      // If profiles table query fails, deny access
+    } catch {
+      // If admin_users table query fails, deny access
       const redirectUrl = new URL('/dashboard', req.url)
       redirectUrl.searchParams.set('error', 'admin_required')
       return NextResponse.redirect(redirectUrl)
