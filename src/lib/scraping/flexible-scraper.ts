@@ -43,7 +43,7 @@ export class FlexibleScraper {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  private extractText($: cheerio.CheerioAPI, element: cheerio.Cheerio, selector: string): string {
+  private extractText(element: cheerio.Cheerio, selector: string): string {
     try {
       return element.find(selector).first().text().trim()
     } catch {
@@ -153,10 +153,10 @@ export class FlexibleScraper {
           const $deal = $(element)
 
           // Extract all text fields
-          const bankName = this.extractText($, $deal, this.config.selectors.bankName)
-          const rewardText = this.extractText($, $deal, this.config.selectors.rewardAmount)
-          const requirementsText = this.extractText($, $deal, this.config.selectors.requirements)
-          const expiryText = this.extractText($, $deal, this.config.selectors.expiryDate)
+          const bankName = this.extractText($deal, this.config.selectors.bankName)
+          const rewardText = this.extractText($deal, this.config.selectors.rewardAmount)
+          const requirementsText = this.extractText($deal, this.config.selectors.requirements)
+          const expiryText = this.extractText($deal, this.config.selectors.expiryDate)
 
           // Skip if no bank name (likely not a valid deal)
           if (!bankName || bankName.trim().length === 0) {
