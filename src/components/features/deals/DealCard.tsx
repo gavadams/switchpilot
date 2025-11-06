@@ -39,9 +39,12 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
   }
 
 
-  const formatExpiryDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
+  const formatExpiryDate = (dateString: string | null) => {
+    if (!dateString) return 'No expiry date'
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return 'Invalid date'
+      const now = new Date()
     const daysUntilExpiry = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     
     if (daysUntilExpiry < 0) {
@@ -55,7 +58,7 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
     }
   }
 
-  const expiryInfo = formatExpiryDate((deal as BankDeal).expiry_date || '')
+  const expiryInfo = formatExpiryDate((deal as BankDeal).expiry_date)
   const requirements = (deal as BankDeal).requirements as Record<string, unknown>
 
   return (
