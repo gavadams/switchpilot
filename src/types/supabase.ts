@@ -430,6 +430,101 @@ export interface Database {
           }
         ]
       }
+      scraping_sources: {
+        Row: {
+          id: string
+          name: string
+          url: string
+          is_active: boolean
+          priority: number
+          scraper_config: Json
+          last_scraped_at: string | null
+          last_scrape_status: string | null
+          last_scrape_deals_found: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          url: string
+          is_active?: boolean
+          priority?: number
+          scraper_config: Json
+          last_scraped_at?: string | null
+          last_scrape_status?: string | null
+          last_scrape_deals_found?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          url?: string
+          is_active?: boolean
+          priority?: number
+          scraper_config?: Json
+          last_scraped_at?: string | null
+          last_scrape_status?: string | null
+          last_scrape_deals_found?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      scraping_logs: {
+        Row: {
+          id: string
+          source_id: string | null
+          source_name: string | null
+          deals_found: number
+          deals_added: number
+          deals_updated: number
+          deals_deactivated: number
+          status: string | null
+          error_message: string | null
+          duration_seconds: number | null
+          scrape_data: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          source_id?: string | null
+          source_name?: string | null
+          deals_found?: number
+          deals_added?: number
+          deals_updated?: number
+          deals_deactivated?: number
+          status?: string | null
+          error_message?: string | null
+          duration_seconds?: number | null
+          scrape_data?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          source_id?: string | null
+          source_name?: string | null
+          deals_found?: number
+          deals_added?: number
+          deals_updated?: number
+          deals_deactivated?: number
+          status?: string | null
+          error_message?: string | null
+          duration_seconds?: number | null
+          scrape_data?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scraping_logs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "scraping_sources"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

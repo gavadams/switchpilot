@@ -68,6 +68,35 @@ export interface AffiliateClick {
   updated_at: string // TIMESTAMP WITH TIME ZONE
 }
 
+export interface ScrapingSource {
+  id: string // UUID
+  name: string // VARCHAR
+  url: string // VARCHAR
+  is_active: boolean // BOOLEAN
+  priority: number // INTEGER
+  scraper_config: Record<string, unknown> // JSONB
+  last_scraped_at: string | null // TIMESTAMP WITH TIME ZONE
+  last_scrape_status: string | null // VARCHAR
+  last_scrape_deals_found: number // INTEGER
+  created_at: string // TIMESTAMP WITH TIME ZONE
+  updated_at: string // TIMESTAMP WITH TIME ZONE
+}
+
+export interface ScrapingLog {
+  id: string // UUID
+  source_id: string | null // UUID
+  source_name: string | null // VARCHAR
+  deals_found: number // INTEGER
+  deals_added: number // INTEGER
+  deals_updated: number // INTEGER
+  deals_deactivated: number // INTEGER
+  status: string | null // VARCHAR
+  error_message: string | null // TEXT
+  duration_seconds: number | null // INTEGER
+  scrape_data: Record<string, unknown> | null // JSONB
+  created_at: string // TIMESTAMP WITH TIME ZONE
+}
+
 // Insert types (without auto-generated fields)
 export interface ProfileInsert {
   id: string
@@ -120,6 +149,30 @@ export interface AffiliateClickInsert {
   referrer?: string | null
   commission_earned?: number
   status?: 'clicked' | 'converted' | 'expired' | 'cancelled'
+}
+
+export interface ScrapingSourceInsert {
+  name: string
+  url: string
+  is_active?: boolean
+  priority?: number
+  scraper_config: Record<string, unknown>
+  last_scraped_at?: string | null
+  last_scrape_status?: string | null
+  last_scrape_deals_found?: number
+}
+
+export interface ScrapingLogInsert {
+  source_id?: string | null
+  source_name?: string | null
+  deals_found?: number
+  deals_added?: number
+  deals_updated?: number
+  deals_deactivated?: number
+  status?: string | null
+  error_message?: string | null
+  duration_seconds?: number | null
+  scrape_data?: Record<string, unknown> | null
 }
 
 // Update types (all fields optional except id)
@@ -176,4 +229,30 @@ export interface AffiliateClickUpdate {
   conversion_timestamp?: string | null
   commission_earned?: number
   status?: 'clicked' | 'converted' | 'expired' | 'cancelled'
+}
+
+export interface ScrapingSourceUpdate {
+  id: string
+  name?: string
+  url?: string
+  is_active?: boolean
+  priority?: number
+  scraper_config?: Record<string, unknown>
+  last_scraped_at?: string | null
+  last_scrape_status?: string | null
+  last_scrape_deals_found?: number
+}
+
+export interface ScrapingLogUpdate {
+  id: string
+  source_id?: string | null
+  source_name?: string | null
+  deals_found?: number
+  deals_added?: number
+  deals_updated?: number
+  deals_deactivated?: number
+  status?: string | null
+  error_message?: string | null
+  duration_seconds?: number | null
+  scrape_data?: Record<string, unknown> | null
 }
