@@ -40,21 +40,24 @@ export default function DealCard({ deal, onStartSwitch }: DealCardProps) {
 
 
   const formatExpiryDate = (dateString: string | null) => {
-    if (!dateString) return 'No expiry date'
+    if (!dateString) return { text: 'No expiry date', color: 'default' as const }
     try {
       const date = new Date(dateString)
-      if (isNaN(date.getTime())) return 'Invalid date'
+      if (isNaN(date.getTime())) return { text: 'Invalid date', color: 'default' as const }
       const now = new Date()
-    const daysUntilExpiry = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-    
-    if (daysUntilExpiry < 0) {
-      return { text: 'Expired', color: 'destructive' as const }
-    } else if (daysUntilExpiry <= 7) {
-      return { text: `${daysUntilExpiry} days left`, color: 'destructive' as const }
-    } else if (daysUntilExpiry <= 30) {
-      return { text: `${daysUntilExpiry} days left`, color: 'warning' as const }
-    } else {
-      return { text: `Expires ${format(date, 'MMM dd, yyyy')}`, color: 'default' as const }
+      const daysUntilExpiry = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+
+      if (daysUntilExpiry < 0) {
+        return { text: 'Expired', color: 'destructive' as const }
+      } else if (daysUntilExpiry <= 7) {
+        return { text: `${daysUntilExpiry} days left`, color: 'destructive' as const }
+      } else if (daysUntilExpiry <= 30) {
+        return { text: `${daysUntilExpiry} days left`, color: 'warning' as const }
+      } else {
+        return { text: `Expires ${format(date, 'MMM dd, yyyy')}`, color: 'default' as const }
+      }
+    } catch (error) {
+      return { text: 'Invalid date', color: 'default' as const }
     }
   }
 
