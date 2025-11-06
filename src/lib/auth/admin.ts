@@ -13,29 +13,37 @@ export async function isAdmin(): Promise<boolean> {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
+      console.log('No authenticated user:', authError?.message)
       return false
     }
 
-    // Check if user has admin role by checking admin_users table
+    // Check if user has admin role by checking profiles.is_admin
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: adminUser, error: adminError } = await (supabase as any)
-        .from('admin_users')
-        .select('id')
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin, email')
         .eq('id', user.id)
         .single()
 
-      if (adminError) {
-        // If table doesn't exist or user is not admin, return false
+      if (profileError) {
+        console.log('Profile fetch error:', profileError.message)
         return false
       }
 
-      return !!adminUser
+      if (!profile) {
+        console.log('No profile found for user:', user.id)
+        return false
+      }
+
+      const isAdmin = profile.is_admin === true
+      console.log('User admin status:', { email: profile.email, isAdmin })
+      return isAdmin
     } catch (error) {
-      // If table doesn't exist, fall back to false
+      console.log('Error checking admin status:', error)
       return false
     }
   } catch (error) {
+    console.log('Error in isAdmin:', error)
     return false
   }
 }
