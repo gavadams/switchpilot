@@ -179,7 +179,7 @@ export default function ScrapingDashboardPage() {
                 }}
               />
             )}
-            {overallHealth?.issues.length > 0 && (
+            {overallHealth?.issues && overallHealth.issues.length > 0 && (
               <p className="text-xs text-muted-foreground mt-2">
                 {overallHealth.issues.length} issue(s) detected
               </p>
