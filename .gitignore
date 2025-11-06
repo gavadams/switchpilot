@@ -135,6 +135,8 @@ temp/
 # Logs
 logs/
 *.log
+# Exception: Allow admin scraping logs page
+!src/app/admin/scraping/logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
