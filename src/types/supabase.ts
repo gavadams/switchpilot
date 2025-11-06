@@ -67,6 +67,8 @@ export interface Database {
           commission_rate: number
           tracking_enabled: boolean
           affiliate_provider: string | null
+          source_name: string | null
+          source_priority: number
           created_at: string
           updated_at: string
         }
@@ -86,6 +88,8 @@ export interface Database {
           commission_rate?: number
           tracking_enabled?: boolean
           affiliate_provider?: string | null
+          source_name?: string | null
+          source_priority?: number
           created_at?: string
           updated_at?: string
         }
@@ -105,6 +109,8 @@ export interface Database {
           commission_rate?: number
           tracking_enabled?: boolean
           affiliate_provider?: string | null
+          source_name?: string | null
+          source_priority?: number
           created_at?: string
           updated_at?: string
         }

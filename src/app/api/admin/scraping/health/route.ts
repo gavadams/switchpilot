@@ -1,7 +1,7 @@
 // API route for health monitoring
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '../../../../../../lib/auth/admin'
-import { HealthMonitor } from '../../../../../../lib/scraping/health-monitor'
+import { requireAdmin } from '../../../../../lib/auth/admin'
+import { HealthMonitor } from '../../../../../lib/scraping/health-monitor'
 
 export const dynamic = 'force-dynamic'
 

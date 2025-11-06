@@ -25,6 +25,8 @@ export interface BankDeal {
   commission_rate: number // DECIMAL(5,2)
   tracking_enabled: boolean
   affiliate_provider: string | null // VARCHAR(50)
+  source_name: string | null // VARCHAR
+  source_priority: number // INTEGER
   created_at: string // TIMESTAMP WITH TIME ZONE
   updated_at: string // TIMESTAMP WITH TIME ZONE
 }
@@ -120,6 +122,8 @@ export interface BankDealInsert {
   commission_rate?: number
   tracking_enabled?: boolean
   affiliate_provider?: string | null
+  source_name?: string | null
+  source_priority?: number
 }
 
 export interface UserSwitchInsert {
@@ -199,6 +203,8 @@ export interface BankDealUpdate {
   commission_rate?: number
   tracking_enabled?: boolean
   affiliate_provider?: string | null
+  source_name?: string | null
+  source_priority?: number
 }
 
 export interface UserSwitchUpdate {
