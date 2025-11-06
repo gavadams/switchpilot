@@ -10,7 +10,15 @@ import { Loader2, Plus, Search, Edit, Trash2 } from 'lucide-react'
 import SourceCard from '../../../../components/features/admin/SourceCard'
 import AddSourceModal from '../../../../components/features/admin/AddSourceModal'
 import ConfirmDeleteDialog from '../../../../components/features/admin/ConfirmDeleteDialog'
-import { ScrapingSource } from '@/types/scraping'
+import { ScrapingSource, ScraperConfig } from '@/types/scraping'
+
+interface SourceFormData {
+  name: string
+  url: string
+  priority: number
+  is_active: boolean
+  scraper_config: ScraperConfig
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -41,7 +49,7 @@ export default function SourcesManagementPage() {
     }
   }, [])
 
-  const handleSave = async (data: any) => {
+  const handleSave = async (data: SourceFormData) => {
     try {
       if (editingSource) {
         // Update

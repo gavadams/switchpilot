@@ -8,7 +8,7 @@ import { Loader2, RefreshCw, AlertCircle, CheckCircle2, Activity } from 'lucide-
 import Link from 'next/link'
 import ScrapeProgress from '../../../components/features/admin/ScrapeProgress'
 import HealthStatusBadge from '../../../components/features/admin/HealthStatusBadge'
-import { ScrapingSource, SyncResult, HealthStatus } from '@/types/scraping'
+import { ScrapingSource, SyncResult, HealthStatus, ScrapingLog } from '@/types/scraping'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +22,7 @@ export default function ScrapingDashboardPage() {
   const [isScraping, setIsScraping] = useState(false)
   const [scrapeResults, setScrapeResults] = useState<SyncResult[]>([])
   const [loading, setLoading] = useState(true)
-  const [recentLogs, setRecentLogs] = useState<any[]>([])
+  const [recentLogs, setRecentLogs] = useState<ScrapingLog[]>([])
 
   useEffect(() => {
     fetchData()
@@ -258,7 +258,7 @@ export default function ScrapingDashboardPage() {
             <p className="text-muted-foreground text-center py-4">No scraping activity yet</p>
           ) : (
             <div className="space-y-2">
-              {recentLogs.map((log: any) => (
+              {recentLogs.map((log: ScrapingLog) => (
                 <div key={log.id} className="flex items-center justify-between p-3 border rounded">
                   <div>
                     <div className="font-medium">{log.source_name || 'Unknown'}</div>
