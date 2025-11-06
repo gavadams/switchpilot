@@ -4,6 +4,7 @@ import { requireAdmin } from '../../../../lib/auth/admin'
 import { createServerSupabaseClient } from '../../../../lib/supabase/server'
 import { MultiSourceSyncService } from '../../../../lib/scraping/multi-source-sync'
 import { ScrapingSource } from '../../../../types/scraping'
+import { Json } from '../../../../types/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
         status: result.errors.length === 0 ? 'success' : result.dealsFound > 0 ? 'partial' : 'failed',
         error_message: result.errors.join('; ') || null,
         duration_seconds: Math.floor(result.duration / 1000),
-        scrape_data: result as any
+        scrape_data: result as unknown as Json
       })
     }
 
