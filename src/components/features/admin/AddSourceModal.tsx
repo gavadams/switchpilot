@@ -153,7 +153,7 @@ export default function AddSourceModal({ open, onOpenChange, onSave, source }: A
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600 shadow-2xl z-50">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border-neutral-200 shadow-xl">
         <DialogHeader>
           <DialogTitle>{source ? 'Edit Scraping Source' : 'Add New Scraping Source'}</DialogTitle>
           <DialogDescription>
