@@ -65,7 +65,7 @@ export async function middleware(req: NextRequest) {
   if (isAdminRoute && session) {
     try {
       // Check if user is in admin_users table
-      const { data: adminUser, error: adminError } = await supabase
+      const { data: adminUser, error: adminError } = await (supabase as any)
         .from('admin_users')
         .select('id')
         .eq('id', session.user.id)
