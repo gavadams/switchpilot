@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth/admin'
-import { FlexibleScraper } from '@/lib/scraping/flexible-scraper'
-import { ScraperConfig } from '@/types/scraping'
+import { requireAdmin } from '../../../../../lib/auth/admin'
+import { FlexibleScraper } from '../../../../../lib/scraping/flexible-scraper'
+import { ScraperConfig } from '../../../../../types/scraping'
 
 export const dynamic = 'force-dynamic'
 

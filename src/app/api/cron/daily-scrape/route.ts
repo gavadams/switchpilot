@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MultiSourceSyncService } from '@/lib/scraping/multi-source-sync'
-import { HealthMonitor } from '@/lib/scraping/health-monitor'
+import { MultiSourceSyncService } from '../../../../../lib/scraping/multi-source-sync'
+import { HealthMonitor } from '../../../../../lib/scraping/health-monitor'
 
 export const dynamic = 'force-dynamic'
 
