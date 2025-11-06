@@ -1,7 +1,7 @@
 // API route for conflict resolution
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '../../../../../../lib/auth/admin'
-import { ConflictResolver } from '../../../../../../lib/scraping/conflict-resolver'
+import { requireAdmin } from '../../../../../lib/auth/admin'
+import { ConflictResolver } from '../../../../../lib/scraping/conflict-resolver'
 
 export const dynamic = 'force-dynamic'
 

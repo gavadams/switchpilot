@@ -1,9 +1,9 @@
 // API route for triggering deal scraping
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '../../../../../lib/auth/admin'
-import { createServerSupabaseClient } from '../../../../../lib/supabase/server'
-import { MultiSourceSyncService } from '../../../../../lib/scraping/multi-source-sync'
-import { ScrapingSource } from '../../../../../types/scraping'
+import { requireAdmin } from '../../../../lib/auth/admin'
+import { createServerSupabaseClient } from '../../../../lib/supabase/server'
+import { MultiSourceSyncService } from '../../../../lib/scraping/multi-source-sync'
+import { ScrapingSource } from '../../../../types/scraping'
 
 export const dynamic = 'force-dynamic'
 
