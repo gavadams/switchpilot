@@ -77,6 +77,13 @@ export default function SourcesManagementPage() {
     }
   }
 
+  const handleDeleteRequest = (sourceId: string) => {
+    const source = sources.find(s => s.id === sourceId)
+    if (source) {
+      setDeletingSource(source)
+    }
+  }
+
   const handleDelete = async () => {
     if (!deletingSource) return
     try {
@@ -180,7 +187,7 @@ export default function SourcesManagementPage() {
                   source={source}
                   onScrape={handleScrape}
                   onEdit={setEditingSource}
-                  onDelete={setDeletingSource}
+                  onDelete={handleDeleteRequest}
                   onTest={handleTest}
                 />
               ))}
