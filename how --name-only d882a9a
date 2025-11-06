@@ -1,0 +1,13 @@
+[33mcommit dd4ca7cc4951e1ca0385df3da634e82f02dd5cd6[m
+Author: gavadams <gav.adams@gmail.com>
+Date:   Thu Nov 6 09:30:09 2025 +0000
+
+    api routeing fix
+
+src/app/api/admin/scrape/route.ts
+src/app/api/admin/scraping-sources/route.ts
+src/app/api/admin/scraping/conflicts/route.ts
+src/app/api/admin/scraping/health/route.ts
+src/app/api/admin/test-scrape-config/route.ts
+src/app/api/cron/daily-scrape/route.ts
+src/components/features/admin/AddSourceModal.tsx

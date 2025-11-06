@@ -1,3 +1,4 @@
+// API route for managing scraping sources
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '../../../../../lib/auth/admin'
 import { createServerSupabaseClient } from '../../../../../lib/supabase/server'

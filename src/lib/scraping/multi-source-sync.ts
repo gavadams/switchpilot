@@ -2,6 +2,7 @@ import { FlexibleScraper } from './flexible-scraper'
 import { createServerSupabaseClient } from '../supabase/server'
 import { ScrapedDeal, ScraperConfig, ScrapingSource, SyncResult } from '@/types/scraping'
 
+// Multi-source deal scraping service
 export class MultiSourceSyncService {
   private async getSupabase() {
     return await createServerSupabaseClient()

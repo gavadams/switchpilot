@@ -1,3 +1,4 @@
+// Health status badge component
 'use client'
 
 import { Badge } from '@/components/ui/badge'

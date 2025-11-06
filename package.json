@@ -1,5 +1,6 @@
 {
   "name": "switch-master",
+  "description": "SwitchPilot - Multi-source deal scraping platform",
   "version": "0.1.1",
   "private": true,
   "scripts": {

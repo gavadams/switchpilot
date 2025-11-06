@@ -1,3 +1,4 @@
+// Cron API route for daily scraping
 import { NextRequest, NextResponse } from 'next/server'
 import { MultiSourceSyncService } from '../../../../../lib/scraping/multi-source-sync'
 import { HealthMonitor } from '../../../../../lib/scraping/health-monitor'

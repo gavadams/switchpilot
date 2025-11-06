@@ -1,3 +1,4 @@
+// Admin sources management page
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'

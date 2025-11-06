@@ -1,3 +1,4 @@
+// Admin authentication utilities
 import { createServerSupabaseClient } from '../supabase/server'
 
 /**

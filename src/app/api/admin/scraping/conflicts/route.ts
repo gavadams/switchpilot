@@ -1,3 +1,4 @@
+// API route for conflict resolution
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '../../../../../../lib/auth/admin'
 import { ConflictResolver } from '../../../../../../lib/scraping/conflict-resolver'
