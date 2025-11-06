@@ -26,7 +26,7 @@ export class MultiSourceSyncService {
 
     // Scrape each source
     for (const source of sources) {
-      const result = await this.syncSource(source as ScrapingSource)
+      const result = await this.syncSource(source as unknown as ScrapingSource)
       results.push(result)
 
       // Update source last scraped info
@@ -37,7 +37,7 @@ export class MultiSourceSyncService {
     }
 
     // After all sources scraped, handle conflicts and deduplication
-    await this.handleConflicts(sources as ScrapingSource[])
+    await this.handleConflicts(sources as unknown as ScrapingSource[])
 
     return results
   }

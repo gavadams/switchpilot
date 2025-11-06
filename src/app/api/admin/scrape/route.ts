@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Source not found' }, { status: 404 })
       }
 
-      const result = await syncService.syncSource(source as ScrapingSource)
+      const result = await syncService.syncSource(source as unknown as ScrapingSource)
       results = [result]
     } else {
       // Scrape all active sources
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         status: result.errors.length === 0 ? 'success' : result.dealsFound > 0 ? 'partial' : 'failed',
         error_message: result.errors.join('; ') || null,
         duration_seconds: Math.floor(result.duration / 1000),
-        scrape_data: result
+        scrape_data: result as any
       })
     }
 
