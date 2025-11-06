@@ -17,27 +17,21 @@ export async function isAdmin(): Promise<boolean> {
       return false
     }
 
-    // Check if user has admin role by checking profiles.is_admin
+    // Check if user has admin role by checking admin_users table
     try {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('is_admin, email')
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
         .eq('id', user.id)
         .single()
 
-      if (profileError) {
-        console.log('Profile fetch error:', profileError.message)
+      if (adminError || !adminUser) {
+        console.log('User is not admin:', adminError?.message)
         return false
       }
 
-      if (!profile) {
-        console.log('No profile found for user:', user.id)
-        return false
-      }
-
-      const isAdmin = profile.is_admin === true
-      console.log('User admin status:', { email: profile.email, isAdmin })
-      return isAdmin
+      console.log('User is admin:', user.id)
+      return true
     } catch (error) {
       console.log('Error checking admin status:', error)
       return false

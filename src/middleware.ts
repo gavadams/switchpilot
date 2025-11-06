@@ -64,14 +64,14 @@ export async function middleware(req: NextRequest) {
   // Check admin status for admin routes
   if (isAdminRoute && session) {
     try {
-      // Check if user has admin role by checking profiles.is_admin
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('is_admin')
+      // Check if user is in admin_users table
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
         .eq('id', session.user.id)
         .single()
 
-      if (profileError || !profile || profile.is_admin !== true) {
+      if (adminError || !adminUser) {
         // User is not an admin, redirect to dashboard
         const redirectUrl = new URL('/dashboard', req.url)
         redirectUrl.searchParams.set('error', 'admin_required')
