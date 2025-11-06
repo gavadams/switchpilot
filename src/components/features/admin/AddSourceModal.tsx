@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2, TestTube, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { ScraperConfig, ScrapedDeal } from '@/types/scraping'
-import { getAllTemplates, getTemplate } from '../../../../lib/scraping/source-templates'
+import { getAllTemplates, getTemplate } from '../../../lib/scraping/source-templates'
 
 interface AddSourceModalProps {
   open: boolean
