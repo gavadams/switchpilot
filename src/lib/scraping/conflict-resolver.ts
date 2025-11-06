@@ -155,10 +155,48 @@ export class ConflictResolver {
     resolution: 'sourceA' | 'sourceB',
     resolvedBy: string
   ): Promise<void> {
-    // This would update the conflict resolution in a conflicts table
-    // For now, the conflicts are detected on-the-fly
-    // Future: Store conflicts in database table for tracking
-    console.log(`Manual resolution: ${conflictId} -> ${resolution} by ${resolvedBy}`)
+    const supabase = await this.getSupabase()
+    
+    // Parse conflict ID (format: "dealIdA-dealIdB")
+    const [dealIdA, dealIdB] = conflictId.split('-')
+    if (!dealIdA || !dealIdB) {
+      throw new Error('Invalid conflict ID format')
+    }
+
+    // Get both deals
+    const { data: deals, error } = await supabase
+      .from('bank_deals')
+      .select('*')
+      .in('id', [dealIdA, dealIdB])
+
+    if (error || !deals || deals.length !== 2) {
+      throw new Error('Failed to find conflicting deals')
+    }
+
+    const dealA = deals.find(d => d.id === dealIdA)
+    const dealB = deals.find(d => d.id === dealIdB)
+
+    if (!dealA || !dealB) {
+      throw new Error('One or both deals not found')
+    }
+
+    // Determine which deal to use as the source of truth
+    const sourceDeal = resolution === 'sourceA' ? dealA : dealB
+    const targetDeal = resolution === 'sourceB' ? dealA : dealB
+
+    // Update target deal to match source deal
+    await supabase
+      .from('bank_deals')
+      .update({
+        reward_amount: sourceDeal.reward_amount,
+        required_direct_debits: sourceDeal.required_direct_debits,
+        min_pay_in: sourceDeal.min_pay_in,
+        expiry_date: sourceDeal.expiry_date,
+        source_name: sourceDeal.source_name,
+        source_priority: sourceDeal.source_priority,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', targetDeal.id)
   }
 }
 

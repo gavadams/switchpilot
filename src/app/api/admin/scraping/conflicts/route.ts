@@ -8,7 +8,15 @@ export const dynamic = 'force-dynamic'
 // GET - List conflicts
 export async function GET(request: NextRequest) {
   try {
-    await requireAdmin()
+    try {
+      await requireAdmin()
+    } catch (authError) {
+      console.error('Admin auth error:', authError)
+      return NextResponse.json(
+        { error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      )
+    }
 
     const { searchParams } = new URL(request.url)
     const unresolvedOnly = searchParams.get('unresolvedOnly') === 'true'
@@ -17,10 +25,16 @@ export async function GET(request: NextRequest) {
     const report = await resolver.generateConflictReport()
 
     if (unresolvedOnly) {
-      return NextResponse.json({ conflicts: report.unresolved, summary: report.summary })
+      return NextResponse.json({ 
+        conflicts: report.unresolved, 
+        summary: report.summary 
+      })
     }
 
-    return NextResponse.json(report)
+    return NextResponse.json({
+      conflicts: [...report.unresolved, ...report.resolved],
+      summary: report.summary
+    })
   } catch (error) {
     console.error('Conflict resolution error:', error)
     return NextResponse.json(
@@ -33,7 +47,15 @@ export async function GET(request: NextRequest) {
 // POST - Manually resolve conflict
 export async function POST(request: NextRequest) {
   try {
-    await requireAdmin()
+    try {
+      await requireAdmin()
+    } catch (authError) {
+      console.error('Admin auth error:', authError)
+      return NextResponse.json(
+        { error: 'Unauthorized: Admin access required' },
+        { status: 401 }
+      )
+    }
 
     const body = await request.json()
     const { conflictId, resolution, resolvedBy } = body

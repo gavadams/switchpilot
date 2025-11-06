@@ -278,9 +278,15 @@ export default function ScrapingDashboardPage() {
               ))}
             </div>
           )}
-          <div className="mt-4">
+          <div className="mt-4 flex gap-2">
             <Link href="/admin/scraping/logs">
               <Button variant="outline" size="sm">View All Logs</Button>
+            </Link>
+            <Link href="/admin/scraping/conflicts">
+              <Button variant="outline" size="sm">View Conflicts</Button>
+            </Link>
+            <Link href="/admin/scraping/analytics">
+              <Button variant="outline" size="sm">View Analytics</Button>
             </Link>
           </div>
         </CardContent>
