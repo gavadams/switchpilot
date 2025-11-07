@@ -6,6 +6,10 @@ export interface Profile {
   full_name: string | null
   total_earnings: number // DECIMAL(10,2)
   is_admin?: boolean
+  role?: 'user' | 'admin' | 'support'
+  is_suspended?: boolean
+  suspension_reason?: string | null
+  suspended_until?: string | null
   created_at: string // TIMESTAMP WITH TIME ZONE
   updated_at: string // TIMESTAMP WITH TIME ZONE
 }
@@ -106,6 +110,10 @@ export interface ProfileInsert {
   full_name?: string | null
   total_earnings?: number
   is_admin?: boolean
+  role?: 'user' | 'admin' | 'support'
+  is_suspended?: boolean
+  suspension_reason?: string | null
+  suspended_until?: string | null
 }
 
 export interface BankDealInsert {
@@ -186,6 +194,10 @@ export interface ProfileUpdate {
   full_name?: string | null
   total_earnings?: number
   is_admin?: boolean
+  role?: 'user' | 'admin' | 'support'
+  is_suspended?: boolean
+  suspension_reason?: string | null
+  suspended_until?: string | null
 }
 
 export interface BankDealUpdate {
@@ -261,4 +273,52 @@ export interface ScrapingLogUpdate {
   error_message?: string | null
   duration_seconds?: number | null
   scrape_data?: Record<string, unknown> | null
+}
+
+// Admin audit log types
+export interface AdminAuditLog {
+  id: string // UUID
+  admin_id: string | null // UUID
+  admin_email: string | null
+  action_type: string
+  target_type: string | null
+  target_id: string | null // UUID
+  target_email: string | null
+  action_details: Record<string, unknown> | null // JSONB
+  ip_address: string | null
+  user_agent: string | null
+  result: 'success' | 'failed'
+  error_message: string | null
+  created_at: string // TIMESTAMP WITH TIME ZONE
+}
+
+export interface AdminAuditLogInsert {
+  admin_id?: string | null
+  admin_email?: string | null
+  action_type: string
+  target_type?: string | null
+  target_id?: string | null
+  target_email?: string | null
+  action_details?: Record<string, unknown> | null
+  ip_address?: string | null
+  user_agent?: string | null
+  result?: 'success' | 'failed'
+  error_message?: string | null
+}
+
+// Deal history types
+export interface DealHistory {
+  id: string // UUID
+  deal_id: string // UUID
+  changed_by: string | null // UUID
+  change_type: 'created' | 'updated' | 'deleted' | 'activated' | 'deactivated'
+  changes: Record<string, unknown> | null // JSONB
+  created_at: string // TIMESTAMP WITH TIME ZONE
+}
+
+export interface DealHistoryInsert {
+  deal_id: string
+  changed_by?: string | null
+  change_type: 'created' | 'updated' | 'deleted' | 'activated' | 'deactivated'
+  changes?: Record<string, unknown> | null
 }

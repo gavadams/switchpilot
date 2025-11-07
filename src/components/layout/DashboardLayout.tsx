@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
@@ -19,7 +19,15 @@ import {
   LogOut,
   Package,
   Shield,
-  BarChart3
+  BarChart3,
+  Users,
+  DollarSign,
+  Activity,
+  Headphones,
+  FileText,
+  Database,
+  TrendingUp,
+  ChevronDown
 } from 'lucide-react'
 import LogoutButton from '../features/auth/LogoutButton'
 
@@ -45,8 +53,13 @@ export default function DashboardLayout({
   breadcrumbs = []
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [adminScrapingOpen, setAdminScrapingOpen] = useState(false)
+  const [adminAffiliatesOpen, setAdminAffiliatesOpen] = useState(false)
   const pathname = usePathname()
   const { user, profile } = useAuth()
+
+  // Check if user is admin (check both is_admin flag and admin_users table)
+  const isAdmin = profile?.is_admin === true || profile?.role === 'admin'
 
   const isActiveRoute = (href: string) => {
     if (href === '/dashboard') {
@@ -54,6 +67,16 @@ export default function DashboardLayout({
     }
     return pathname.startsWith(href)
   }
+
+  // Auto-expand admin sub-menus if on those pages
+  useEffect(() => {
+    if (pathname.startsWith('/admin/scraping')) {
+      setAdminScrapingOpen(true)
+    }
+    if (pathname.startsWith('/admin/affiliates')) {
+      setAdminAffiliatesOpen(true)
+    }
+  }, [pathname])
 
   const getInitials = (name?: string | null) => {
     if (!name) return 'U'
@@ -120,23 +143,258 @@ export default function DashboardLayout({
             })}
             
             {/* Admin Section */}
-            {profile?.is_admin && (
+            {isAdmin && (
               <>
                 <Separator className="my-4" />
-                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground">
-                  ADMIN
+                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">
+                  Admin
                 </div>
+                
+                {/* Admin Dashboard */}
                 <Link
-                  href="/admin/affiliates"
+                  href="/admin"
                   className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    pathname.startsWith('/admin')
+                    pathname === '/admin'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Home className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </Link>
+
+                {/* Users */}
+                <Link
+                  href="/admin/users"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/users')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Users className="h-4 w-4" />
+                  <span>Users</span>
+                </Link>
+
+                {/* Revenue */}
+                <Link
+                  href="/admin/revenue"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/revenue')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <DollarSign className="h-4 w-4" />
+                  <span>Revenue</span>
+                </Link>
+
+                {/* Switches Monitor */}
+                <Link
+                  href="/admin/switches"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/switches')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <ArrowRightLeft className="h-4 w-4" />
+                  <span>Switches Monitor</span>
+                </Link>
+
+                {/* Deals Management */}
+                <Link
+                  href="/admin/deals"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/deals')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  <span>Deals Management</span>
+                </Link>
+
+                {/* Scraping - Collapsible */}
+                <div>
+                  <button
+                    onClick={() => setAdminScrapingOpen(!adminScrapingOpen)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      pathname.startsWith('/admin/scraping')
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Database className="h-4 w-4" />
+                      <span>Scraping</span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${adminScrapingOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {adminScrapingOpen && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      <Link
+                        href="/admin/scraping"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/scraping'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Dashboard</span>
+                      </Link>
+                      <Link
+                        href="/admin/scraping/sources"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/scraping/sources'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Sources</span>
+                      </Link>
+                      <Link
+                        href="/admin/scraping/logs"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/scraping/logs'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Logs</span>
+                      </Link>
+                      <Link
+                        href="/admin/scraping/conflicts"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/scraping/conflicts'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Conflicts</span>
+                      </Link>
+                      <Link
+                        href="/admin/scraping/analytics"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/scraping/analytics'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Analytics</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* Affiliates - Collapsible */}
+                <div>
+                  <button
+                    onClick={() => setAdminAffiliatesOpen(!adminAffiliatesOpen)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      pathname.startsWith('/admin/affiliates')
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <TrendingUp className="h-4 w-4" />
+                      <span>Affiliates</span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${adminAffiliatesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {adminAffiliatesOpen && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      <Link
+                        href="/admin/affiliates"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/affiliates'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Management</span>
+                      </Link>
+                      <Link
+                        href="/admin/affiliates/performance"
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === '/admin/affiliates/performance'
+                            ? 'bg-primary/20 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span>Performance</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* System Health */}
+                <Link
+                  href="/admin/system"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/system')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Activity className="h-4 w-4" />
+                  <span>System Health</span>
+                </Link>
+
+                {/* Support Tools */}
+                <Link
+                  href="/admin/support"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/support')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Headphones className="h-4 w-4" />
+                  <span>Support Tools</span>
+                </Link>
+
+                {/* Fraud Detection */}
+                <Link
+                  href="/admin/fraud"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/fraud')
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <Shield className="h-4 w-4" />
-                  <span>Affiliate Management</span>
+                  <span>Fraud Detection</span>
+                </Link>
+
+                {/* Audit Log */}
+                <Link
+                  href="/admin/audit"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith('/admin/audit')
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>Audit Log</span>
                 </Link>
               </>
             )}

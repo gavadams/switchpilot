@@ -63,23 +63,45 @@ export async function middleware(req: NextRequest) {
 
   // Check admin status for admin routes
   if (isAdminRoute && session) {
+    let isAdmin = false
+
     try {
-      // Check if user is in admin_users table
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: adminUser, error: adminError } = await (supabase as any)
-        .from('admin_users')
-        .select('id')
+      // Check profiles table for is_admin flag or admin role
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin, role')
         .eq('id', session.user.id)
         .single()
 
-      if (adminError || !adminUser) {
-        // User is not an admin, redirect to dashboard
-        const redirectUrl = new URL('/dashboard', req.url)
-        redirectUrl.searchParams.set('error', 'admin_required')
-        return NextResponse.redirect(redirectUrl)
+      if (!profileError && profile) {
+        if (profile.is_admin === true || profile.role === 'admin') {
+          isAdmin = true
+        }
       }
-    } catch {
-      // If admin_users table query fails, deny access
+    } catch (error) {
+      // Continue to check admin_users table
+    }
+
+    // Also check admin_users table (for backward compatibility)
+    if (!isAdmin) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: adminUser, error: adminError } = await (supabase as any)
+          .from('admin_users')
+          .select('id')
+          .eq('id', session.user.id)
+          .single()
+
+        if (!adminError && adminUser) {
+          isAdmin = true
+        }
+      } catch {
+        // If both checks fail, deny access
+      }
+    }
+
+    if (!isAdmin) {
+      // User is not an admin, redirect to dashboard
       const redirectUrl = new URL('/dashboard', req.url)
       redirectUrl.searchParams.set('error', 'admin_required')
       return NextResponse.redirect(redirectUrl)
