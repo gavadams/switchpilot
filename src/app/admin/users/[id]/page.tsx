@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Switch } from '@/components/ui/switch'
 import { Loader2, ArrowLeft, Mail, Ban, CheckCircle } from 'lucide-react'
-import { Profile, UserSwitch, DirectDebit, AffiliateClick } from '@/types/database'
+import { Profile, UserSwitch, DirectDebit, AffiliateClick, DdPayment } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +19,7 @@ interface UserDetail {
   switches: UserSwitch[]
   directDebits: DirectDebit[]
   affiliateClicks: AffiliateClick[]
-  payments: any[]
+  payments: DdPayment[]
 }
 
 export default function UserDetailPage() {

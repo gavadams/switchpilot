@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Loader2, Search, DollarSign, Mail, Key, CheckCircle } from 'lucide-react'
 import { useToast } from '@/components/ui/toast'
+import { Profile } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,9 +19,9 @@ export default function SupportToolsPage() {
   const router = useRouter()
   const { addToast } = useToast()
   const [userSearch, setUserSearch] = useState('')
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<Profile[]>([])
   const [searching, setSearching] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null)
 
   // Support action states
   const [refundData, setRefundData] = useState({ userId: '', amount: 0, reason: '', paymentId: '' })

@@ -15,10 +15,29 @@ export const dynamic = 'force-dynamic'
 
 const COLORS = ['#10b981', '#3b82f6']
 
+interface RevenueMetrics {
+  totalRevenue: number
+  monthlyRecurringRevenue: number
+  thisMonthRevenue: number
+  lastMonthRevenue: number
+  averageRevenuePerUser: number
+  ddRevenue: number
+  affiliateRevenue: number
+  ddRevenuePercentage: number
+  affiliateRevenuePercentage: number
+}
+
+interface RevenueDataPoint {
+  month: string
+  ddRevenue: number
+  affiliateRevenue: number
+  total: number
+}
+
 export default function RevenueDashboardPage() {
   const [loading, setLoading] = useState(true)
-  const [metrics, setMetrics] = useState<any>(null)
-  const [revenueData, setRevenueData] = useState<any[]>([])
+  const [metrics, setMetrics] = useState<RevenueMetrics | null>(null)
+  const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([])
   const [dateRange, setDateRange] = useState('12')
 
   useEffect(() => {

@@ -241,7 +241,7 @@ export default function SwitchesMonitoringPage() {
             </div>
             <Select
               value={filters.status}
-              onValueChange={(value: any) => {
+              onValueChange={(value: 'all' | 'started' | 'in_progress' | 'completed' | 'failed' | 'stuck') => {
                 setFilters({ ...filters, status: value })
                 setPage(1)
               }}
