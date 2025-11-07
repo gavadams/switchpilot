@@ -193,7 +193,7 @@ export default function UsersManagementPage() {
                 const [sortBy, sortOrder] = value.split('-')
                 setFilters({
                   ...filters,
-                  sortBy: sortBy as any,
+                  sortBy: sortBy as 'created_at' | 'total_earnings' | 'last_active' | 'switch_count',
                   sortOrder: sortOrder as 'asc' | 'desc'
                 })
               }}

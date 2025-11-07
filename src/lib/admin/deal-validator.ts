@@ -1,11 +1,12 @@
 // Deal validation functions
+import { BankDealInsert, BankDealUpdate } from '@/types/database'
 
 export interface ValidationResult {
   valid: boolean
   errors: string[]
 }
 
-export function validateDeal(dealData: any): ValidationResult {
+export function validateDeal(dealData: Partial<BankDealInsert & BankDealUpdate>): ValidationResult {
   const errors: string[] = []
 
   // Required fields

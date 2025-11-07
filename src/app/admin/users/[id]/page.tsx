@@ -303,7 +303,7 @@ export default function UserDetailPage() {
                     {switches.map((switchItem) => (
                       <TableRow key={switchItem.id}>
                         <TableCell>
-                          {(switchItem as any).bank_deals?.bank_name || 'Unknown'}
+                          {switchItem.bank_deals?.bank_name || 'Unknown'}
                         </TableCell>
                         <TableCell>
                           <Badge variant={

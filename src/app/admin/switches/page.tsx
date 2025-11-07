@@ -21,8 +21,8 @@ interface Switch {
   started_at: string
   completed_at: string | null
   earnings_received: number
-  bank_deals?: { bank_name: string; reward_amount: number }
-  profiles?: { email: string; full_name: string | null }
+  bank_deals?: { bank_name: string; reward_amount: number } | null
+  profiles?: { email: string; full_name: string | null } | null
 }
 
 export default function SwitchesMonitoringPage() {
@@ -198,7 +198,7 @@ export default function SwitchesMonitoringPage() {
                 {stuckSwitches.map((switchItem) => (
                   <TableRow key={switchItem.id}>
                     <TableCell>
-                      {(switchItem as any).profiles?.email || 'Unknown'}
+                      {switchItem.profiles?.email || 'Unknown'}
                     </TableCell>
                     <TableCell>
                       {switchItem.bank_deals?.bank_name || 'Unknown'}
@@ -286,7 +286,7 @@ export default function SwitchesMonitoringPage() {
                 {switches.map((switchItem) => (
                   <TableRow key={switchItem.id}>
                     <TableCell>
-                      {(switchItem as any).profiles?.email || 'Unknown'}
+                      {switchItem.profiles?.email || 'Unknown'}
                     </TableCell>
                     <TableCell>
                       {switchItem.bank_deals?.bank_name || 'Unknown'}

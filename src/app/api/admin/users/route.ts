@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       hasActiveDDs: searchParams.get('hasActiveDDs') === 'true' ? true : undefined,
       dateFrom: searchParams.get('dateFrom') || undefined,
       dateTo: searchParams.get('dateTo') || undefined,
-      sortBy: (searchParams.get('sortBy') as any) || 'created_at',
+      sortBy: (searchParams.get('sortBy') as 'created_at' | 'total_earnings' | 'last_active' | 'switch_count') || 'created_at',
       sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
       page: parseInt(searchParams.get('page') || '1'),
       limit: parseInt(searchParams.get('limit') || '50')

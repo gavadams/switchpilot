@@ -9,10 +9,11 @@ export const dynamic = 'force-dynamic'
 // GET - Get user detail
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const params = await context.params
 
     const userDetail = await getUserDetail(params.id)
 
@@ -36,11 +37,12 @@ export async function GET(
 // PATCH - Update user
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
     const supabase = await createServerSupabaseClient()
+    const params = await context.params
 
     const body = await req.json()
     const { email, full_name, is_suspended, suspension_reason, suspended_until } = body
@@ -103,11 +105,12 @@ export async function PATCH(
 // DELETE - Delete user (soft delete by suspending)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
     const supabase = await createServerSupabaseClient()
+    const params = await context.params
 
     // Get user for audit log
     const { data: user } = await supabase

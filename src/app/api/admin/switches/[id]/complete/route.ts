@@ -7,13 +7,14 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
     const supabase = await createServerSupabaseClient()
 
     const { earnings } = await req.json()
+    const params = await context.params
 
     // Get switch details
     const { data: switchItem } = await supabase
@@ -43,6 +44,7 @@ export async function POST(
       throw updateError
     }
 
+    const bankDeals = switchItem.bank_deals as { bank_name: string } | null | undefined
     await logAdminAction({
       actionType: 'switch_complete_manual',
       targetType: 'switch',
@@ -50,7 +52,7 @@ export async function POST(
       actionDetails: {
         user_id: switchItem.user_id,
         earnings: earnings || 0,
-        bank: (switchItem.bank_deals as any)?.bank_name
+        bank: bankDeals?.bank_name || 'Unknown'
       }
     }, req)
 

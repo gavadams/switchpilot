@@ -47,10 +47,11 @@ export async function GET(req: NextRequest) {
       .limit(5)
 
     completedSwitches?.forEach(switchItem => {
+      const bankDeals = switchItem.bank_deals as { bank_name: string } | null | undefined
       activities.push({
         id: `switch-${switchItem.id}`,
         type: 'switch_completed',
-        description: `Switch completed: ${(switchItem.bank_deals as any)?.bank_name || 'Unknown bank'}`,
+        description: `Switch completed: ${bankDeals?.bank_name || 'Unknown bank'}`,
         timestamp: switchItem.completed_at!
       })
     })

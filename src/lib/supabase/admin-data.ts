@@ -513,7 +513,8 @@ export async function getSystemHealthMetrics(): Promise<SystemHealthMetrics> {
   }, null as string | null) || null
 
   let scrapingStatus: 'healthy' | 'warning' | 'critical' = 'healthy'
-  if (sourcesWithIssues > sources?.length! / 2) {
+  const sourcesLength = sources?.length || 0
+  if (sourcesLength > 0 && sourcesWithIssues > sourcesLength / 2) {
     scrapingStatus = 'critical'
   } else if (sourcesWithIssues > 0) {
     scrapingStatus = 'warning'

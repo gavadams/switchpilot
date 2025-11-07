@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url)
     const filters = {
-      status: (searchParams.get('status') as any) || 'all',
+      status: (searchParams.get('status') as 'all' | 'started' | 'in_progress' | 'completed' | 'failed' | 'stuck') || 'all',
       bankName: searchParams.get('bankName') || undefined,
       dateFrom: searchParams.get('dateFrom') || undefined,
       dateTo: searchParams.get('dateTo') || undefined,
