@@ -74,6 +74,41 @@ export interface AffiliateClick {
   updated_at: string // TIMESTAMP WITH TIME ZONE
 }
 
+export interface DirectDebit {
+  id: string // UUID
+  user_id: string // UUID
+  switch_id: string | null // UUID
+  provider: string
+  charity_name: string | null
+  amount: number // DECIMAL(10,2)
+  frequency: 'monthly' | 'one-time'
+  status: 'pending' | 'active' | 'cancelled' | 'completed' | 'failed'
+  setup_date: string // DATE
+  next_collection_date: string | null // DATE
+  last_collection_date: string | null // DATE
+  auto_cancel_after_switch: boolean
+  total_collected: number // DECIMAL(10,2)
+  stripe_payment_method_id: string | null
+  stripe_subscription_id: string | null
+  stripe_customer_id: string | null
+  created_at: string // TIMESTAMP WITH TIME ZONE
+  updated_at: string // TIMESTAMP WITH TIME ZONE
+}
+
+export interface DdPayment {
+  id: string // UUID
+  user_id: string // UUID
+  direct_debit_id: string // UUID
+  amount: number // DECIMAL(10,2)
+  payment_date: string // DATE
+  stripe_payment_intent_id: string | null
+  stripe_charge_id: string | null
+  status: 'pending' | 'succeeded' | 'failed' | 'refunded'
+  failure_reason: string | null
+  created_at: string // TIMESTAMP WITH TIME ZONE
+  updated_at: string // TIMESTAMP WITH TIME ZONE
+}
+
 export interface ScrapingSource {
   id: string // UUID
   name: string // VARCHAR

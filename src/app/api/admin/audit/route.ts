@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '100')
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from('admin_audit_log')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
@@ -86,7 +87,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { filters } = body
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from('admin_audit_log')
       .select('*')
       .order('created_at', { ascending: false })
@@ -116,7 +118,15 @@ export async function POST(req: NextRequest) {
 
     // Generate CSV
     const csvHeader = 'Timestamp,Admin Email,Action Type,Target Type,Target Email,Result,IP Address\n'
-    const csvRows = (data || []).map(log => 
+    const csvRows = (data || []).map((log: {
+      created_at: string
+      admin_email: string | null
+      action_type: string
+      target_type: string | null
+      target_email: string | null
+      result: string
+      ip_address: string | null
+    }) => 
       `${log.created_at},${log.admin_email || ''},${log.action_type},${log.target_type || ''},${log.target_email || ''},${log.result},${log.ip_address || ''}`
     ).join('\n')
     const csv = csvHeader + csvRows

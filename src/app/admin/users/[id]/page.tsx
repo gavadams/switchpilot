@@ -14,9 +14,20 @@ import { Profile, UserSwitch, DirectDebit, AffiliateClick, DdPayment } from '@/t
 
 export const dynamic = 'force-dynamic'
 
+interface UserSwitchWithDeal extends UserSwitch {
+  bank_deals?: {
+    bank_name: string
+    reward_amount: number
+    expiry_date: string | null
+    time_to_payout: string | null
+    required_direct_debits: number
+    affiliate_url: string | null
+  } | null
+}
+
 interface UserDetail {
   profile: Profile
-  switches: UserSwitch[]
+  switches: UserSwitchWithDeal[]
   directDebits: DirectDebit[]
   affiliateClicks: AffiliateClick[]
   payments: DdPayment[]
@@ -177,7 +188,9 @@ export default function UserDetailPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">Stripe Customer ID</label>
-              <p className="text-sm font-medium">{profile.stripe_customer_id || '—'}</p>
+              <p className="text-sm font-medium">
+                {userDetail?.directDebits.find(dd => dd.stripe_customer_id)?.stripe_customer_id || '—'}
+              </p>
             </div>
             {profile.is_suspended && (
               <>

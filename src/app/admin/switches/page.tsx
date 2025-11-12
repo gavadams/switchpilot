@@ -129,7 +129,8 @@ export default function SwitchesMonitoringPage() {
     }
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A'
     try {
       const date = new Date(dateString)
       if (isNaN(date.getTime())) return 'Invalid date'

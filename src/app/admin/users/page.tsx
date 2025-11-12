@@ -36,7 +36,7 @@ export default function UsersManagementPage() {
   const [filters, setFilters] = useState({
     search: '',
     status: 'all' as 'all' | 'active' | 'suspended',
-    sortBy: 'created_at' as 'created_at' | 'total_earnings' | 'last_active',
+    sortBy: 'created_at' as 'created_at' | 'total_earnings' | 'last_active' | 'switch_count',
     sortOrder: 'desc' as 'asc' | 'desc'
   })
   const [page, setPage] = useState(1)

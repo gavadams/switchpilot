@@ -77,7 +77,8 @@ export async function logAdminAction(
     }
 
     // Insert into audit log
-    const { error: insertError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertError } = await (supabase as any)
       .from('admin_audit_log')
       .insert(auditLogEntry)
 
